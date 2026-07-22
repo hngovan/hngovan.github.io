@@ -1,0 +1,658 @@
+---
+name: '3 mode keyboard conversion module'
+description: 'Module DIY giúp biến bàn phím cơ có dây thành bàn phím 3 chế độ: USB, Bluetooth và 2.4G.'
+image: '/static/3-mode-conversion-module/box-3d-3.webp'
+routeSlug: '3-mode-conversion-module'
+tags: ['build-log', 'module', '3-mode']
+startDate: '2026-07-20'
+status: 'Completed'
+relatedPosts: ['3-mode-conversion-module']
+sections:
+  - title: 'Linh kiện'
+    type: 'list'
+    items:
+      - 'Module chuyển đổi bàn phím có dây sang USB / Bluetooth 5.3 / 2.4G'
+      - 'Pin Li-Po 3.7V'
+      - 'LED 3 chân'
+      - 'Công tắc kim loại mini 3-24V 12mm'
+      - 'Type-C đầu cái'
+      - 'USB-A đầu cái'
+      - 'Dây USB-A to Type-C có đủ dây data'
+      - 'Box in 3D bằng PETG'
+      - 'Feet 8mm, trụ cấy ren M2, ốc M2 x 5mm'
+      - 'Trạm hàn, thiếc hàn, kìm cắt, keo nến'
+  - title: 'Mục tiêu'
+    type: 'list'
+    items:
+      - 'Chuyển bàn phím 1 mode có dây thành module dùng được 3 mode'
+      - 'Tách module ra thành box rời để dùng lại với nhiều bàn phím khác'
+      - 'Có thể chuyển giữa PC, điện thoại, iPad hoặc receiver 2.4G'
+      - 'Giữ lại khả năng dùng dây khi cần test hoặc sạc'
+---
+
+Ý tưởng ban đầu khá đơn giản: tôi có một số bàn phím cũ như Realforce R1,
+Realforce R2. Phần lớn chúng là bàn phím có dây cố định, mỗi lần muốn dùng lại
+phải cắm thẳng dây từ bàn phím vào PC. Việc này khá bất tiện nếu muốn đổi qua
+lại giữa nhiều thiết bị, nên tôi bắt đầu nghĩ đến việc độ Type-C hoặc chuyển
+sang không dây.
+
+Cách nhanh nhất là nhét thẳng module chuyển đổi vào trong vỏ bàn phím, hàn dây
+USB vào module rồi cố định bằng keo nến. Tôi tham khảo ý tưởng đó từ bài mod
+trên DCInside:
+https://gall.dcinside.com/mgallery/board/view/?id=mechanicalkeyboard&no=2594402
+
+Nhược điểm là mỗi bàn phím lại phải mod một lần. Vì vậy tôi chuyển hướng sang
+làm một module rời: bàn phím nào có cổng USB hoặc có thể đưa dây USB ra ngoài
+thì chỉ cần cắm vào box này để dùng như một bàn phím 3 mode.
+
+## 1. Tổng quan module
+
+### 1.1. Module này dùng để làm gì?
+
+Module dùng chip Bluetooth và hỗ trợ tối đa 3 chế độ kết nối. Tùy option khi
+mua mà có thể chỉ có một số chế độ, còn bản tôi dùng là bản đủ cả 3 mode:
+
+- USB có dây.
+- Bluetooth 5.3.
+- Wireless 2.4G qua receiver.
+
+Theo mô tả của người bán, module hỗ trợ bàn phím tiêu chuẩn 104 phím và các
+layout phổ biến như 81, 67, 60. Các phím multimedia và ba đèn lock trên bàn
+phím vẫn có thể được chuyển qua module. Tuy nhiên, chế độ có dây cũng đi qua
+chip chuyển đổi, không phải kiểu nối USB trực tiếp bypass module hoàn toàn.
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/module-feature-overview.png"
+		alt="Mô tả chức năng của module chuyển đổi bàn phím có dây sang Bluetooth và 2.4G"
+	/>
+	<figcaption>
+		Module hỗ trợ USB, Bluetooth 5.3 và wireless 2.4G. Bluetooth và 2.4G có thể
+		lưu nhiều thiết bị để chuyển nhanh.
+	</figcaption>
+</figure>
+
+### 1.2. Chuyển mode và chuyển thiết bị
+
+Bluetooth và 2.4G đều hỗ trợ nhiều nhóm thiết bị. Với Bluetooth, thao tác
+chuyển thiết bị thường mất khoảng 1-3 giây. Với USB và 2.4G, việc chuyển gần
+như tức thời hơn, phù hợp nếu thường xuyên đổi giữa nhiều máy.
+
+Các tổ hợp phím chính:
+
+- `Ctrl + Alt + Shift + Q`: chuyển sang Bluetooth.
+- `Ctrl + Alt + Shift + W`: chuyển sang USB có dây.
+- `Ctrl + Alt + Shift + E`: chuyển sang Wireless 2.4G.
+- `Ctrl + Alt + Shift + 1` đến `8`: chuyển nhóm thiết bị.
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/module-shortcuts.png"
+		alt="Tổ hợp phím chuyển thiết bị của module bàn phím 3 mode"
+	/>
+	<figcaption>
+		Bảng tổ hợp phím chuyển mode và chuyển nhóm thiết bị từ người bán.
+	</figcaption>
+</figure>
+
+### 1.3. Trạng thái đèn kết nối
+
+Tôi dùng LED 3 chân để đưa trạng thái kết nối ra ngoài vỏ box. Màu LED sau khi
+lắp thực tế như sau:
+
+| Chế độ        | Trạng thái LED       |
+| ------------- | -------------------- |
+| USB có dây    | 🔴 Đèn sáng màu đỏ   |
+| Bluetooth     | 🔵 Đèn sáng màu xanh |
+| Wireless 2.4G | 🟣 Đèn sáng màu tím  |
+
+Với chế độ Wireless 2.4G, LED tím thực chất là do hai màu sáng cùng lúc:
+**xanh dương + đỏ = tím**.
+
+<div class="not-prose my-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-950 dark:text-amber-100">
+	<p class="mb-2 font-semibold">⚠️ Lưu ý khi dùng USB có dây</p>
+	<p>
+		Khi chuyển sang chế độ có dây, cần cắm dây USB-A to Type-C vào cổng Type-C
+		phía sau box. Nếu chỉ chọn mode USB bằng phím tắt nhưng không cắm dây này,
+		máy tính sẽ không nhận bàn phím.
+	</p>
+</div>
+
+## 2. Điều kiện trước khi DIY
+
+### 2.1. Những thứ cần kiểm tra trước
+
+Không phải bàn phím có dây nào cũng nên mod theo kiểu này. Trước khi làm, cần
+kiểm tra các điểm sau:
+
+- Phân biệt được bốn dây USB của bàn phím: VCC, GND, D+, D-.
+- Nếu muốn nhét module vào trong bàn phím, vỏ phải còn đủ không gian.
+- Nếu làm box rời như bài này, bàn phím nên có cổng rời hoặc có thể đưa đầu
+  USB ra ngoài.
+- Vỏ full kim loại có thể làm yếu tín hiệu Bluetooth/2.4G.
+- Thời lượng pin phụ thuộc trực tiếp vào dung lượng pin và mức tiêu thụ của bàn
+  phím. Không nên kỳ vọng giống bàn phím wireless native.
+
+<div class="not-prose my-6 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-950 dark:text-red-100">
+	<p class="mb-2 font-semibold">🚨 Cảnh báo trước khi hàn</p>
+	<p>
+		Nếu chưa nắm được dây USB và sơ đồ mạch, nên dừng lại ở bước này hoặc nhờ
+		người có kinh nghiệm kiểm tra. Cắm nhầm hoặc hàn nhầm dây có thể làm hỏng
+		module hoặc cháy IC trên PCB bàn phím.
+	</p>
+</div>
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/module-diy-notes.png"
+		alt="Lưu ý khi DIY module bàn phím có dây sang không dây"
+	/>
+	<figcaption>Ảnh lưu ý từ người bán trên Taobao.</figcaption>
+</figure>
+
+### 2.2. Giới hạn của cách làm này
+
+Cách mod này biến bàn phím có dây thành thiết bị dùng được nhiều mode hơn,
+nhưng nó không biến bàn phím thành wireless native đúng nghĩa. Module vẫn cần
+cấp nguồn cho cả mạch bàn phím, nên pin sẽ phụ thuộc vào mức tiêu thụ của bàn
+phím gốc.
+
+Nếu bàn phím có LED nền, hub USB, hoặc mạch tiêu thụ điện cao, thời lượng pin
+có thể giảm đáng kể.
+
+## 3. Bo mạch và phần mềm
+
+### 3.1. Module tôi sử dụng
+
+Đây là bộ module tôi dùng:
+https://item.taobao.com/item.htm?id=728976782961&skuId=5064767313028
+
+<figure>
+	<div class="grid gap-3 sm:grid-cols-2">
+		<img
+			src="/static/3-mode-conversion-module/original_product-1.jpg"
+			alt="Ảnh sản phẩm thực tế của module chuyển đổi 3 mode"
+		/>
+		<img
+			src="/static/3-mode-conversion-module/original_product-2.jpg"
+			alt="Ảnh sản phẩm thực tế của phụ kiện đi kèm module chuyển đổi 3 mode"
+		/>
+	</div>
+	<figcaption>Hình ảnh sản phẩm thực tế sau khi order từ Taobao về.</figcaption>
+</figure>
+
+Mạch có kích thước khoảng 20 × 40 × 5 mm, đủ nhỏ để đặt trong một box rời hoặc
+trong một số vỏ bàn phím còn dư không gian.
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/module-pcb-size.png"
+		alt="Kích thước và hai mặt của bo mạch chuyển đổi bàn phím 3 mode"
+	/>
+	<figcaption>
+		Hai mặt của PCB. Kích thước được ghi là 20 × 40 × 5 mm.
+	</figcaption>
+</figure>
+
+### 3.2. Tài liệu đi kèm và phần mềm tùy chỉnh
+
+Module đi kèm một tờ hướng dẫn sử dụng và QR code để tải phần mềm tùy chỉnh.
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/user-manual-included.jpg"
+		alt="Giấy hướng dẫn sử dụng kèm QR code"
+	/>
+	<figcaption>Giấy hướng dẫn sử dụng kèm theo module.</figcaption>
+</figure>
+
+Vấn đề là QR code dẫn tới dịch vụ lưu trữ nội địa Trung Quốc, cần đăng nhập tài
+khoản mới tải được. Tôi vô tình thấy một video hướng dẫn làm
+tương tự, trong phần bình luận có chia sẻ link phần mềm. Link tham khảo:
+https://www.youtube.com/watch?v=0TgEkzuZdYc&lc=UgyK0FmAzdMSloESw754AaABAg.AYiFe5BEOt5AYp8QVmfWJ-
+
+Phần mềm tùy chỉnh có thể dùng để:
+
+- Đổi tên thiết bị Bluetooth.
+- Đặt thời gian tự tắt khi không hoạt động, tối thiểu khoảng 10 phút.
+- Remap một số tổ hợp phím tắt.
+
+<div class="not-prose my-6 rounded-2xl border border-sky-500/40 bg-sky-500/10 p-4 text-sm text-sky-950 dark:text-sky-100">
+	<p class="mb-2 font-semibold">💡 Khuyến nghị</p>
+	<p>
+		Nếu chỉ cần dùng module ở mức cơ bản, tôi khuyên chỉ nên đổi tên Bluetooth
+		và chỉnh thời gian tự tắt. Các phần cấu hình sâu hơn nên để mặc định nếu
+		chưa hiểu rõ tác dụng của từng mục.
+	</p>
+</div>
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/app-setting.jpg"
+		alt="Giao diện phần mềm tùy chỉnh module"
+	/>
+	<figcaption>Giao diện phần mềm tùy chỉnh module.</figcaption>
+</figure>
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/rename-bluetooth.jpg"
+		alt="Giao diện đổi tên Bluetooth của module"
+	/>
+	<figcaption>Sau khi đổi tên Bluetooth trong phần mềm.</figcaption>
+</figure>
+
+### 3.3. Các chân cần quan tâm trên PCB
+
+Các cụm chân chính:
+
+- `Power`: cổng sạc Type-C, gồm VCC, GND, D-, D+, CC.
+- `Keyboard`: đường nối sang bàn phím, gồm VCC, GND, D-, D+.
+- `Battery`: pin Li-Po 3.7V, cực dương và cực âm.
+- `Switch`: công tắc nguồn / nút chuyển, kèm chân LED.
+- `STATUS`: chân LED trạng thái, thường dùng để đưa LED ra ngoài vỏ.
+- `IPEX antenna`: cổng anten ngoài nếu cần cải thiện tín hiệu.
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/module-front-status-led.png"
+		alt="Mặt trước bo mạch với vị trí LED trạng thái, anten, cổng sạc và cổng bàn phím"
+	/>
+	<figcaption>
+		Mặt trước của PCB có anten onboard, chân pin, chân switch, cổng sạc, cổng
+		bàn phím và LED trạng thái.
+	</figcaption>
+</figure>
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/module-back-pinout.png"
+		alt="Mặt sau bo mạch với ký hiệu pinout cho Power, Keyboard, Battery, Switch và Status"
+	/>
+	<figcaption>
+		Mặt sau in rõ pinout. Khi hàn nên đối chiếu theo ký hiệu này thay vì đoán
+		theo màu dây.
+	</figcaption>
+</figure>
+
+## 4. Linh kiện sử dụng
+
+### 4.1. Danh sách linh kiện
+
+Danh sách linh kiện tôi dùng cho bản build này:
+
+- Module chuyển đổi 3 mode.
+- Pin Li-Po 3.7V 102540, khoảng 1100-1200 mAh.
+- LED 3 chân 2 màu đỏ/xanh để đưa trạng thái ra ngoài vỏ.
+- Công tắc kim loại mini 12 mm.
+- Type-C đầu cái để làm cổng sạc / USB mode.
+- USB-A đầu cái để cắm bàn phím vào module.
+- Dây USB-A to Type-C có đủ dây data, không dùng dây chỉ sạc.
+- Box in 3D bằng PETG.
+- Feet 8mm, trụ cấy ren M2 dài 5mm, ốc M2 x 5mm.
+- Trạm hàn, thiếc hàn, kìm cắt, keo nến.
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/module-kit-package.png"
+		alt="Bộ module chuyển đổi kèm dây, receiver 2.4G, Type-C và USB-A"
+	/>
+	<figcaption>
+		Bộ module đi kèm dây, receiver 2.4G, đầu Type-C và đầu USB-A.
+	</figcaption>
+</figure>
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/module-wiring-kit.png"
+		alt="Sơ đồ dây của module gồm Type-C, USB-A, công tắc nguồn và dây pin"
+	/>
+	<figcaption>
+		Cách chia dây tổng thể: Type-C cho sạc/USB mode, USB-A để cắm bàn phím, dây
+		pin 3.7V và cụm công tắc nguồn.
+	</figcaption>
+</figure>
+
+### 4.2. Link mua linh kiện
+
+- LED 3 chân:
+  https://shopee.vn/Led-3-Ch%C3%A2n-2-M%C3%A0u-%C4%90%E1%BB%8F-Xanh-%C4%90%C6%B0%E1%BB%9Dng-K%C3%ADnh-Led-5mm-i.61435118.6105132012
+- Pin Li-Po 3.7V:
+  https://shopee.vn/Pin-Li-Po-3.7V-102540-1100-1200mAh-(Li-Polyme)-Cho-Loa-Bluetooth-Tai-Nghe-Bluetooth-Camera-H%C3%A0nh-Tr%C3%ACnh-Pin-d%C3%A0y-10mm-i.54915183.23418869721
+- Công tắc kim loại mini:
+  https://shopee.vn/12-24V-MOMENTARY-V%C3%B2ng-si%C3%AAu-ng%E1%BA%AFn-m%C3%A0u-%C4%91en-nh%E1%BA%A1t-t%E1%BA%A1m-th%E1%BB%9Di-t%E1%BB%B1-c%C3%A0i-l%E1%BA%A1i-n%C3%BAt-kim-lo%E1%BA%A1i-c%C3%B4ng-t%E1%BA%AFc-n%C3%BAt-mini-ch%E1%BB%91ng-n%C6%B0%E1%BB%9Bc-i.662241743.25005990191
+- Type-C đầu cái:
+  https://shopee.vn/%E1%BB%94-C%E1%BA%AFm-Type-C-%C4%90%E1%BA%A7u-C%C3%A1i-D%C3%A0nh-Cho-B%C3%A0n-Ph%C3%ADm-C%C6%A1-Chu%E1%BB%99t-D%E1%BB%AF-Li%E1%BB%87u-S%E1%BA%A1c-5-Pin-i.100162131.16361457634
+- Feet 8mm:
+  https://shopee.vn/COMBO-100-N%C3%9AT-Silicon-Tr%C3%B2n-%C4%90%C6%B0%E1%BB%9Dng-K%C3%ADnh-8mm-D%C3%A0y-2mm-Feet-Cao-Su-Ch%E1%BB%91ng-Tr%C6%B0%E1%BB%A3t-Cho-B%C3%A0n-Ph%C3%ADm-i.794702732.17393782470
+- Trụ ốc M2 x 5:
+  https://shopee.vn/%C4%90ai-%E1%BB%90c-C%E1%BA%A5y-Nh%E1%BB%B1a-M2-M2.5-M3-M4-Ecu-T%C3%A1n-Gai-Nghi%C3%AAng-i.838073143.28230040210
+- Ốc M2 x 5:
+  https://shopee.vn/OVM002-%E1%BB%90c-V%C3%ADt-Bake-%C4%90%E1%BA%A7u-Nh%E1%BB%8F-M2-M2.5-M3-Inox-304-i.838073143.19232697159
+
+## 5. Thiết kế box in 3D
+
+### 5.1. Yêu cầu thiết kế
+
+Tôi làm box rời gồm hai phần: top và bottom. Mục tiêu là đặt được PCB, pin,
+USB-A, Type-C, nút nguồn và LED trạng thái vào cùng một hộp nhỏ, đồng thời vẫn
+dễ mở ra nếu cần sửa chữa.
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/box-3d-1.webp"
+		alt="Bản CAD box module chuyển đổi 3 mode với lỗ cắm sạc phía sau"
+	/>
+	<figcaption>Lỗ cắm sạc được đưa ra phía sau box.</figcaption>
+</figure>
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/box-3d-3.webp"
+		alt="Bản CAD box module chuyển đổi 3 mode với các lỗ I/O phía trước"
+	/>
+	<figcaption>
+		Các lỗ được bố trí cho USB-A, Type-C, nút nguồn và LED trạng thái.
+	</figcaption>
+</figure>
+
+### 5.2. Bên trong box
+
+có phần khuôn để cố định pin và lỗ tròn để bắt công tắc mini vào
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/box-inside-3d.webp"
+		alt="Bản CAD box module chuyển đổi 3 mode bên trong có khuôn để đặt pin + lỗ để đặt công tắc vào"
+	/>
+	<figcaption>Phía bên trong box.</figcaption>
+</figure>
+
+### 5.3. Gờ gá mạch và đáy box
+
+<figure>
+	<div class="grid gap-3 sm:grid-cols-2">
+		<img
+			src="/static/3-mode-conversion-module/box-3d-2.webp"
+			alt="Bản CAD phần nắp trên của box module 3 mode"
+		/>
+		<img
+			src="/static/3-mode-conversion-module/box-3d-4.webp"
+			alt="Bản CAD gờ gá mạch bên trong nắp trên"
+		/>
+	</div>
+	<figcaption>Nắp phía trên được thiết kế gờ để gá mạch vào.</figcaption>
+</figure>
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/box-3d-5.webp"
+		alt="Bản CAD phần đáy box module 3 mode"
+	/>
+	<figcaption>
+		Phần đáy có 4 lỗ bắt ốc M2 x 5mm và 4 vị trí tròn để gắn feet 8mm.
+	</figcaption>
+</figure>
+
+### 5.4. File STL
+
+- <a href="/static/3-mode-conversion-module/BOX-TOP.STL" download>
+  	BOX-TOP.STL
+  </a>
+- <a href="/static/3-mode-conversion-module/BOX-BOT.STL" download>
+  	BOX-BOT.STL
+  </a>
+
+<div class="not-prose my-6 rounded-2xl border border-sky-500/40 bg-sky-500/10 p-4 text-sm text-sky-950 dark:text-sky-100">
+	<p class="mb-2 font-semibold">💡 Lưu ý khi in lại box</p>
+	<p>
+		Nên kiểm tra kích thước thực tế của công tắc, đầu USB-A và Type-C trước khi
+		in. Các linh kiện module nhỏ từ nhiều shop có thể lệch kích thước một chút.
+		Có thể dùng mỏ hàn hoặc các công cụ mài dữa nếu có để nới rộng ra cho vừa
+	</p>
+</div>
+
+## 6. Lắp LED trạng thái
+
+### 6.1. Ướm LED vào box
+
+Tôi bắt đầu bằng LED 3 chân để đưa trạng thái pin/kết nối ra ngoài vỏ. Bước này
+nên test trước khi lắp vào box, vì sau khi cố định bằng thiếc hoặc keo thì sửa
+sẽ khó hơn.
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/assem-led-2.jpg"
+		alt="Lắp LED 3 chân vào vị trí trên box"
+	/>
+	<figcaption>Ướm LED 3 chân vào vị trí trên vỏ để kiểm tra độ vừa.</figcaption>
+</figure>
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/assem-led-1.jpg"
+		alt="Test LED trạng thái sau khi lắp vào box"
+	/>
+	<figcaption>Test LED sáng trước khi hàn dây cố định vào module.</figcaption>
+</figure>
+
+### 6.2. Cắt chân và hàn dây LED
+
+Sau khi LED hoạt động đúng, tôi cắt ba chân LED cho bằng nhau rồi hàn dây từ
+PCB sang LED. Đoạn này không bắt buộc phải cắt ngắn; nếu muốn dễ sửa hơn có thể
+để chân LED dài hơn một chút.
+
+Vì PCB được gắn ở nắp trên, tôi ưu tiên hàn dây rời để khi tháo nắp ra không bị
+kẹt hoặc khó thao tác.
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/assem-led-final.jpg"
+		alt="LED đã được cắt chân và hàn dây hoàn chỉnh"
+	/>
+	<figcaption>
+		LED sau khi cắt chân, hàn dây và chuẩn bị cố định trong box.
+	</figcaption>
+</figure>
+
+## 7. Lắp pin, USB-A, Type-C và nút nguồn
+
+### 7.1. Bố trí linh kiện ở đáy box
+
+Phần bottom của box chứa các linh kiện cần tiếp xúc từ bên ngoài: USB-A để cắm
+bàn phím, Type-C để sạc hoặc dùng USB mode, pin Li-Po và nút nguồn.
+
+<div class="not-prose my-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-950 dark:text-amber-100">
+	<p class="mb-2 font-semibold">⚠️ Lưu ý về nút nguồn</p>
+	<p>
+		Trong ảnh, nút nguồn gốc đi kèm module đã được cắt bỏ để thay bằng nút nguồn
+		kim loại mới gắn ra ngoài box.
+	</p>
+</div>
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/assem-pin-usb-type-c-button.jpg"
+		alt="Lắp pin, USB-A, Type-C và nút nguồn vào đáy box"
+	/>
+	<figcaption>
+		Pin, USB-A, Type-C và nút nguồn được đặt vào phần đáy box trước khi nối với
+		PCB.
+	</figcaption>
+</figure>
+
+### 7.2. Lưu ý khi hàn
+
+- Không đảo cực pin.
+- Không để VCC/GND chạm nhau.
+- Với dây USB, nên đo lại bằng đồng hồ hoặc bám theo pinout thay vì tin hoàn
+  toàn vào màu dây.
+- Dây USB phải có D+ và D-, không dùng dây chỉ sạc.
+
+## 8. Gắn PCB vào nắp trên
+
+### 8.1. Cố định PCB
+
+PCB được cố định vào phần top của box. Cách này giúp dây từ PCB đi xuống phần
+bottom gọn hơn, đồng thời giữ mặt anten của module ít bị che nhất có thể.
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/assem-pcb-to-box-top.jpg"
+		alt="Gắn PCB module 3 mode vào phần nắp trên của box"
+	/>
+	<figcaption>
+		PCB sau khi được đặt vào phần nắp trên. Nên giữ khu vực anten thoáng nhất có
+		thể.
+	</figcaption>
+</figure>
+
+### 8.2. Nối top và bottom
+
+Sau khi nối dây giữa top và bottom, nên kiểm tra lại bằng USB mode trước. Nếu
+USB mode nhận bàn phím ổn, tiếp tục test Bluetooth và 2.4G.
+
+<figure>
+	<img
+		src="/static/3-mode-conversion-module/assem-compled.jpg"
+		alt="Module chuyển đổi 3 mode sau khi lắp hoàn chỉnh"
+	/>
+	<figcaption>
+		Module sau khi nối dây giữa PCB, pin, USB-A, Type-C, nút nguồn và LED trạng
+		thái.
+	</figcaption>
+</figure>
+
+## 9. Trình tự test
+
+### 9.1. Test cơ bản
+
+Tôi khuyến nghị test theo thứ tự này:
+
+1. Cắm bàn phím vào cổng USB-A của module.
+2. Cắm dây USB-A to Type-C vào cổng Type-C phía sau box và máy tính.
+3. Chuyển sang USB mode, kiểm tra máy tính có nhận bàn phím không.
+4. Kiểm tra LED trạng thái nguồn/sạc.
+5. Pair Bluetooth với một thiết bị.
+6. Test receiver 2.4G.
+7. Thử chuyển mode bằng `Ctrl + Alt + Shift + Q/W/E`.
+8. Thử chuyển nhóm thiết bị bằng `Ctrl + Alt + Shift + 1-8`.
+
+<div class="not-prose my-6 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-950 dark:text-red-100">
+	<p class="mb-2 font-semibold">🚨 Nếu USB mode chưa hoạt động</p>
+	<p>
+		Không nên test tiếp Bluetooth hoặc 2.4G vội. Hãy kiểm tra lại bốn dây USB
+		trước: VCC, GND, D+ và D-.
+	</p>
+</div>
+
+### 9.2. Test trạng thái sạc
+
+Khi đang cắm sạc, LED trên module sẽ hiển thị trạng thái sạc/pin theo cách hoạt
+động của mạch.
+
+<video controls playsinline preload="metadata">
+	<source
+		src="/static/3-mode-conversion-module/charge-battery.mp4"
+		type="video/mp4"
+	/>
+	Trình duyệt của bạn không hỗ trợ video HTML5.
+</video>
+
+## 10. Kết quả
+
+### 10.1. Module sau khi hoàn thiện
+
+Kết quả cuối cùng là một box rời nhỏ, có thể biến nhiều bàn phím có dây thành
+bàn phím dùng được USB, Bluetooth và 2.4G. Cách này không sạch bằng thiết kế
+wireless native, nhưng rất hợp với các bàn phím cũ có layout hoặc cảm giác gõ
+tốt nhưng bị giới hạn vì chỉ có dây.
+
+Điểm tôi thích nhất là module có thể tái sử dụng. Thay vì mod chết vào từng bàn
+phím, tôi chỉ cần cắm bàn phím vào box này khi muốn dùng không dây.
+
+<video controls playsinline preload="metadata">
+	<source
+		src="/static/3-mode-conversion-module/box-finish.mp4"
+		type="video/mp4"
+	/>
+	Trình duyệt của bạn không hỗ trợ video HTML5.
+</video>
+
+Trong video trên, module đang ở chế độ Wireless 2.4G nên LED sáng màu tím.
+
+### 10.2. Vấn đề với cổng Type-C phụ
+
+Sau khi hoàn thiện bản đầu tiên, tôi có thêm một ý tưởng: câu dây từ cổng USB-A
+ra thêm một cổng Type-C bên hông box để cắm bàn phím bằng dây Type-C cho gọn hơn.
+Về lý thuyết, cách này sẽ tiện hơn vì nhiều bàn phím hiện tại đều dùng Type-C.
+
+Nhưng khi thử thực tế thì cổng Type-C phụ và Dây USB-A gốc này đều không hoạt động. Tôi chưa xác định chắc nguyên nhân là do cổng không chia đủ điện, hay do tôi đấu sai chân. Sau khi rã cổng Type-C phụ ra và quay lại dùng cổng USB-A như thiết kế ban đầu, module hoạt động bình thường trở lại.
+
+Vì vậy tôi đã sửa lại thiết kế box: bỏ cổng Type-C bên cạnh, chỉ giữ USB-A để
+cắm bàn phím và cổng Type-C phía sau cho sạc/USB mode.
+
+<div class="not-prose my-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-950 dark:text-amber-100">
+	<p class="mb-2 font-semibold">⚠️ Ghi chú sau khi build</p>
+	<p>
+		Nếu muốn đổi USB-A sang Type-C, cần kiểm tra kỹ pinout, chiều cắm, đường
+		VBUS/GND và D+/D-. Không nên giả định chỉ cần nối dây từ USB-A sang Type-C
+		là chắc chắn hoạt động.
+	</p>
+</div>
+
+<figure>
+	<div class="grid gap-3 sm:grid-cols-2">
+		<img
+			src="/static/3-mode-conversion-module/box-3d-3.webp"
+			alt="Thiết kế box ban đầu có thêm cổng Type-C bên cạnh"
+		/>
+		<img
+			src="/static/3-mode-conversion-module/box-3d-fix.webp"
+			alt="Thiết kế box sau khi bỏ cổng Type-C bên cạnh"
+		/>
+	</div>
+	<figcaption>
+		Trước và sau khi sửa thiết kế: bản đầu có thêm cổng Type-C bên cạnh, bản sau
+		đã bỏ cổng này để tránh lỗi kết nối.
+	</figcaption>
+</figure>
+
+### 10.3. Chi phí thực tế
+
+Chi phí ước tính cho bản build này:
+
+| Hạng mục                 |           Chi phí |
+| ------------------------ | ----------------: |
+| Module chuyển đổi 3 mode |         ~300.000đ |
+| Vỏ in 3D                 |          ~40.000đ |
+| Nút bấm mini             |          ~20.000đ |
+| Phụ kiện linh tinh khác  |   ~30.000-50.000đ |
+| Tổng ước tính            | ~390.000-410.000đ |
+
+<div class="not-prose my-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-950 dark:text-amber-100">
+	<p class="mb-2 font-semibold">🤔 Đúc kết hơi đau ví</p>
+	<p>
+		Với chi phí xấp xỉ 400.000đ, thực tế bạn đã có thể mua một bàn phím có sẵn 3
+		chế độ kết nối. Vì vậy bài viết này chủ yếu mang tính tham khảo và ghi lại
+		quá trình vọc vạch, không khuyến khích làm theo dưới mọi hình thức nếu mục
+		tiêu chỉ là tiết kiệm tiền hoặc cần một giải pháp ổn định.
+	</p>
+</div>
+
+### 10.4. Tóm tắt trạng thái sử dụng
+
+- 🔴 Muốn dùng có dây: chọn USB mode và cắm dây USB-A to Type-C vào cổng Type-C
+  phía sau box.
+- 🔵 Muốn dùng Bluetooth: pair thiết bị, chọn Bluetooth mode, LED sáng màu xanh.
+- 🟣 Muốn dùng 2.4G: cắm receiver, chọn 2.4G mode, LED sáng màu tím.
+
+## Nguồn và file liên quan
+
+- Ý tưởng tham khảo:
+  - https://gall.dcinside.com/mgallery/board/view/?id=mechanicalkeyboard&no=2594402
+  - https://www.youtube.com/watch?v=0TgEkzuZdYc&lc=UgyK0FmAzdMSloESw754AaABAg.AYiFe5BEOt5AYp8QVmfWJ-
+- Module chuyển đổi: https://item.taobao.com/item.htm?id=728976782961&skuId=5064767313028
+- File STL top: <a href="/static/3-mode-conversion-module/BOX-TOP.STL" download>BOX-TOP.STL</a>
+- File STL bottom: <a href="/static/3-mode-conversion-module/BOX-BOT.STL" download>BOX-BOT.STL</a>
+- Phần mềm tùy chỉnh: <a href="/static/3-mode-conversion-module/USBSET-EN.exe" download>USBSET-EN</a>

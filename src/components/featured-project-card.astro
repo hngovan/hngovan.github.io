@@ -1,0 +1,91 @@
+---
+import { Image } from 'astro:assets'
+import type { CollectionEntry } from 'astro:content'
+import { Icon } from 'astro-icon/components'
+
+import Link from '@/components/link.astro'
+import { getStatusInfo } from '@/lib/utils'
+
+type Props = {
+	project: CollectionEntry<'projects'>
+}
+
+const { project } = Astro.props
+const { variant } = getStatusInfo(project.data.status)
+const tags = project.data.tags ?? []
+const image = project.data.image
+const isRemoteImage = typeof image === 'string'
+
+const dotColorMap: Record<string, string> = {
+	default: 'bg-success',
+	success: 'bg-primary',
+	secondary: 'bg-muted-foreground/50',
+	destructive: 'bg-destructive'
+}
+const dotColor = dotColorMap[variant] ?? 'bg-muted-foreground'
+---
+
+<Link
+	href={`/project/${project.id}`}
+	class="snow-border group hover:bg-muted/50 flex flex-col gap-4 rounded-xl p-4 transition-all duration-300 ease-in-out hover:scale-[1.02] sm:flex-row"
+>
+	{
+		image ? (
+			<div class="aspect-video shrink-0 overflow-hidden rounded-lg sm:w-[150px]">
+				{isRemoteImage ? (
+					<img
+						src={image}
+						alt={project.data.name}
+						width="300"
+						height="170"
+						loading="lazy"
+						decoding="async"
+						class="aspect-video w-full object-cover"
+					/>
+				) : (
+					<Image
+						src={image}
+						alt={project.data.name}
+						width={300}
+						height={170}
+						class="aspect-video w-full object-cover"
+					/>
+				)}
+			</div>
+		) : (
+			<div class="bg-muted/30 flex aspect-video shrink-0 items-center justify-center rounded-lg sm:w-[150px]">
+				<Icon name="lucide:code-2" class="text-muted-foreground/50 size-8" />
+			</div>
+		)
+	}
+
+	<div class="flex min-w-0 flex-col gap-y-1.5">
+		<div class="flex items-center gap-3">
+			<h3 class="font-medium">{project.data.name}</h3>
+			{
+				project.data.status && (
+					<span class="text-muted-foreground flex shrink-0 items-center gap-1.5 text-xs">
+						<span
+							class:list={[
+								'size-1.5 shrink-0 rounded-full',
+								dotColor,
+								variant === 'success' && 'animate-pulse'
+							]}
+						/>
+						{project.data.status}
+					</span>
+				)
+			}
+		</div>
+
+		<p class="text-muted-foreground line-clamp-2 text-sm">
+			{project.data.description}
+		</p>
+
+		{
+			tags.length > 0 && (
+				<p class="text-muted-foreground/70 text-xs">{tags.join(' · ')}</p>
+			)
+		}
+	</div>
+</Link>

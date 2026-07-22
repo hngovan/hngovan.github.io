@@ -1,0 +1,104 @@
+---
+import { Icon } from 'astro-icon/components'
+
+import Link from '@/components/link.astro'
+import PageHead from '@/components/page-head.astro'
+import { Badge } from '@/components/ui/badge'
+import Layout from '@/layouts/layout.astro'
+import { getAllProjects, getEntrySlug, getRecentPosts } from '@/lib/data-utils'
+
+const latestPosts = await getRecentPosts(3)
+const projects = await getAllProjects()
+---
+
+<Layout>
+	<PageHead slot="head" title="Home" />
+
+	<section class="mx-auto flex max-w-3xl flex-col gap-8 px-4">
+		<div class="snow-border bg-secondary/25 rounded-3xl border p-6">
+			<div class="mb-4 flex flex-wrap gap-2">
+				<Badge variant="muted">custom keyboard</Badge>
+				<Badge variant="muted">build log</Badge>
+				<Badge variant="muted">switch notes</Badge>
+			</div>
+			<h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">
+				Keeb Log
+			</h1>
+			<p class="text-muted-foreground mt-4 max-w-2xl leading-relaxed">
+				Blog tiếng Việt ghi lại quá trình tìm hiểu bàn phím cơ custom: chọn
+				layout, thử switch, build kit, tinh chỉnh âm gõ và lưu lại những cấu
+				hình đáng dùng hằng ngày.
+			</p>
+			<div class="mt-6 flex flex-wrap gap-3">
+				<Link
+					href="/blog"
+					class="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-4 py-2 text-sm"
+				>
+					Đọc bài viết
+				</Link>
+				<Link
+					href="/project"
+					class="border-border hover:bg-secondary rounded-full border px-4 py-2 text-sm"
+				>
+					Xem build log
+				</Link>
+			</div>
+		</div>
+
+		<section class="flex flex-col gap-4">
+			<div class="flex items-center justify-between gap-4">
+				<h2 class="text-lg font-semibold">Bài mới</h2>
+				<Link
+					href="/blog"
+					class="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm"
+				>
+					Tất cả bài viết
+					<Icon name="lucide:arrow-right" class="size-4" />
+				</Link>
+			</div>
+			<div class="grid gap-3">
+				{
+					latestPosts.map(post => (
+						<Link
+							href={`/blog/${getEntrySlug(post)}`}
+							class="snow-border hover:bg-secondary/50 rounded-2xl border p-4 transition-colors"
+						>
+							<div class="text-sm font-medium">{post.data.title}</div>
+							<p class="text-muted-foreground mt-1 text-sm">
+								{post.data.description}
+							</p>
+						</Link>
+					))
+				}
+			</div>
+		</section>
+
+		<section class="flex flex-col gap-4">
+			<div class="flex items-center justify-between gap-4">
+				<h2 class="text-lg font-semibold">Build đang ghi chú</h2>
+				<Link
+					href="/project"
+					class="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm"
+				>
+					Tất cả build
+					<Icon name="lucide:arrow-right" class="size-4" />
+				</Link>
+			</div>
+			<div class="grid gap-3">
+				{
+					projects.slice(0, 2).map(project => (
+						<Link
+							href={`/project/${getEntrySlug(project)}`}
+							class="snow-border hover:bg-secondary/50 rounded-2xl border p-4 transition-colors"
+						>
+							<div class="text-sm font-medium">{project.data.name}</div>
+							<p class="text-muted-foreground mt-1 text-sm">
+								{project.data.description}
+							</p>
+						</Link>
+					))
+				}
+			</div>
+		</section>
+	</section>
+</Layout>

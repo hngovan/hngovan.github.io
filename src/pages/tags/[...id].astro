@@ -1,0 +1,61 @@
+---
+import BlogCard from '@/components/blog-card.astro'
+import Breadcrumbs from '@/components/breadcrumbs.astro'
+import PageHead from '@/components/page-head.astro'
+import ProjectCard from '@/components/project-card.astro'
+import Layout from '@/layouts/layout.astro'
+import { getAllCombinedTags, getContentByTag } from '@/lib/data-utils'
+
+export async function getStaticPaths() {
+	const tagMap = await getAllCombinedTags()
+	const uniqueTags = Array.from(tagMap.keys())
+
+	return Promise.all(
+		uniqueTags.map(async tag => {
+			const { posts, projects } = await getContentByTag(tag)
+			return {
+				params: { id: tag },
+				props: {
+					tag,
+					posts,
+					projects
+				}
+			}
+		})
+	)
+}
+
+const { tag, posts, projects } = Astro.props
+---
+
+<Layout class="max-w-3xl">
+	<PageHead
+		slot="head"
+		title={`Posts tagged with "${tag}"`}
+		description={`A collection of posts tagged with ${tag}.`}
+		noindex
+	/>
+	<Breadcrumbs
+		items={[
+			{ href: '/tags', label: 'Tags', icon: 'lucide:tags' },
+			{ label: tag, icon: 'lucide:tag' }
+		]}
+	/>
+
+	<ul class="flex flex-col gap-y-4">
+		{
+			posts.map(post => (
+				<li>
+					<BlogCard entry={post} />
+				</li>
+			))
+		}
+		{
+			projects.map(project => (
+				<li>
+					<ProjectCard project={project} />
+				</li>
+			))
+		}
+	</ul>
+</Layout>
