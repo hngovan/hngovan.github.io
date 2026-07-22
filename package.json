@@ -13,8 +13,8 @@
 		"check": "astro check",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
-		"format": "prettier --write \"**/*.ts\" \"**/*.tsx\" \"**/*.js\" \"**/*.mjs\" \"**/*.css\" \"**/*.astro\" \"**/*.md\" \"**/*.mdx\" \"**/*.json\" \"**/*.yml\" --ignore-path .gitignore",
-		"format:check": "prettier --check \"**/*.ts\" \"**/*.tsx\" \"**/*.js\" \"**/*.mjs\" \"**/*.css\" \"**/*.astro\" \"**/*.md\" \"**/*.mdx\" \"**/*.json\" \"**/*.yml\" --ignore-path .gitignore"
+		"format": "prettier --write . --ignore-unknown --ignore-path .gitignore",
+		"format:check": "prettier --check . --ignore-unknown --ignore-path .gitignore"
 	},
 	"dependencies": {
 		"@astrojs/check": "0.9.7",
