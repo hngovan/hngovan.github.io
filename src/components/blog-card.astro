@@ -13,7 +13,7 @@ import {
 	isSubpost,
 	parseAuthors
 } from '@/lib/data-utils'
-import { formatDate } from '@/lib/utils'
+import { formatDate, withBasePath } from '@/lib/utils'
 
 import Link from './link.astro'
 
@@ -45,7 +45,7 @@ const href = `/blog/${getEntrySlug(entry)}`
 			) : (
 				<div class="w-full sm:max-w-[200px] sm:shrink-0">
 					<img
-						src={`/static/twitter-card.png`}
+						src={withBasePath('/static/twitter-card.png')}
 						alt={entry.data.title}
 						class="rounded-xl object-cover"
 					/>

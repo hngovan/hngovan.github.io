@@ -1,5 +1,6 @@
 ---
 import { SITE } from '@/consts'
+import { withBasePath } from '@/lib/utils'
 
 interface Props {
 	title?: string
@@ -12,7 +13,7 @@ const {
 	description = SITE.description,
 	noindex = false
 } = Astro.props
-const image = new URL('/static/twitter-card.png', Astro.site)
+const image = new URL(withBasePath('/static/twitter-card.png'), Astro.site)
 ---
 
 <title>{`${title} | ${SITE.title}`}</title>

@@ -5,6 +5,19 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs))
 }
 
+export function withBasePath(path: string): string {
+	if (
+		!path.startsWith('/') ||
+		path.startsWith('//') ||
+		/^[a-z][a-z\d+\-.]*:/i.test(path)
+	) {
+		return path
+	}
+
+	const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+	return `${base}${path}`
+}
+
 export function formatDate(date: Date | undefined): string {
 	if (!date) return '-1'
 	return date

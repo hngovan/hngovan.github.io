@@ -37,6 +37,8 @@ interface LanyardResponse {
 const DISCORD_USER_ID = '453729488191094809'
 const LANYARD_API_URL = `https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`
 const LANYARD_REFRESH_MS = 60_000
+const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '')
+const withBasePath = (path: string) => `${BASE_PATH}${path}`
 
 // 스켈레톤 로딩 컴포넌트
 const DiscordSkeleton = () => (
@@ -411,7 +413,7 @@ const DiscordPresence = () => {
 					<div className="flex justify-between gap-x-1">
 						<div className="relative">
 							<AvatarComponent
-								src="/static/avatar.webp"
+								src={withBasePath('/static/avatar.webp')}
 								alt="Avatar"
 								fallback="e"
 								className="-mt-[3rem] aspect-square size-20 rounded-full"
@@ -419,7 +421,7 @@ const DiscordPresence = () => {
 							<StatusIndicator status={status} />
 							<div className="pointer-events-none absolute -inset-4">
 								<img
-									src="/static/discord_avatar_decoration.gif"
+									src={withBasePath('/static/discord_avatar_decoration.gif')}
 									alt="Avatar Decoration"
 									className="absolute -top-11 left-1 size-28"
 								/>
@@ -427,7 +429,7 @@ const DiscordPresence = () => {
 						</div>
 						<div className="bg-secondary/50 flex items-center rounded-xl px-2 xl:px-1.5">
 							<img
-								src="/static/discord_badge.svg"
+								src={withBasePath('/static/discord_badge.svg')}
 								alt="Discord Badges"
 								width={104}
 								height={24}

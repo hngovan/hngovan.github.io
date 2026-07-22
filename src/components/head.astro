@@ -2,6 +2,7 @@
 import { ClientRouter } from 'astro:transitions'
 
 import { SITE } from '@/consts'
+import { withBasePath } from '@/lib/utils'
 
 import Favicons from './favicons.astro'
 ---
@@ -35,13 +36,13 @@ import Favicons from './favicons.astro'
 		media="(prefers-color-scheme: light)"
 	/>
 
-	<link rel="sitemap" href="/sitemap-index.xml" />
-	<link rel="manifest" href="/site.webmanifest" />
+	<link rel="sitemap" href={withBasePath('/sitemap-index.xml')} />
+	<link rel="manifest" href={withBasePath('/site.webmanifest')} />
 	<link
 		rel="alternate"
 		type="application/rss+xml"
 		title={SITE.title}
-		href={new URL('rss.xml', Astro.site)}
+		href={new URL(withBasePath('/rss.xml'), Astro.site)}
 	/>
 
 	<Favicons />

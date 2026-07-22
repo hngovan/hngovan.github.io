@@ -4,7 +4,7 @@ import type { CollectionEntry } from 'astro:content'
 import { Icon } from 'astro-icon/components'
 
 import Link from '@/components/link.astro'
-import { getStatusInfo } from '@/lib/utils'
+import { getStatusInfo, withBasePath } from '@/lib/utils'
 
 type Props = {
 	project: CollectionEntry<'projects'>
@@ -15,6 +15,7 @@ const { variant } = getStatusInfo(project.data.status)
 const tags = project.data.tags ?? []
 const image = project.data.image
 const isRemoteImage = typeof image === 'string'
+const imageSrc = isRemoteImage ? withBasePath(image) : undefined
 
 const dotColorMap: Record<string, string> = {
 	default: 'bg-success',
@@ -34,7 +35,7 @@ const dotColor = dotColorMap[variant] ?? 'bg-muted-foreground'
 			<div class="aspect-video shrink-0 overflow-hidden rounded-lg sm:w-[150px]">
 				{isRemoteImage ? (
 					<img
-						src={image}
+						src={imageSrc}
 						alt={project.data.name}
 						width="300"
 						height="170"

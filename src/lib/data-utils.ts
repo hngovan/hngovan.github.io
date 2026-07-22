@@ -1,6 +1,10 @@
 import { type CollectionEntry, getCollection, render } from 'astro:content'
 
-import { calculateWordCountFromHtml, readingTime } from '@/lib/utils'
+import {
+	calculateWordCountFromHtml,
+	readingTime,
+	withBasePath
+} from '@/lib/utils'
 
 export const PROJECT_STATUS = ['In Progress', 'Completed', 'Planned', 'Paused']
 
@@ -281,7 +285,7 @@ export async function parseAuthors(authorIds: string[] = []) {
 		return {
 			id,
 			name: author?.data?.name || id,
-			avatar: author?.data?.avatar || '/static/logo.png',
+			avatar: withBasePath(author?.data?.avatar || '/static/logo.png'),
 			isRegistered: !!author
 		}
 	})
