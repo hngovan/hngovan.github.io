@@ -17,7 +17,6 @@ import remarkMath from 'remark-math'
 
 export default defineConfig({
 	site: 'https://hngovan.github.io',
-	base: '/keeb-log',
 	integrations: [mdx(), react(), sitemap(), icon()],
 	vite: {
 		plugins: [tailwindcss()]

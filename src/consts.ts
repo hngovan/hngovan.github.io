@@ -4,7 +4,7 @@ export const SITE: Site = {
 	title: 'Keeb Log',
 	description:
 		'Blog tiếng Việt ghi lại kiến thức, build log và trải nghiệm bàn phím cơ custom.',
-	href: 'https://hngovan.github.io/keeb-log',
+	href: 'https://hngovan.github.io',
 	author: 'Keeb Log',
 	locale: 'vi_VN',
 	featuredPostCount: 1,
