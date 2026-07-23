@@ -19,7 +19,7 @@ export const NAV_LINKS: SocialLink[] = [
 ]
 
 export const SOCIAL_LINKS: SocialLink[] = [
-	{ href: 'https://github.com/', label: 'GitHub' },
+	{ href: 'https://github.com/hngovan/hngovan.github.io', label: 'GitHub' },
 	{ href: 'https://www.facebook.com/mn.HoangEt', label: 'Facebook' },
 	{ href: 'mailto:hngovan1999@gmail.com', label: 'Email' },
 	{ href: '/rss.xml', label: 'RSS' }
@@ -28,7 +28,7 @@ export const SOCIAL_LINKS: SocialLink[] = [
 export const ICON_MAP: IconMap = {
 	Website: 'lucide:globe',
 	GitHub: 'lucide:github',
-	Facebook: 'lucide:external-link',
+	Facebook: 'simple-icons:facebook',
 	LinkedIn: 'lucide:linkedin',
 	Twitter: 'lucide:twitter',
 	Email: 'lucide:mail',
