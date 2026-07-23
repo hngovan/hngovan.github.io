@@ -1,11 +1,14 @@
 ---
 import { Icon } from 'astro-icon/components'
+import { Image } from 'astro:assets'
 
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
 import { Badge } from '@/components/ui/badge'
 import Layout from '@/layouts/layout.astro'
 import { getAllProjects, getEntrySlug, getRecentPosts } from '@/lib/data-utils'
+
+import logo from '../../public/static/logo.webp'
 
 const latestPosts = await getRecentPosts(3)
 const projects = await getAllProjects()
@@ -15,33 +18,55 @@ const projects = await getAllProjects()
 	<PageHead slot="head" title="Home" />
 
 	<section class="mx-auto flex max-w-3xl flex-col gap-8 px-4">
-		<div class="snow-border bg-secondary/25 rounded-3xl border p-6">
-			<div class="mb-4 flex flex-wrap gap-2">
-				<Badge variant="muted">custom keyboard</Badge>
-				<Badge variant="muted">build log</Badge>
-				<Badge variant="muted">switch notes</Badge>
+		<div
+			class="snow-border bg-secondary/25 grid items-center gap-6 rounded-3xl border p-6 sm:grid-cols-[1fr_auto] sm:p-8"
+		>
+			<div>
+				<div class="mb-4 flex flex-wrap gap-2">
+					<Badge variant="muted">custom keyboard</Badge>
+					<Badge variant="muted">build log</Badge>
+					<Badge variant="muted">switch notes</Badge>
+				</div>
+				<h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">
+					Keeb Log
+				</h1>
+				<p class="text-muted-foreground mt-4 max-w-2xl leading-relaxed">
+					Blog tiếng Việt ghi lại quá trình tìm hiểu bàn phím cơ custom: chọn
+					layout, thử switch, build kit, tinh chỉnh âm gõ và lưu lại những cấu
+					hình đáng dùng hằng ngày.
+				</p>
+				<div class="mt-6 flex flex-wrap gap-3">
+					<Link
+						href="/blog"
+						class="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-4 py-2 text-sm"
+					>
+						Đọc bài viết
+					</Link>
+					<Link
+						href="/project"
+						class="border-border hover:bg-secondary rounded-full border px-4 py-2 text-sm"
+					>
+						Xem build log
+					</Link>
+				</div>
 			</div>
-			<h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">
-				Keeb Log
-			</h1>
-			<p class="text-muted-foreground mt-4 max-w-2xl leading-relaxed">
-				Blog tiếng Việt ghi lại quá trình tìm hiểu bàn phím cơ custom: chọn
-				layout, thử switch, build kit, tinh chỉnh âm gõ và lưu lại những cấu
-				hình đáng dùng hằng ngày.
-			</p>
-			<div class="mt-6 flex flex-wrap gap-3">
-				<Link
-					href="/blog"
-					class="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-4 py-2 text-sm"
+			<div class="relative mx-auto size-32 shrink-0 sm:size-36">
+				<div
+					class="border-border bg-background/70 shadow-primary/10 grid size-full place-items-center overflow-hidden rounded-full border shadow-xl backdrop-blur"
 				>
-					Đọc bài viết
-				</Link>
-				<Link
-					href="/project"
-					class="border-border hover:bg-secondary rounded-full border px-4 py-2 text-sm"
-				>
-					Xem build log
-				</Link>
+					<Image
+						src={logo}
+						alt="Keeb Log logo"
+						class="size-24 object-contain sm:size-28"
+					/>
+				</div>
+				<img
+					src={`${import.meta.env.BASE_URL}static/discord_avatar_decoration.gif`}
+					alt=""
+					class="pointer-events-none absolute -top-10 -left-9 size-44 max-w-none sm:-top-11 sm:-left-10 sm:size-48"
+					loading="lazy"
+					aria-hidden="true"
+				/>
 			</div>
 		</div>
 
