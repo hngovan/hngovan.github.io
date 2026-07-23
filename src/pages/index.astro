@@ -1,14 +1,11 @@
 ---
 import { Icon } from 'astro-icon/components'
-import { Image } from 'astro:assets'
 
 import Link from '@/components/link.astro'
 import PageHead from '@/components/page-head.astro'
 import { Badge } from '@/components/ui/badge'
 import Layout from '@/layouts/layout.astro'
 import { getAllProjects, getEntrySlug, getRecentPosts } from '@/lib/data-utils'
-
-import logo from '../../public/static/logo.webp'
 
 const latestPosts = await getRecentPosts(3)
 const projects = await getAllProjects()
@@ -51,10 +48,11 @@ const projects = await getAllProjects()
 				</div>
 			</div>
 			<div class="relative mx-auto size-32 shrink-0 sm:mr-2 sm:size-36">
-				<Image
-					src={logo}
-					alt="Keeb Log logo"
+				<img
+					src={`${import.meta.env.BASE_URL}static/cat-squad.svg`}
+					alt="Cat squad"
 					class="relative z-10 size-full object-contain"
+					loading="lazy"
 				/>
 				<img
 					src={`${import.meta.env.BASE_URL}static/discord_avatar_decoration.gif`}
