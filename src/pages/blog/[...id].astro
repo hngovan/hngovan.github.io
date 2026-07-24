@@ -4,6 +4,7 @@ import { render } from 'astro:content'
 import { Icon } from 'astro-icon/components'
 
 import Breadcrumbs from '@/components/breadcrumbs.astro'
+import ContentLightbox from '@/components/content-lightbox.astro'
 import Link from '@/components/link.astro'
 import PostHead from '@/components/post-head.astro'
 import PostNavigation from '@/components/post-navigation.astro'
@@ -118,6 +119,7 @@ const tocSections = await getTOCSections(currentPostId)
 					width={1200}
 					height={630}
 					class="col-span-full mx-auto w-full max-w-5xl object-cover"
+					data-lightbox-image
 				/>
 			)
 		}
@@ -225,9 +227,11 @@ const tocSections = await getTOCSections(currentPostId)
 			)
 		}
 
-		<article class="prose col-start-2 max-w-none">
+		<article class="prose col-start-2 max-w-none" data-content-lightbox>
 			<Content />
 		</article>
+
+		<ContentLightbox />
 
 		{
 			(hasChildPosts || isCurrentSubpost) && (

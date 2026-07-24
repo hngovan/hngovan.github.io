@@ -4,6 +4,7 @@ import { render } from 'astro:content'
 import { Icon } from 'astro-icon/components'
 
 import Breadcrumbs from '@/components/breadcrumbs.astro'
+import ContentLightbox from '@/components/content-lightbox.astro'
 import PostHead from '@/components/post-head.astro'
 import ProjectSidebar from '@/components/project-sidebar.astro'
 import TOCHeader from '@/components/toc-header.astro'
@@ -74,6 +75,7 @@ const tocSections: TOCSection[] =
 							loading="eager"
 							decoding="async"
 							class="aspect-video w-full rounded-xl object-cover"
+							data-lightbox-image
 						/>
 					) : (
 						<Image
@@ -83,6 +85,7 @@ const tocSections: TOCSection[] =
 							height={630}
 							class="rounded-xl object-cover"
 							decoding="async"
+							data-lightbox-image
 						/>
 					)}
 				</div>
@@ -147,9 +150,12 @@ const tocSections: TOCSection[] =
 
 		<article
 			class="prose prose-neutral dark:prose-invert col-start-2 max-w-none"
+			data-content-lightbox
 		>
 			<Content />
 		</article>
+
+		<ContentLightbox />
 
 		{
 			tocSections.length > 0 && (

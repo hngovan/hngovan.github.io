@@ -1,0 +1,129 @@
+---
+import 'lightgallery/css/lg-zoom.css'
+import 'lightgallery/css/lightgallery.css'
+---
+
+<div id="content-lightbox-root" class="hidden"></div>
+
+<script>
+	import lightGallery from 'lightgallery'
+	import lgZoom from 'lightgallery/plugins/zoom'
+
+	const IMAGE_SELECTOR = '[data-lightbox-image], [data-content-lightbox] img'
+	const LIGHTBOX_ROOT_ID = 'content-lightbox-root'
+
+	const escapeHtml = (value: string) =>
+		value
+			.replaceAll('&', '&amp;')
+			.replaceAll('<', '&lt;')
+			.replaceAll('>', '&gt;')
+			.replaceAll('"', '&quot;')
+			.replaceAll("'", '&#039;')
+
+	const getCaption = (image: HTMLImageElement) => {
+		const figure = image.closest('figure')
+		const caption = figure?.querySelector('figcaption')?.textContent?.trim()
+
+		return caption || image.alt || ''
+	}
+
+	const getImageUrl = (image: HTMLImageElement) =>
+		image.currentSrc || image.src || image.getAttribute('src') || ''
+
+	const initContentLightbox = () => {
+		window.__keebLogContentLightbox?.destroy?.()
+
+		const root = document.getElementById(LIGHTBOX_ROOT_ID)
+		if (!root) return
+
+		const images = Array.from(
+			document.querySelectorAll<HTMLImageElement>(IMAGE_SELECTOR)
+		).filter(image => {
+			if (!getImageUrl(image)) return false
+			if (image.closest('[data-lightbox-ignore]')) return false
+			if (image.closest('a, button')) return false
+
+			return true
+		})
+
+		if (images.length === 0) return
+
+		const dynamicEl = images.map(image => {
+			const caption = getCaption(image)
+			const imageUrl = getImageUrl(image)
+
+			return {
+				src: imageUrl,
+				thumb: imageUrl,
+				subHtml: caption
+					? `<div class="lg-caption">${escapeHtml(caption)}</div>`
+					: ''
+			}
+		})
+
+		const gallery = lightGallery(root, {
+			actualSize: true,
+			closable: true,
+			controls: true,
+			counter: true,
+			download: false,
+			dynamic: true,
+			dynamicEl,
+			licenseKey: '0000-0000-000-0000',
+			plugins: [lgZoom],
+			selector: '',
+			speed: 250,
+			zoom: true
+		})
+
+		const cleanups = images.map((image, index) => {
+			image.classList.add('cursor-zoom-in')
+			image.setAttribute('tabindex', '0')
+			image.setAttribute('role', 'button')
+			image.setAttribute(
+				'aria-label',
+				image.alt ? `Phóng to ảnh: ${image.alt}` : 'Phóng to ảnh'
+			)
+
+			const openGallery = (event: MouseEvent | KeyboardEvent) => {
+				event.preventDefault()
+				gallery.openGallery(index)
+			}
+
+			const handleKeydown = (event: KeyboardEvent) => {
+				if (event.key !== 'Enter' && event.key !== ' ') return
+				openGallery(event)
+			}
+
+			image.addEventListener('click', openGallery)
+			image.addEventListener('keydown', handleKeydown)
+
+			return () => {
+				image.classList.remove('cursor-zoom-in')
+				image.removeAttribute('tabindex')
+				image.removeAttribute('role')
+				image.removeAttribute('aria-label')
+				image.removeEventListener('click', openGallery)
+				image.removeEventListener('keydown', handleKeydown)
+			}
+		})
+
+		window.__keebLogContentLightbox = {
+			destroy() {
+				cleanups.forEach(cleanup => cleanup())
+				gallery.destroy()
+			}
+		}
+	}
+
+	document.addEventListener('astro:page-load', initContentLightbox)
+	initContentLightbox()
+
+	declare global {
+		interface Window {
+			__keebLogContentLightbox?: {
+				destroy: () => void
+			}
+		}
+	}
+</script>

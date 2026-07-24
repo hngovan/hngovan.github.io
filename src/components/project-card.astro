@@ -101,7 +101,7 @@ const dotColor = dotColorMap[variant] ?? 'bg-muted-foreground'
 
 		{
 			tags.length > 0 && (
-				<div class="flex gap-1.5 overflow-hidden">
+				<div class="flex flex-wrap gap-1.5">
 					{tags.map((tag: string) => (
 						<Badge
 							variant="muted"
