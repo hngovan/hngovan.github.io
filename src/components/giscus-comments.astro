@@ -1,0 +1,102 @@
+---
+type Props = {
+	term: string
+}
+
+const { term } = Astro.props
+
+const repo = import.meta.env.PUBLIC_GISCUS_REPO ?? 'hngovan/hngovan.github.io'
+const repoId = import.meta.env.PUBLIC_GISCUS_REPO_ID
+const category = import.meta.env.PUBLIC_GISCUS_CATEGORY ?? 'Announcements'
+const categoryId = import.meta.env.PUBLIC_GISCUS_CATEGORY_ID
+const isConfigured = Boolean(repo && repoId && category && categoryId)
+---
+
+<section class="col-start-2 mt-8" aria-labelledby="comments-title">
+	<div class="snow-border bg-secondary/25 rounded-3xl border p-5 sm:p-6">
+		<div class="mb-4 flex flex-col gap-1">
+			<h2 id="comments-title" class="text-xl font-semibold">Bình luận</h2>
+			<p class="text-muted-foreground text-sm">
+				Bình luận dùng GitHub Discussions. Bạn cần đăng nhập GitHub để gửi bình
+				luận.
+			</p>
+		</div>
+
+		{
+			isConfigured ? (
+				<div class="giscus" data-giscus-comments>
+					<script
+						is:inline
+						src="https://giscus.app/client.js"
+						data-repo={repo}
+						data-repo-id={repoId}
+						data-category={category}
+						data-category-id={categoryId}
+						data-mapping="specific"
+						data-term={term}
+						data-strict="1"
+						data-reactions-enabled="1"
+						data-emit-metadata="0"
+						data-input-position="bottom"
+						data-theme="preferred_color_scheme"
+						data-lang="vi"
+						data-loading="lazy"
+						crossorigin="anonymous"
+						async
+					/>
+				</div>
+			) : (
+				<div class="border-border/70 bg-background/70 text-muted-foreground rounded-2xl border p-4 text-sm">
+					Chưa cấu hình Giscus. Vào{' '}
+					<a
+						href="https://giscus.app"
+						class="text-foreground underline underline-offset-4"
+						target="_blank"
+						rel="noreferrer"
+					>
+						giscus.app
+					</a>{' '}
+					để lấy <code>repo-id</code> và <code>category-id</code>, rồi set{' '}
+					<code>PUBLIC_GISCUS_REPO_ID</code> /{' '}
+					<code>PUBLIC_GISCUS_CATEGORY_ID</code>.
+				</div>
+			)
+		}
+	</div>
+</section>
+
+<script>
+	const getGiscusTheme = () => {
+		const theme = document.documentElement.getAttribute('data-theme')
+		return theme === 'dark' ? 'dark' : 'light'
+	}
+
+	const syncGiscusTheme = () => {
+		const iframe = document.querySelector<HTMLIFrameElement>(
+			'iframe.giscus-frame'
+		)
+		if (!iframe?.contentWindow) return
+
+		iframe.contentWindow.postMessage(
+			{
+				giscus: {
+					setConfig: {
+						theme: getGiscusTheme()
+					}
+				}
+			},
+			'https://giscus.app'
+		)
+	}
+
+	document.addEventListener('astro:page-load', syncGiscusTheme)
+	document.addEventListener('astro:after-swap', syncGiscusTheme)
+	window.addEventListener('storage', event => {
+		if (event.key === 'theme') syncGiscusTheme()
+	})
+	document.addEventListener('click', event => {
+		if ((event.target as Element | null)?.closest('#theme-toggle')) {
+			window.setTimeout(syncGiscusTheme, 0)
+		}
+	})
+</script>

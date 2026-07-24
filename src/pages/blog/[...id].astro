@@ -5,6 +5,7 @@ import { Icon } from 'astro-icon/components'
 
 import Breadcrumbs from '@/components/breadcrumbs.astro'
 import ContentLightbox from '@/components/content-lightbox.astro'
+import GiscusComments from '@/components/giscus-comments.astro'
 import Link from '@/components/link.astro'
 import PostHead from '@/components/post-head.astro'
 import PostNavigation from '@/components/post-navigation.astro'
@@ -249,6 +250,8 @@ const tocSections = await getTOCSections(currentPostId)
 			olderPost={navigation.older}
 			parentPost={isCurrentSubpost ? navigation.parent : undefined}
 		/>
+
+		<GiscusComments term={`blog/${currentPostId}`} />
 	</section>
 
 	<Button

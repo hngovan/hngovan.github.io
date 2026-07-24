@@ -5,6 +5,7 @@ import { Icon } from 'astro-icon/components'
 
 import Breadcrumbs from '@/components/breadcrumbs.astro'
 import ContentLightbox from '@/components/content-lightbox.astro'
+import GiscusComments from '@/components/giscus-comments.astro'
 import PostHead from '@/components/post-head.astro'
 import ProjectSidebar from '@/components/project-sidebar.astro'
 import TOCHeader from '@/components/toc-header.astro'
@@ -166,6 +167,8 @@ const tocSections: TOCSection[] =
 				/>
 			)
 		}
+
+		<GiscusComments term={`project/${getEntrySlug(project)}`} />
 	</section>
 
 	<Button
