@@ -14,7 +14,8 @@
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
 		"format": "prettier --write . --ignore-unknown --ignore-path .gitignore",
-		"format:check": "prettier --check . --ignore-unknown --ignore-path .gitignore"
+		"format:check": "prettier --check . --ignore-unknown --ignore-path .gitignore",
+		"prepare": "husky"
 	},
 	"dependencies": {
 		"@astrojs/check": "0.9.7",
@@ -64,6 +65,7 @@
 		"eslint-plugin-react-hooks": "^7.1.1",
 		"eslint-plugin-simple-import-sort": "^14.0.0",
 		"globals": "^17.7.0",
+		"husky": "^9.1.7",
 		"prettier": "^3.5.1",
 		"prettier-plugin-astro": "^0.14.1",
 		"prettier-plugin-astro-organize-imports": "^0.4.11",
