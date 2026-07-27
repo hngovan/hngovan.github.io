@@ -154,6 +154,12 @@
 			@apply mx-auto my-6;
 		}
 
+		:where(figure img, figure video):not(
+			:where([class~='not-prose'], [class~='not-prose'] *)
+		) {
+			@apply my-0;
+		}
+
 		:where(figcaption):not(
 			:where([class~='not-prose'], [class~='not-prose'] *)
 		) {

@@ -49,7 +49,6 @@ Realforce R1 là bàn phím rất đáng dùng, nhưng dây USB cố định là
 - Khi cất bàn phím, dây lúc nào cũng lòi ra một đoạn.
 - Khi mang đi đâu đó, dây bị gập hoặc vướng khá khó chịu.
 - Nếu dây hỏng, việc thay thế không tiện như bàn phím có cổng rời.
-- Dây stock nhìn đúng kiểu “tôi đến từ một thời đại chưa có USB-C”.
 
 Phần lớn người dùng bàn phím cơ hiện nay đều có sẵn ít nhất một sợi USB-A to USB-C.
 Nếu Realforce R1 có thể dùng dây rời thì việc đổi dây, chọn chiều dài hoặc cất bàn
@@ -67,13 +66,11 @@ một bộ cáp trên [Goofish](https://www.goofish.com/) với giá khoảng **
 		alt="Cáp chuyển Realforce R1 sang USB-C được bán sẵn trên chợ đồ cũ Trung Quốc"
 	/>
 	<figcaption>
-		Cáp bán sẵn nhìn gọn và sạch, nhưng giá cộng ship về thì cũng đủ để tôi tự
-		tin làm liều.
+		Cáp bán sẵn nhìn gọn và sạch, nhưng giá trên chưa tính tiền ship về.
 	</figcaption>
 </figure>
 
-Sau một hồi cân nhắc, tôi chọn tự làm. Không hẳn vì tiết kiệm được quá nhiều tiền, mà vì
-tự làm thì mình hiểu dây đi như thế nào, hỏng ở đâu còn biết đường chửi đúng chỗ.
+Sau một hồi cân nhắc, tôi chọn tự làm. Không hẳn vì tiết kiệm được quá nhiều tiền (có khi tiết kiệm thật 👀), mà xem như trải nghiệm được cách được tự làm một sợi dây custom (có kiến thức kinh nghiệm trải nghiệm 👌).
 
 ### 1.3. Nguyên tắc của bản mod
 
@@ -112,8 +109,8 @@ là làm một đầu dây rời nhìn tương đối gọn, không phải để
 		/>
 	</div>
 	<figcaption>
-		Bên trái là hình shop, bên phải là hàng thực tế. Nhìn chung đủ dùng, miễn là
-		hàn cẩn thận và cố định mối hàn tốt.
+		Bên trái là hình lấy từ taobao, bên phải là hàng thực tế trên tay. Nhìn khá
+		ổn.
 	</figcaption>
 </figure>
 
@@ -155,22 +152,22 @@ Tôi dùng dây cáp tín hiệu 4 lõi để đi bốn đường USB cơ bản:
 
 ### 2.3. Đầu nối JST EHR 4 pin cho PCB Realforce
 
-Đầu nối phía PCB của Realforce R1 trong bản tôi làm dùng dạng **JST EHR 4 pin**. Đây là
-phần quan trọng nhất vì nó quyết định dây có cắm vừa và giữ chắc trên PCB hay không.
+Đầu nối phía PCB của Realforce R1 trong bài tôi làm dùng dạng **JST EHR 4 pin**. Đây là
+phần quan trọng nhất nên lưu ý trước khi mua để tránh nhầm.
 
 <figure>
 	<div class="grid gap-3 sm:grid-cols-2">
 		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/ehr-4-1.jpg`}
+			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/ehr-4-3.jpg`}
 			alt="Đầu nối JST EHR 4 pin mặt trước"
 		/>
 		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/ehr-4-2.jpg`}
+			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/ehr-4-1.jpg`}
 			alt="Đầu nối JST EHR 4 pin mặt sau"
 		/>
 		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/ehr-4-3.jpg`}
-			alt="Đầu nối JST EHR 4 pin khi đặt cạnh dây"
+			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/ehr-4-2.jpg`}
+			alt="Đầu nối JST EHR 4 pin chân pin"
 		/>
 		<img
 			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/ehr-4-4.jpg`}
@@ -178,20 +175,24 @@ phần quan trọng nhất vì nó quyết định dây có cắm vừa và gi�
 		/>
 	</div>
 	<figcaption>
-		Đầu JST EHR 4 pin dùng để cắm vào đầu nối USB nội bộ của Realforce R1.
+		Đầu JST EHR 4 pin dùng để cắm vào jack EH trên PCB của Realforce R1.
 	</figcaption>
 </figure>
 
 Vì tôi không có cos/pin đúng loại để bấm dây mới hoàn toàn, tôi tận dụng pin từ đầu JST
-XH2.54 4 pin có sẵn. Phần pitch hơi sát nhau nên cần tháo và gắn lại cẩn thận, tránh
-làm cong pin hoặc lỏng tiếp xúc.
+XH2.54 4 pin có sẵn. Có thể dùng nhíp gắp như trên hình để nới lỏng chân lôi đầu cos/pin ra, tránh
+làm cong cos/pin hoặc lỏng tiếp xúc.
 
 <figure>
-	<div class="grid gap-3 sm:grid-cols-3">
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/pitch-2.5mm.jpg`}
-			alt="Pin được tháo ra từ đầu JST XH2.54 để tận dụng lại"
-		/>
+	<img
+		src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/pitch-2.5mm.jpg`}
+		alt="Pin được tháo ra từ đầu JST XH2.54 để tận dụng lại"
+	/>
+	<figcaption>Một đầu dây bóc ra từ JST XH2.54 4 pin có sẵn.</figcaption>
+</figure>
+
+<figure>
+	<div class="grid gap-3 sm:grid-cols-2">
 		<img
 			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/assem-ehr-1.jpg`}
 			alt="Lắp pin vào vỏ JST EHR 4 pin bước thứ nhất"
@@ -201,10 +202,7 @@ làm cong pin hoặc lỏng tiếp xúc.
 			alt="Đầu JST EHR 4 pin sau khi lắp đủ dây"
 		/>
 	</div>
-	<figcaption>
-		Tận dụng pin từ đầu nối khác không phải cách đẹp nhất, nhưng đủ dùng nếu pin
-		giữ chắc và tiếp xúc ổn định.
-	</figcaption>
+	<figcaption>Tận dụng pin từ đầu nối JST XH2.54 có sẵn.</figcaption>
 </figure>
 
 ## 3. Làm phần dây bọc ngoài
@@ -249,7 +247,7 @@ qua.
 </video>
 
 <div class="not-prose my-6 rounded-2xl border border-sky-500/40 bg-sky-500/10 p-4 text-sm text-sky-950 dark:text-sky-100">
-	<p class="mb-2 font-semibold">🛠️ Tip nhỏ khi luồn dây</p>
+	<p class="mb-2 font-semibold">🛠️ Tip and trick</p>
 	<p>
 		Nếu PET sleeve khó luồn, có thể dùng một chiếc đũa hoặc vật tròn nhỏ luồn
 		vào trước, đùn sleeve lại cho nó phình ra rồi mới đẩy dây vào. Làm vậy đỡ
@@ -294,7 +292,7 @@ Sau đó cắt ngắn đầu dây khoảng 2-3cm để chuẩn bị tuốt lõi.
 </video>
 
 Tôi nhỏ thêm một ít keo 502 ở phần đầu bọc để cố định lõi dây và lớp Paracord. Đoạn này
-không cần quá nhiều keo, chỉ cần đủ để dây không trượt ra khi hàn.
+không cần quá nhiều keo, chỉ cần đủ để dây không trượt ra khỏi lõi khi thao tác.
 
 <video controls playsinline preload="metadata">
 	<source
@@ -326,8 +324,7 @@ Sau đó tuốt bốn đầu dây để lộ lõi đồng.
 | Vàng    | D+       |
 
 Tôi quên quay lại đoạn hàn đầu USB-C, nhưng nguyên tắc vẫn giống phần xử lý USB trong
-bài [Realforce TKL 3D](/project/realforce-tkl-3d): hàn nhanh, không dí mỏ hàn quá lâu,
-và phải kiểm tra lại mối hàn trước khi đóng vỏ.
+bài [Realforce TKL 3D](/project/realforce-tkl-3d): hàn nhanh, không dí mỏ hàn quá lâu, và phải kiểm tra lại mối hàn trước khi đóng vỏ.
 
 <div class="not-prose my-6 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-950 dark:text-red-100">
 	<p class="mb-2 font-semibold">🚨 Đừng bỏ qua bước đo dây</p>
@@ -361,7 +358,10 @@ Sau khi cố định vỏ bằng keo 502, đầu dây hoàn thiện trông như 
 		src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/step-3-finally.jpg`}
 		alt="Đầu USB-C cái sau khi hàn dây và đóng vỏ"
 	/>
-	<figcaption>Đầu USB-C cái sau khi hàn, cách điện và đóng vỏ.</figcaption>
+	<figcaption>
+		Đầu USB-C cái sau khi hàn, cách điện và đóng vỏ. (nhìn hơi xấu do dùng hơi
+		nhiều keo 502 🐧)
+	</figcaption>
 </figure>
 
 ## 5. Xử lý đầu JST cắm vào PCB Realforce
@@ -408,6 +408,19 @@ JST EHR 4 pin.
 	</figcaption>
 </figure>
 
+Kế tiếp cắt 1 đoạn ống co nhiệt khoảng 10mm luồn vào sẵn trước khi hàn rồi dùng máy lửa hoặc máy khò cho nó co lại, đến đây thì sản phẩm đã hoàn thiện như hình dưới.
+
+<figure>
+	<img
+		src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/finally-3.jpg`}
+		alt="Cận cảnh đầu USB-C cái sau khi hoàn thiện"
+	/>
+	<figcaption>
+		Sau khi bọc ống co nhiệt vào dây nối giữa đầu cắm type-c và jack cắm EHR 4
+		pin
+	</figcaption>
+</figure>
+
 ### 5.2. Kiểm tra pinout trước khi cắm vào bàn phím
 
 Trước khi cắm dây vào PCB, tôi kiểm tra lại từng đường:
@@ -431,10 +444,6 @@ USB-C cái để đưa ra ngoài case.
 <figure>
 	<div class="grid gap-3 sm:grid-cols-2">
 		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/finally.jpg`}
-			alt="Sợi cáp chuyển Realforce R1 sang USB-C sau khi hoàn thiện góc nhìn thứ nhất"
-		/>
-		<img
 			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/finally-1.jpg`}
 			alt="Sợi cáp chuyển Realforce R1 sang USB-C sau khi hoàn thiện góc nhìn thứ hai"
 		/>
@@ -442,14 +451,16 @@ USB-C cái để đưa ra ngoài case.
 			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/finally-2.jpg`}
 			alt="Đầu JST và đầu USB-C của sợi cáp chuyển Realforce R1"
 		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/finally-3.jpg`}
-			alt="Cận cảnh đầu USB-C cái sau khi hoàn thiện"
-		/>
 	</div>
-	<figcaption>
-		Sợi cáp hoàn chỉnh. Không quá công nghiệp, nhưng đủ gọn và đúng mục đích.
-	</figcaption>
+	<figcaption>Sợi cáp sau khi hoàn chỉnh.</figcaption>
+</figure>
+
+<figure>
+	<img
+		src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/finally.jpg`}
+		alt="Sợi cáp chuyển Realforce R1 sang USB-C sau khi hoàn thiện góc nhìn thứ nhất"
+	/>
+	<figcaption>Sau khi gắn cáp vào bottom case của Realforce R1</figcaption>
 </figure>
 
 ### 6.2. Lắp lại vào Realforce R1
@@ -479,25 +490,39 @@ Sau khi thay bằng cáp chuyển, bàn phím có thể dùng dây USB-A to USB-
 			alt="Realforce R1 sau khi lắp dây USB-C tháo rời góc nhìn thứ hai"
 		/>
 	</div>
-	<figcaption>
-		Sau khi hoàn thiện: bàn phím vẫn giữ được layout và cảm giác gõ cũ, nhưng
-		phần dây đã dễ thay và dễ cất hơn nhiều.
-	</figcaption>
+	<figcaption>Sau khi hoàn thiện: phần dây đã gọn gàng hơn nhiều.</figcaption>
 </figure>
 
 ## 7. Chi phí và link linh kiện
 
-Chi phí phụ thuộc vào việc bạn đã có sẵn dụng cụ hay chưa. Với tôi, phần chính cần mua
-là dây, vỏ đầu Type-C và đầu JST. Một vài món như keo, thiếc hàn, ống co nhiệt có thể đã
-có sẵn nếu bạn hay làm đồ điện tử.
+Chi phí phụ thuộc vào việc bạn đã có sẵn dụng cụ hay chưa. Bảng dưới đây chỉ tính phần
+linh kiện tiêu hao để làm **một sợi cáp chuyển**, không tính mỏ hàn, đồng hồ đo điện,
+kìm tuốt dây hay các món dụng cụ dùng lâu dài.
 
-| Hạng mục                              | Ghi chú                                      |
-| ------------------------------------- | -------------------------------------------- |
-| Dây dù Paracord 7 lõi 4mm             | Dùng để bọc ngoài dây tín hiệu               |
-| Dây cáp tín hiệu 4 lõi                | Dùng cho VCC, GND, D+ và D-                  |
-| Ống lưới bện PET trong suốt 4mm       | Không bắt buộc, chủ yếu để bảo vệ và làm đẹp |
-| Vỏ đầu dây USB-C cái + cổng USB-C cái | Phần đầu cắm rời bên ngoài                   |
-| JST EHR 4 pin                         | Đầu cắm vào PCB Realforce R1                 |
+| Hạng mục                              | Ước lượng     | Ghi chú                                      |
+| ------------------------------------- | ------------- | -------------------------------------------- |
+| Dây dù Paracord 7 lõi 4mm             | 15.000-30.000 | Dùng để bọc ngoài dây tín hiệu               |
+| Dây cáp tín hiệu 4 lõi                | 10.000-20.000 | Dùng cho VCC, GND, D+ và D-                  |
+| Ống lưới bện PET trong suốt 4mm       | 10.000-20.000 | Không bắt buộc, chủ yếu để bảo vệ và làm đẹp |
+| Vỏ đầu dây USB-C cái + cổng USB-C cái | 40.000-70.000 | Phần đầu cắm rời bên ngoài                   |
+| JST EHR 4 pin                         | 10.000-20.000 | Đầu cắm vào PCB Realforce R1                 |
+| Ống co nhiệt, keo, thiếc hàn          | 10.000-30.000 | Nếu đã có sẵn thì gần như không đáng kể      |
+| Phí ship / gom đơn                    | 30.000-80.000 | Dao động mạnh tùy mua Shopee hay Taobao      |
+
+Tổng lại, nếu đã có sẵn dụng cụ thì chi phí thực tế rơi vào khoảng **125.000-270.000đ**.
+Nếu bỏ PET sleeve hoặc tận dụng được dây/cos có sẵn thì có thể thấp hơn. Ngược lại, nếu
+phải mua lẻ từng món ở nhiều shop khác nhau thì tiền ship đôi khi còn đau hơn tiền linh
+kiện.
+
+<div class="not-prose my-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-950 dark:text-amber-100">
+	<p class="mb-2 font-semibold">🧾 Đúc kết về tiền nong</p>
+	<p>
+		Tự làm không hẳn rẻ hơn quá nhiều so với mua dây làm sẵn, nhất là nếu tính
+		cả thời gian đo dây, hàn dây và sửa sai. Giá trị chính là mình chủ động được
+		chiều dài, màu dây, đầu nối và quan trọng nhất là hiểu chính xác cái dây này
+		đang cứu hay đang hại bàn phím của mình.
+	</p>
+</div>
 
 Link sản phẩm tôi đã tham khảo/mua:
 
@@ -506,6 +531,7 @@ Link sản phẩm tôi đã tham khảo/mua:
 - [Ống lưới bện PET trong suốt](https://shopee.vn/C%C3%B3-Th%E1%BB%83-M%E1%BB%9F-R%E1%BB%99ng-B%E1%BB%87n-C%C3%A1p-Tay-3-4-6-8-10-mm-%C4%90%C6%A1n-PET-Nylon-L%C6%B0%E1%BB%9Bi-DIY-USB-B%C3%A0n-Ph%C3%ADm-C%C3%A1p-Tay-V%E1%BB%8F-B%E1%BA%A3o-V%E1%BB%87-D%C3%A2y-B%E1%BB%8Dc-i.1150338752.26232825738)
 - [Vỏ đầu dây Type-C cái + cổng Type-C cái](https://item.taobao.com/item.htm?id=690430680123&skuId=5081830914303)
 - [JST EHR 4 pin](https://item.taobao.com/item.htm?id=833285337190&skuId=5748999655170)
+- [Ống co nhiệt](https://shopee.vn/-Top-Value-%E1%BB%90ng-Co-Nhi%E1%BB%87t-%E1%BB%90ng-Gen-Co-Nhi%E1%BB%87t-C%E1%BA%AFt-S%E1%BA%B5n-%C4%90%E1%BB%83-B%E1%BB%8Dc-D%C3%A2y-%C4%90i%E1%BB%87n-M%E1%BB%91i-H%C3%A0n-127pcs-164pcs-328pcs-530pcs-Nhi%E1%BB%81u-M%C3%A0u-S%E1%BA%AFc-i.1175586038.50655042266)
 
 ## 8. Đúc kết
 
