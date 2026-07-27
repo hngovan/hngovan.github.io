@@ -1,4 +1,5 @@
 ---
+import 'lightgallery/css/lg-rotate.css'
 import 'lightgallery/css/lg-zoom.css'
 import 'lightgallery/css/lightgallery.css'
 ---
@@ -7,6 +8,7 @@ import 'lightgallery/css/lightgallery.css'
 
 <script>
 	import lightGallery from 'lightgallery'
+	import lgRotate from 'lightgallery/plugins/rotate'
 	import lgZoom from 'lightgallery/plugins/zoom'
 
 	const IMAGE_SELECTOR = '[data-lightbox-image], [data-content-lightbox] img'
@@ -70,7 +72,8 @@ import 'lightgallery/css/lightgallery.css'
 			dynamic: true,
 			dynamicEl,
 			licenseKey: '0000-0000-000-0000',
-			plugins: [lgZoom],
+			plugins: [lgZoom, lgRotate],
+			rotate: true,
 			selector: '',
 			speed: 250,
 			zoom: true
