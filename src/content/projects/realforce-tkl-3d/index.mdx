@@ -31,6 +31,8 @@ sections:
       - 'Ghi lại các lỗi ngu người để người sau né bớt tiền ngu'
 ---
 
+import Callout from '@/components/callout.astro'
+
 Ý tưởng ban đầu đến khá đơn giản: tôi mua một chiếc **Realforce R2 màu beige**
 trên chợ cá [Goofish](https://www.goofish.com/). Nhận hàng xong thì phát hiện
 case bị nứt và cấn vài vết. Về mặt thẩm mỹ thì còn nhắm mắt bỏ qua được, nhưng
@@ -139,15 +141,12 @@ Link tham khảo:
 Nếu cần tham khảo cách tháo vỏ Realforce, có thể xem bài này:
 https://www.galaxy-factory.com/goods/goods_view.php?goodsNo=1000000006
 
-<div class="not-prose my-6 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-950 dark:text-red-100">
-	<p class="mb-2 font-semibold">🚨 Cảnh báo trước khi đấu dây</p>
-	<p>
-		Sơ đồ dưới đây chỉ là phần tôi dùng được với các board Realforce tôi đang
-		có. Không áp dụng mù cho mọi phiên bản Realforce. Nếu bạn không chắc VCC,
-		GND, D+ và D- nằm ở đâu thì nên dừng lại, hỏi người có kinh nghiệm, hoặc
-		chuẩn bị tinh thần nhìn PCB bay màu IC.
-	</p>
-</div>
+<Callout variant="danger" title="🚨 Cảnh báo trước khi đấu dây">
+	Sơ đồ dưới đây chỉ là phần tôi dùng được với các board Realforce tôi đang có.
+	Không áp dụng mù cho mọi phiên bản Realforce. Nếu bạn không chắc VCC, GND, D+
+	và D- nằm ở đâu thì nên dừng lại, hỏi người có kinh nghiệm, hoặc chuẩn bị tinh
+	thần nhìn PCB bay màu IC.
+</Callout>
 
 ### 2.3. Bỏ dây chống nhiễu SG
 
@@ -269,14 +268,11 @@ Nghe thì ổn, nhưng thứ tự thao tác của tôi không ổn: tôi cấy r
 daughterboard trước, sau đó mới thử đặt bộ lòng vào. Kết quả là bộ lòng không
 lọt. Không có phép màu nào ở đây cả 🥲.
 
-<div class="not-prose my-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-950 dark:text-amber-100">
-	<p class="mb-2 font-semibold">💡 Kinh nghiệm rút ra</p>
-	<p>
-		In case xong hãy thử fit bộ lòng trước. Khi mọi thứ lọt, thẳng, không cấn
-		thì mới cấy ren, bắt ốc, gá daughterboard. Làm ngược lại thì case chưa chắc
-		thành bàn phím, nhưng chắc chắn thành bài học.
-	</p>
-</div>
+<Callout variant="warning" title="💡 Kinh nghiệm rút ra">
+	In case xong hãy thử fit bộ lòng trước. Khi mọi thứ lọt, thẳng, không cấn thì
+	mới cấy ren, bắt ốc, gá daughterboard. Làm ngược lại thì case chưa chắc thành
+	bàn phím, nhưng chắc chắn thành bài học.
+</Callout>
 
 <figure>
 	<div class="grid gap-3 sm:grid-cols-2">
@@ -633,21 +629,12 @@ Nếu muốn tải trực tiếp bản tôi dùng trong bài:
 	</a>
 </div>
 
-<div class="not-prose my-6 rounded-2xl border border-orange-500/40 bg-orange-500/10 p-4 text-sm text-orange-950 dark:text-orange-100">
-	<p class="mb-2 font-semibold">⚠️ Lưu ý trước khi mang file đi in</p>
-	<p>
-		File STL ở trên là bản tôi đã dùng được với setup của mình, nhưng thông số
-		in 3D ở mỗi nơi có thể khác nhau: máy in, vật liệu, độ co nhựa, hướng đặt
-		mẫu, layer height, support và cả tay nghề người in đều có thể làm bản in bị
-		hẹp hơn hoặc rộng hơn một chút.
-	</p>
-	<p class="mt-2">
-		Vì vậy tôi không chịu trách nhiệm nếu bản in của bạn bị cấn, lỏng, hẹp lòng
-		case hoặc phải khoét thêm. Trước khi in bản đẹp, nên in test một phần quan
-		trọng hoặc trao đổi kỹ với bên in. Đừng để case chưa thành bàn phím mà đã
-		thành cục PETG trang trí bàn học 😝
-	</p>
-</div>
+<Callout variant="problem" title="⚠️ Lưu ý trước khi mang file đi in">
+	File STL ở trên là bản tôi đã dùng được với setup của mình, nhưng thông số in 3D ở mỗi nơi có thể khác nhau: máy in, vật liệu, độ co nhựa, hướng đặt mẫu, layer height, support và cả tay nghề người in đều có thể làm bản in bị hẹp hơn hoặc rộng hơn một chút.
+
+Vì vậy tôi không chịu trách nhiệm nếu bản in của bạn bị cấn, lỏng, hẹp lòng case hoặc phải khoét thêm. Trước khi in bản đẹp, nên in test một phần quan trọng hoặc trao đổi kỹ với bên in. Đừng để case chưa thành bàn phím mà đã thành cục PETG trang trí bàn học 😝
+
+</Callout>
 
 ### 7.2. Link mua linh kiện
 

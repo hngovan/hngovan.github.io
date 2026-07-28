@@ -29,6 +29,9 @@ sections:
       - 'Làm một sợi dây custom gọn hơn, dễ thay hơn và nhìn đỡ “đời Tống” hơn'
 ---
 
+import Callout from '@/components/callout.astro'
+import ContentFigure from '@/components/mdx/content-figure.astro'
+
 Trong project [Realforce TKL 3D](/project/realforce-tkl-3d), tôi đã đề cập đến đầu nối
 USB bên trong bàn phím Realforce và cách xác định các đường dây **VCC**, **GND**,
 **D+** và **D-**.
@@ -60,15 +63,11 @@ Trước khi tự làm, tôi có tìm thử xem có ai bán sẵn cáp chuyển 
 Topre không quá phổ biến, đồ làm sẵn không nhiều và giá cũng không mềm lắm. Tôi có thấy
 một bộ cáp trên [Goofish](https://www.goofish.com/) với giá khoảng **80 tệ**.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/taobao-cable.jpg`}
-		alt="Cáp chuyển Realforce R1 sang USB-C được bán sẵn trên chợ đồ cũ Trung Quốc"
-	/>
-	<figcaption>
-		Cáp bán sẵn nhìn gọn và sạch, nhưng giá trên chưa tính tiền ship về.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/realforce-r1-usb-c-conversion/taobao-cable.jpg"
+	alt="Cáp chuyển Realforce R1 sang USB-C được bán sẵn trên chợ đồ cũ Trung Quốc"
+	caption="Cáp bán sẵn nhìn gọn và sạch, nhưng giá trên chưa tính tiền ship về."
+/>
 
 Sau một hồi cân nhắc, tôi chọn tự làm. Không hẳn vì tiết kiệm được quá nhiều tiền (có khi tiết kiệm thật 👀), mà xem như trải nghiệm được cách được tự làm một sợi dây custom (có kiến thức kinh nghiệm trải nghiệm 👌).
 
@@ -80,15 +79,12 @@ chính của bàn phím.
 
 Nếu sau này muốn trả bàn phím về zin, chỉ cần tháo cáp chuyển ra và cắm lại dây stock.
 
-<div class="not-prose my-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-950 dark:text-amber-100">
-	<p class="mb-2 font-semibold">⚠️ Lưu ý trước khi làm</p>
-	<p>
-		Bài này là ghi chép quá trình tôi tự làm với bàn phím của tôi. Pinout và đầu
-		nối có thể khác tùy đời Realforce, nên hãy đo lại bằng đồng hồ trước khi cấp
-		nguồn. Đấu sai D+/D- thì còn có cửa đảo lại, nhưng đấu sai VCC/GND thì rất
-		dễ thành bài post chia buồn.
-	</p>
-</div>
+<Callout variant="warning" title="⚠️ Lưu ý trước khi làm">
+	Bài này là ghi chép quá trình tôi tự làm với bàn phím của tôi. Pinout và đầu
+	nối có thể khác tùy đời Realforce, nên hãy đo lại bằng đồng hồ trước khi cấp
+	nguồn. Đấu sai D+/D- thì còn có cửa đảo lại, nhưng đấu sai VCC/GND thì rất dễ
+	thành bài post chia buồn.
+</Callout>
 
 ## 2. Chuẩn bị linh kiện
 
@@ -97,113 +93,103 @@ Nếu sau này muốn trả bàn phím về zin, chỉ cần tháo cáp chuyển
 Phần đầu USB-C tôi dùng là loại gồm **vỏ đầu dây** và **board/cổng Type-C cái**. Mục tiêu
 là làm một đầu dây rời nhìn tương đối gọn, không phải để trần mối hàn ra ngoài.
 
-<figure>
-	<div class="grid gap-3 sm:grid-cols-2">
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/usb-c-taobao.png`}
-			alt="Bộ vỏ đầu dây USB-C cái trên Taobao"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/usb-c.jpg`}
-			alt="Bộ vỏ đầu dây USB-C cái sau khi nhận hàng"
-		/>
-	</div>
-	<figcaption>
-		Bên trái là hình lấy từ taobao, bên phải là hàng thực tế trên tay. Nhìn khá
-		ổn.
-	</figcaption>
-</figure>
+<ContentFigure
+	columns={2}
+	images={[
+		{
+			src: '/static/realforce-r1-usb-c-conversion/usb-c-taobao.png',
+			alt: 'Bộ vỏ đầu dây USB-C cái trên Taobao'
+		},
+		{
+			src: '/static/realforce-r1-usb-c-conversion/usb-c.jpg',
+			alt: 'Bộ vỏ đầu dây USB-C cái sau khi nhận hàng'
+		}
+	]}
+	caption="Bên trái là hình lấy từ taobao, bên phải là hàng thực tế trên tay. Nhìn khá ổn."
+/>
 
 ### 2.2. Dây tín hiệu, Paracord và PET sleeve
 
 Tôi dùng dây cáp tín hiệu 4 lõi để đi bốn đường USB cơ bản: **VCC**, **GND**, **D+** và
 **D-**. Bên ngoài dây được bọc thêm Paracord, rồi thêm một lớp PET sleeve trong suốt.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/cable-pet-paracord.jpg`}
-		alt="Dây cáp tín hiệu 4 lõi, dây dù Paracord và ống lưới PET trong suốt"
-	/>
-	<figcaption>
-		Bộ nguyên liệu chính để làm dây: dây tín hiệu, Paracord và PET sleeve.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/realforce-r1-usb-c-conversion/cable-pet-paracord.jpg"
+	alt="Dây cáp tín hiệu 4 lõi, dây dù Paracord và ống lưới PET trong suốt"
+	caption="Bộ nguyên liệu chính để làm dây: dây tín hiệu, Paracord và PET sleeve."
+/>
 
-<figure>
-	<div class="grid gap-3 sm:grid-cols-3">
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/4-core-cable.jpg`}
-			alt="Dây cáp tín hiệu 4 lõi"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/paracord-7- 4mm.jpg`}
-			alt="Dây dù Paracord 7 lõi 4mm màu đen"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/4mm-clear-pet-expandable-braided-sleeving.jpg`}
-			alt="Ống lưới bện PET trong suốt 4mm"
-		/>
-	</div>
-	<figcaption>
-		PET sleeve là phần có thể bỏ qua nếu bạn muốn dây mềm và đơn giản hơn. Tôi
-		bọc vào cho có vẻ “custom”, xong nhìn lại thấy phối màu hơi ngu 🙂‍↔️
-	</figcaption>
-</figure>
+<ContentFigure
+	columns={3}
+	images={[
+		{
+			src: '/static/realforce-r1-usb-c-conversion/4-core-cable.jpg',
+			alt: 'Dây cáp tín hiệu 4 lõi'
+		},
+		{
+			src: '/static/realforce-r1-usb-c-conversion/paracord-7- 4mm.jpg',
+			alt: 'Dây dù Paracord 7 lõi 4mm màu đen'
+		},
+		{
+			src: '/static/realforce-r1-usb-c-conversion/4mm-clear-pet-expandable-braided-sleeving.jpg',
+			alt: 'Ống lưới bện PET trong suốt 4mm'
+		}
+	]}
+	caption="PET sleeve là phần có thể bỏ qua nếu bạn muốn dây mềm và đơn giản hơn. Tôi bọc vào cho có vẻ “custom”, xong nhìn lại thấy phối màu hơi ngu 🙂‍↔️"
+/>
 
 ### 2.3. Đầu nối JST EHR 4 pin cho PCB Realforce
 
 Đầu nối phía PCB của Realforce R1 trong bài tôi làm dùng dạng **JST EHR 4 pin**. Đây là
 phần quan trọng nhất nên lưu ý trước khi mua để tránh nhầm.
 
-<figure>
-	<div class="grid gap-3 sm:grid-cols-2">
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/ehr-4-3.jpg`}
-			alt="Đầu nối JST EHR 4 pin mặt trước"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/ehr-4-1.jpg`}
-			alt="Đầu nối JST EHR 4 pin mặt sau"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/ehr-4-2.jpg`}
-			alt="Đầu nối JST EHR 4 pin chân pin"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/ehr-4-4.jpg`}
-			alt="Đầu nối JST EHR 4 pin góc nhìn gần"
-		/>
-	</div>
-	<figcaption>
-		Đầu JST EHR 4 pin dùng để cắm vào jack EH trên PCB của Realforce R1.
-	</figcaption>
-</figure>
+<ContentFigure
+	columns={2}
+	images={[
+		{
+			src: '/static/realforce-r1-usb-c-conversion/ehr-4-3.jpg',
+			alt: 'Đầu nối JST EHR 4 pin mặt trước'
+		},
+		{
+			src: '/static/realforce-r1-usb-c-conversion/ehr-4-1.jpg',
+			alt: 'Đầu nối JST EHR 4 pin mặt sau'
+		},
+		{
+			src: '/static/realforce-r1-usb-c-conversion/ehr-4-2.jpg',
+			alt: 'Đầu nối JST EHR 4 pin chân pin'
+		},
+		{
+			src: '/static/realforce-r1-usb-c-conversion/ehr-4-4.jpg',
+			alt: 'Đầu nối JST EHR 4 pin góc nhìn gần'
+		}
+	]}
+	caption="Đầu JST EHR 4 pin dùng để cắm vào jack EH trên PCB của Realforce R1."
+/>
 
 Vì tôi không có cos/pin đúng loại để bấm dây mới hoàn toàn, tôi tận dụng pin từ đầu JST
 XH2.54 4 pin có sẵn. Có thể dùng nhíp gắp như trên hình để nới lỏng chân lôi đầu cos/pin ra, tránh
 làm cong cos/pin hoặc lỏng tiếp xúc.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/pitch-2.5mm.jpg`}
-		alt="Pin được tháo ra từ đầu JST XH2.54 để tận dụng lại"
-	/>
-	<figcaption>Một đầu dây bóc ra từ JST XH2.54 4 pin có sẵn.</figcaption>
-</figure>
+<ContentFigure
+	src="/static/realforce-r1-usb-c-conversion/pitch-2.5mm.jpg"
+	alt="Pin được tháo ra từ đầu JST XH2.54 để tận dụng lại"
+	caption="Một đầu dây bóc ra từ JST XH2.54 4 pin có sẵn."
+/>
 
-<figure>
-	<div class="grid gap-3 sm:grid-cols-2">
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/assem-ehr-1.jpg`}
-			alt="Lắp pin vào vỏ JST EHR 4 pin bước thứ nhất"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/assem-ehr-2.jpg`}
-			alt="Đầu JST EHR 4 pin sau khi lắp đủ dây"
-		/>
-	</div>
-	<figcaption>Tận dụng pin từ đầu nối JST XH2.54 có sẵn.</figcaption>
-</figure>
+<ContentFigure
+	columns={2}
+	images={[
+		{
+			src: '/static/realforce-r1-usb-c-conversion/assem-ehr-1.jpg',
+			alt: 'Lắp pin vào vỏ JST EHR 4 pin bước thứ nhất'
+		},
+		{
+			src: '/static/realforce-r1-usb-c-conversion/assem-ehr-2.jpg',
+			alt: 'Đầu JST EHR 4 pin sau khi lắp đủ dây'
+		}
+	]}
+	caption="Tận dụng pin từ đầu nối JST XH2.54 có sẵn."
+/>
 
 ## 3. Làm phần dây bọc ngoài
 
@@ -246,14 +232,11 @@ qua.
 	Trình duyệt của bạn không hỗ trợ video HTML5.
 </video>
 
-<div class="not-prose my-6 rounded-2xl border border-sky-500/40 bg-sky-500/10 p-4 text-sm text-sky-950 dark:text-sky-100">
-	<p class="mb-2 font-semibold">🛠️ Tip and trick</p>
-	<p>
-		Nếu PET sleeve khó luồn, có thể dùng một chiếc đũa hoặc vật tròn nhỏ luồn
-		vào trước, đùn sleeve lại cho nó phình ra rồi mới đẩy dây vào. Làm vậy đỡ
-		phải ngồi vật lộn với một sợi dây bé xíu như đang giải đố escape room.
-	</p>
-</div>
+<Callout variant="tip" title="🛠️ Tip and trick">
+	Nếu PET sleeve khó luồn, có thể dùng một chiếc đũa hoặc vật tròn nhỏ luồn vào
+	trước, đùn sleeve lại cho nó phình ra rồi mới đẩy dây vào. Làm vậy đỡ phải
+	ngồi vật lộn với một sợi dây bé xíu như đang giải đố escape room.
+</Callout>
 
 <video controls playsinline preload="metadata">
 	<source
@@ -304,13 +287,11 @@ không cần quá nhiều keo, chỉ cần đủ để dây không trượt ra k
 
 Sau đó tuốt bốn đầu dây để lộ lõi đồng.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/after-sharpening-the-wire.jpg`}
-		alt="Bốn lõi dây sau khi được tuốt để chuẩn bị hàn vào cổng USB-C"
-	/>
-	<figcaption>Bốn lõi dây sau khi tuốt: đỏ, trắng, vàng và đen.</figcaption>
-</figure>
+<ContentFigure
+	src="/static/realforce-r1-usb-c-conversion/after-sharpening-the-wire.jpg"
+	alt="Bốn lõi dây sau khi được tuốt để chuẩn bị hàn vào cổng USB-C"
+	caption="Bốn lõi dây sau khi tuốt: đỏ, trắng, vàng và đen."
+/>
 
 ### 4.2. Hàn dây vào cổng USB-C
 
@@ -326,15 +307,11 @@ Sau đó tuốt bốn đầu dây để lộ lõi đồng.
 Tôi quên quay lại đoạn hàn đầu USB-C, nhưng nguyên tắc vẫn giống phần xử lý USB trong
 bài [Realforce TKL 3D](/project/realforce-tkl-3d): hàn nhanh, không dí mỏ hàn quá lâu, và phải kiểm tra lại mối hàn trước khi đóng vỏ.
 
-<div class="not-prose my-6 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-950 dark:text-red-100">
-	<p class="mb-2 font-semibold">🚨 Đừng bỏ qua bước đo dây</p>
-	<p>
-		D+ và D- nếu đảo sai thì thường chỉ cần đảo lại. Nhưng VCC và GND mà đấu
-		nhầm thì khả năng cao là bàn phím sẽ có một khoảnh khắc “tỏa sáng” đúng
-		nghĩa đen. Trước khi cắm vào máy tính, hãy đo continuity và đo chập giữa
-		VCC/GND.
-	</p>
-</div>
+<Callout variant="danger" title="🚨 Đừng bỏ qua bước đo dây">
+	D+ và D- nếu đảo sai thì thường chỉ cần đảo lại. Nhưng VCC và GND mà đấu nhầm
+	thì khả năng cao là bàn phím sẽ có một khoảnh khắc “tỏa sáng” đúng nghĩa đen.
+	Trước khi cắm vào máy tính, hãy đo continuity và đo chập giữa VCC/GND.
+</Callout>
 
 Trước khi đóng vỏ đầu Type-C, nhớ luồn phần chuôi vỏ vào dây trước. Nếu quên bước này
 thì sau khi hàn xong bạn sẽ được trải nghiệm cảm giác nhìn mối hàn rất đẹp nhưng phải
@@ -353,16 +330,11 @@ hàn.
 
 Sau khi cố định vỏ bằng keo 502, đầu dây hoàn thiện trông như sau:
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/step-3-finally.jpg`}
-		alt="Đầu USB-C cái sau khi hàn dây và đóng vỏ"
-	/>
-	<figcaption>
-		Đầu USB-C cái sau khi hàn, cách điện và đóng vỏ. (nhìn hơi xấu do dùng hơi
-		nhiều keo 502 🐧)
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/realforce-r1-usb-c-conversion/step-3-finally.jpg"
+	alt="Đầu USB-C cái sau khi hàn dây và đóng vỏ"
+	caption="Đầu USB-C cái sau khi hàn, cách điện và đóng vỏ. (nhìn hơi xấu do dùng hơi nhiều keo 502 🐧)"
+/>
 
 ## 5. Xử lý đầu JST cắm vào PCB Realforce
 
@@ -372,53 +344,46 @@ Sau khi cố định vỏ bằng keo 502, đầu dây hoàn thiện trông như 
 nhiệt. Điểm cần chú ý là phải luồn ống co nhiệt vào trước khi hàn. Nghe rất cơ bản,
 nhưng đây là lỗi mà ai cũng có thể dính ít nhất một lần.
 
-<figure>
-	<div class="grid gap-3 sm:grid-cols-2">
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/step-4.1.jpg`}
-			alt="Chuẩn bị ống co nhiệt trước khi hàn đầu JST"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/step-4.2.jpg`}
-			alt="Dây được tuốt lõi để chuẩn bị hàn vào pin JST"
-		/>
-	</div>
-	<figcaption>
-		Luồn ống co nhiệt trước, rồi mới hàn. Làm ngược lại là tự tạo mini game.
-	</figcaption>
-</figure>
+<ContentFigure
+	columns={2}
+	images={[
+		{
+			src: '/static/realforce-r1-usb-c-conversion/step-4.1.jpg',
+			alt: 'Chuẩn bị ống co nhiệt trước khi hàn đầu JST'
+		},
+		{
+			src: '/static/realforce-r1-usb-c-conversion/step-4.2.jpg',
+			alt: 'Dây được tuốt lõi để chuẩn bị hàn vào pin JST'
+		}
+	]}
+	caption="Luồn ống co nhiệt trước, rồi mới hàn. Làm ngược lại là tự tạo mini game."
+/>
 
 Sau khi hàn xong, tôi bọc co nhiệt từng dây để tránh chạm nhau, rồi lắp các pin vào vỏ
 JST EHR 4 pin.
 
-<figure>
-	<div class="grid gap-3 sm:grid-cols-2">
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/step-4.jpg`}
-			alt="Đầu JST sau khi hàn và bọc co nhiệt"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/step-4.3.jpg`}
-			alt="Đầu JST EHR 4 pin sau khi hoàn thiện"
-		/>
-	</div>
-	<figcaption>
-		Ở bước này tôi có thể đảo lại vị trí dây trắng và vàng cho đúng màu hơn,
-		nhưng lười 🥱 Miễn là pinout đúng thì bàn phím vẫn nhận bình thường.
-	</figcaption>
-</figure>
+<ContentFigure
+	columns={2}
+	images={[
+		{
+			src: '/static/realforce-r1-usb-c-conversion/step-4.jpg',
+			alt: 'Đầu JST sau khi hàn và bọc co nhiệt'
+		},
+		{
+			src: '/static/realforce-r1-usb-c-conversion/step-4.3.jpg',
+			alt: 'Đầu JST EHR 4 pin sau khi hoàn thiện'
+		}
+	]}
+	caption="Ở bước này tôi có thể đảo lại vị trí dây trắng và vàng cho đúng màu hơn, nhưng lười 🥱 Miễn là pinout đúng thì bàn phím vẫn nhận bình thường."
+/>
 
 Kế tiếp cắt 1 đoạn ống co nhiệt khoảng 10mm luồn vào sẵn trước khi hàn rồi dùng máy lửa hoặc máy khò cho nó co lại, đến đây thì sản phẩm đã hoàn thiện như hình dưới.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/finally-3.jpg`}
-		alt="Cận cảnh đầu USB-C cái sau khi hoàn thiện"
-	/>
-	<figcaption>
-		Sau khi bọc ống co nhiệt vào dây nối giữa cáp và jack cắm EHR 4 pin
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/realforce-r1-usb-c-conversion/finally-3.jpg"
+	alt="Cận cảnh đầu USB-C cái sau khi hoàn thiện"
+	caption="Sau khi bọc ống co nhiệt vào dây nối giữa cáp và jack cắm EHR 4 pin"
+/>
 
 ### 5.2. Kiểm tra pinout trước khi cắm vào bàn phím
 
@@ -440,57 +405,53 @@ bừa vì USB 5V nhìn hiền nhưng vẫn đủ làm một chiếc PCB cũ ngh�
 Sau khi hoàn thiện, sợi cáp có một đầu JST EHR 4 pin để cắm vào PCB Realforce và một đầu
 USB-C cái để đưa ra ngoài case.
 
-<figure>
-	<div class="grid gap-3 sm:grid-cols-2">
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/finally-1.jpg`}
-			alt="Sợi cáp chuyển Realforce R1 sang USB-C sau khi hoàn thiện góc nhìn thứ hai"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/finally-2.jpg`}
-			alt="Đầu JST và đầu USB-C của sợi cáp chuyển Realforce R1"
-		/>
-	</div>
-	<figcaption>Sợi cáp sau khi hoàn chỉnh.</figcaption>
-</figure>
+<ContentFigure
+	columns={2}
+	images={[
+		{
+			src: '/static/realforce-r1-usb-c-conversion/finally-1.jpg',
+			alt: 'Sợi cáp chuyển Realforce R1 sang USB-C sau khi hoàn thiện góc nhìn thứ hai'
+		},
+		{
+			src: '/static/realforce-r1-usb-c-conversion/finally-2.jpg',
+			alt: 'Đầu JST và đầu USB-C của sợi cáp chuyển Realforce R1'
+		}
+	]}
+	caption="Sợi cáp sau khi hoàn chỉnh."
+/>
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/finally.jpg`}
-		alt="Sợi cáp chuyển Realforce R1 sang USB-C sau khi hoàn thiện góc nhìn thứ nhất"
-	/>
-	<figcaption>Sau khi gắn cáp vào bottom case của Realforce R1</figcaption>
-</figure>
+<ContentFigure
+	src="/static/realforce-r1-usb-c-conversion/finally.jpg"
+	alt="Sợi cáp chuyển Realforce R1 sang USB-C sau khi hoàn thiện góc nhìn thứ nhất"
+	caption="Sau khi gắn cáp vào bottom case của Realforce R1"
+/>
 
 ### 6.2. Lắp lại vào Realforce R1
 
 Trước khi mod, Realforce R1 vẫn dùng dây USB cố định như thiết kế ban đầu.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/before.jpg`}
-		alt="Realforce R1 trước khi chuyển sang cổng USB-C tháo rời"
-	/>
-	<figcaption>
-		Trước khi chuyển USB-C: dây stock cố định, quen thuộc nhưng hơi bất tiện.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/realforce-r1-usb-c-conversion/before.jpg"
+	alt="Realforce R1 trước khi chuyển sang cổng USB-C tháo rời"
+	caption="Trước khi chuyển USB-C: dây stock cố định, quen thuộc nhưng hơi bất tiện."
+/>
 
 Sau khi thay bằng cáp chuyển, bàn phím có thể dùng dây USB-A to USB-C rời.
 
-<figure>
-	<div class="grid gap-3 sm:grid-cols-2">
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/shows-the-keyboard-with-a-type-c-cable-1.jpg`}
-			alt="Realforce R1 sau khi lắp dây USB-C tháo rời góc nhìn thứ nhất"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/realforce-r1-usb-c-conversion/shows-the-keyboard-with-a-type-c-cable-2.jpg`}
-			alt="Realforce R1 sau khi lắp dây USB-C tháo rời góc nhìn thứ hai"
-		/>
-	</div>
-	<figcaption>Sau khi hoàn thiện: phần dây đã gọn gàng hơn nhiều.</figcaption>
-</figure>
+<ContentFigure
+	columns={2}
+	images={[
+		{
+			src: '/static/realforce-r1-usb-c-conversion/shows-the-keyboard-with-a-type-c-cable-1.jpg',
+			alt: 'Realforce R1 sau khi lắp dây USB-C tháo rời góc nhìn thứ nhất'
+		},
+		{
+			src: '/static/realforce-r1-usb-c-conversion/shows-the-keyboard-with-a-type-c-cable-2.jpg',
+			alt: 'Realforce R1 sau khi lắp dây USB-C tháo rời góc nhìn thứ hai'
+		}
+	]}
+	caption="Sau khi hoàn thiện: phần dây đã gọn gàng hơn nhiều."
+/>
 
 ## 7. Chi phí và link linh kiện
 
@@ -513,15 +474,12 @@ Nếu bỏ PET sleeve hoặc tận dụng được dây/cos có sẵn thì có t
 phải mua lẻ từng món ở nhiều shop khác nhau thì tiền ship đôi khi còn đau hơn tiền linh
 kiện.
 
-<div class="not-prose my-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-950 dark:text-amber-100">
-	<p class="mb-2 font-semibold">🧾 Đúc kết về tiền nong</p>
-	<p>
-		Tự làm không hẳn rẻ hơn quá nhiều so với mua dây làm sẵn, nhất là nếu tính
-		cả thời gian đo dây, hàn dây và sửa sai. Giá trị chính là mình chủ động được
-		chiều dài, màu dây, đầu nối và quan trọng nhất là được trải nghiệm cách làm
-		một sợi dây custom 😉
-	</p>
-</div>
+<Callout variant="warning" title="🧾 Đúc kết về tiền nong">
+	Tự làm không hẳn rẻ hơn quá nhiều so với mua dây làm sẵn, nhất là nếu tính cả
+	thời gian đo dây, hàn dây và sửa sai. Giá trị chính là mình chủ động được
+	chiều dài, màu dây, đầu nối và quan trọng nhất là được trải nghiệm cách làm
+	một sợi dây custom 😉
+</Callout>
 
 Link sản phẩm tôi đã tham khảo/mua:
 
@@ -541,14 +499,11 @@ cần: **dây tháo rời, dễ thay, dễ cất và không phải cắt phá b�
 vẫn có thể tháo dây chuyển ra và cắm lại dây nguyên bản. Với các bàn phím cũ, nhất là đồ
 Topre, việc giữ khả năng phục hồi về zin là khá đáng giá.
 
-<div class="not-prose my-6 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm text-emerald-950 dark:text-emerald-100">
-	<p class="mb-2 font-semibold">🤭 Kết luận rất thực tế</p>
-	<p>
-		Nếu bạn thích sạch đẹp tuyệt đối, mua dây làm sẵn có thể hợp lý hơn. Nếu bạn
-		thích tự vọc, chấp nhận đo dây, hàn dây và thỉnh thoảng tự hỏi “mình đang
-		làm gì với cuộc đời mình vậy”, thì bản mod này khá vui.
-	</p>
-</div>
+<Callout variant="summary" title="🤭 Kết luận rất thực tế">
+	Nếu bạn thích sạch đẹp tuyệt đối, mua dây làm sẵn có thể hợp lý hơn. Nếu bạn
+	thích tự vọc, chấp nhận đo dây, hàn dây và thỉnh thoảng tự hỏi “mình đang làm
+	gì với cuộc đời mình vậy”, thì bản mod này khá vui.
+</Callout>
 
 Quan trọng nhất: **đo lại trước khi cắm điện**. Một sợi dây custom làm xong có thể rất
 vui, nhưng một chiếc Realforce chết vì đấu nhầm nguồn thì không vui chút nào.

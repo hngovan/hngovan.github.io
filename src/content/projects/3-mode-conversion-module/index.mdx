@@ -30,6 +30,8 @@ sections:
       - 'Giữ lại khả năng dùng dây khi cần test hoặc sạc'
 ---
 
+import Callout from '@/components/callout.astro'
+
 Ý tưởng ban đầu khá đơn giản: tôi có một số bàn phím cũ như Realforce R1,
 Realforce R2. Phần lớn chúng là bàn phím có dây cố định, mỗi lần muốn dùng lại
 phải cắm thẳng dây từ bàn phím vào PC. Việc này khá bất tiện nếu muốn đổi qua
@@ -111,14 +113,11 @@ lắp thực tế như sau:
 Với chế độ Wireless 2.4G, LED tím thực chất là do hai màu sáng cùng lúc:
 **xanh dương + đỏ = tím**.
 
-<div class="not-prose my-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-950 dark:text-amber-100">
-	<p class="mb-2 font-semibold">⚠️ Lưu ý khi dùng USB có dây</p>
-	<p>
-		Khi chuyển sang chế độ có dây, cần cắm dây USB-A to Type-C vào cổng Type-C
-		phía sau box. Nếu chỉ chọn mode USB bằng phím tắt nhưng không cắm dây này,
-		máy tính sẽ không nhận bàn phím.
-	</p>
-</div>
+<Callout variant="warning" title="⚠️ Lưu ý khi dùng USB có dây">
+	Khi chuyển sang chế độ có dây, cần cắm dây USB-A to Type-C vào cổng Type-C
+	phía sau box. Nếu chỉ chọn mode USB bằng phím tắt nhưng không cắm dây này, máy
+	tính sẽ không nhận bàn phím.
+</Callout>
 
 ## 2. Điều kiện trước khi DIY
 
@@ -135,14 +134,11 @@ kiểm tra các điểm sau:
 - Thời lượng pin phụ thuộc trực tiếp vào dung lượng pin và mức tiêu thụ của bàn
   phím. Không nên kỳ vọng giống bàn phím wireless native.
 
-<div class="not-prose my-6 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-950 dark:text-red-100">
-	<p class="mb-2 font-semibold">🚨 Cảnh báo trước khi hàn</p>
-	<p>
-		Nếu chưa nắm được dây USB và sơ đồ mạch, nên dừng lại ở bước này hoặc nhờ
-		người có kinh nghiệm kiểm tra. Cắm nhầm hoặc hàn nhầm dây có thể làm hỏng
-		module hoặc cháy IC trên PCB bàn phím.
-	</p>
-</div>
+<Callout variant="danger" title="🚨 Cảnh báo trước khi hàn">
+	Nếu chưa nắm được dây USB và sơ đồ mạch, nên dừng lại ở bước này hoặc nhờ
+	người có kinh nghiệm kiểm tra. Cắm nhầm hoặc hàn nhầm dây có thể làm hỏng
+	module hoặc cháy IC trên PCB bàn phím.
+</Callout>
 
 <figure>
 	<img
@@ -219,14 +215,11 @@ Phần mềm tùy chỉnh có thể dùng để:
 - Đặt thời gian tự tắt khi không hoạt động, tối thiểu khoảng 10 phút.
 - Remap một số tổ hợp phím tắt.
 
-<div class="not-prose my-6 rounded-2xl border border-sky-500/40 bg-sky-500/10 p-4 text-sm text-sky-950 dark:text-sky-100">
-	<p class="mb-2 font-semibold">💡 Khuyến nghị</p>
-	<p>
-		Nếu chỉ cần dùng module ở mức cơ bản, tôi khuyên chỉ nên đổi tên Bluetooth
-		và chỉnh thời gian tự tắt. Các phần cấu hình sâu hơn nên để mặc định nếu
-		chưa hiểu rõ tác dụng của từng mục.
-	</p>
-</div>
+<Callout variant="tip" title="💡 Khuyến nghị">
+	Nếu chỉ cần dùng module ở mức cơ bản, tôi khuyên chỉ nên đổi tên Bluetooth và
+	chỉnh thời gian tự tắt. Các phần cấu hình sâu hơn nên để mặc định nếu chưa
+	hiểu rõ tác dụng của từng mục.
+</Callout>
 
 <figure>
 	<img
@@ -411,14 +404,11 @@ có phần khuôn để cố định pin và lỗ tròn để bắt công tắc 
   	BOX-BOT.STL
   </a>
 
-<div class="not-prose my-6 rounded-2xl border border-sky-500/40 bg-sky-500/10 p-4 text-sm text-sky-950 dark:text-sky-100">
-	<p class="mb-2 font-semibold">💡 Lưu ý khi in lại box</p>
-	<p>
-		Nên kiểm tra kích thước thực tế của công tắc, đầu USB-A và Type-C trước khi
-		in. Các linh kiện module nhỏ từ nhiều shop có thể lệch kích thước một chút.
-		Có thể dùng mỏ hàn hoặc các công cụ mài dữa nếu có để nới rộng ra cho vừa
-	</p>
-</div>
+<Callout variant="tip" title="💡 Lưu ý khi in lại box">
+	Nên kiểm tra kích thước thực tế của công tắc, đầu USB-A và Type-C trước khi
+	in. Các linh kiện module nhỏ từ nhiều shop có thể lệch kích thước một chút. Có
+	thể dùng mỏ hàn hoặc các công cụ mài dữa nếu có để nới rộng ra cho vừa
+</Callout>
 
 ## 6. Lắp LED trạng thái
 
@@ -470,13 +460,10 @@ kẹt hoặc khó thao tác.
 Phần bottom của box chứa các linh kiện cần tiếp xúc từ bên ngoài: USB-A để cắm
 bàn phím, Type-C để sạc hoặc dùng USB mode, pin Li-Po và nút nguồn.
 
-<div class="not-prose my-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-950 dark:text-amber-100">
-	<p class="mb-2 font-semibold">⚠️ Lưu ý về nút nguồn</p>
-	<p>
-		Trong ảnh, nút nguồn gốc đi kèm module đã được cắt bỏ để thay bằng nút nguồn
-		kim loại mới gắn ra ngoài box.
-	</p>
-</div>
+<Callout variant="warning" title="⚠️ Lưu ý về nút nguồn">
+	Trong ảnh, nút nguồn gốc đi kèm module đã được cắt bỏ để thay bằng nút nguồn
+	kim loại mới gắn ra ngoài box.
+</Callout>
 
 <figure>
 	<img
@@ -546,13 +533,10 @@ Tôi khuyến nghị test theo thứ tự này:
 7. Thử chuyển mode bằng `Ctrl + Alt + Shift + Q/W/E`.
 8. Thử chuyển nhóm thiết bị bằng `Ctrl + Alt + Shift + 1-8`.
 
-<div class="not-prose my-6 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-950 dark:text-red-100">
-	<p class="mb-2 font-semibold">🚨 Nếu USB mode chưa hoạt động</p>
-	<p>
-		Không nên test tiếp Bluetooth hoặc 2.4G vội. Hãy kiểm tra lại bốn dây USB
-		trước: VCC, GND, D+ và D-.
-	</p>
-</div>
+<Callout variant="danger" title="🚨 Nếu USB mode chưa hoạt động">
+	Không nên test tiếp Bluetooth hoặc 2.4G vội. Hãy kiểm tra lại bốn dây USB
+	trước: VCC, GND, D+ và D-.
+</Callout>
 
 ### 9.2. Test trạng thái sạc
 
@@ -600,14 +584,11 @@ Nhưng khi thử thực tế thì cổng Type-C phụ và Dây USB-A gốc này 
 Vì vậy tôi đã sửa lại thiết kế box: bỏ cổng Type-C bên cạnh, chỉ giữ USB-A để
 cắm bàn phím và cổng Type-C phía sau cho sạc/USB mode.
 
-<div class="not-prose my-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-950 dark:text-amber-100">
-	<p class="mb-2 font-semibold">⚠️ Ghi chú sau khi build</p>
-	<p>
-		Nếu muốn đổi USB-A sang Type-C, cần kiểm tra kỹ pinout, chiều cắm, đường
-		VBUS/GND và D+/D-. Không nên giả định chỉ cần nối dây từ USB-A sang Type-C
-		là chắc chắn hoạt động.
-	</p>
-</div>
+<Callout variant="warning" title="⚠️ Ghi chú sau khi build">
+	Nếu muốn đổi USB-A sang Type-C, cần kiểm tra kỹ pinout, chiều cắm, đường
+	VBUS/GND và D+/D-. Không nên giả định chỉ cần nối dây từ USB-A sang Type-C là
+	chắc chắn hoạt động.
+</Callout>
 
 <figure>
 	<div class="grid gap-3 sm:grid-cols-2">
@@ -639,15 +620,12 @@ Chi phí ước tính cho bản build này:
 | Phụ kiện linh tinh khác  |   ~30.000-50.000đ |
 | Tổng ước tính            | ~450.000-500.000đ |
 
-<div class="not-prose my-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-950 dark:text-amber-100">
-	<p class="mb-2 font-semibold">🤔 Đúc kết hơi đau ví</p>
-	<p>
-		Với chi phí xấp xỉ 500.000đ, thực tế bạn đã có thể mua một bàn phím có sẵn 3
-		chế độ kết nối. Vì vậy bài viết này chủ yếu mang tính tham khảo và ghi lại
-		quá trình vọc vạch, không khuyến khích làm theo dưới mọi hình thức nếu mục
-		tiêu chỉ là tiết kiệm tiền hoặc cần một giải pháp ổn định.
-	</p>
-</div>
+<Callout variant="warning" title="🤔 Đúc kết hơi đau ví">
+	Với chi phí xấp xỉ 500.000đ, thực tế bạn đã có thể mua một bàn phím có sẵn 3
+	chế độ kết nối. Vì vậy bài viết này chủ yếu mang tính tham khảo và ghi lại quá
+	trình vọc vạch, không khuyến khích làm theo dưới mọi hình thức nếu mục tiêu
+	chỉ là tiết kiệm tiền hoặc cần một giải pháp ổn định.
+</Callout>
 
 ### 10.4. Tóm tắt trạng thái sử dụng
 

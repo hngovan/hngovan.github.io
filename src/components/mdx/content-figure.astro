@@ -1,0 +1,59 @@
+---
+import { withBasePath } from '@/lib/utils'
+
+type FigureImage = {
+	src: string
+	alt: string
+}
+
+interface Props {
+	src?: string
+	alt?: string
+	caption?: string
+	images?: FigureImage[]
+	columns?: 1 | 2 | 3 | 4
+	class?: string
+}
+
+const {
+	src,
+	alt = '',
+	caption,
+	images,
+	columns = 2,
+	class: className
+} = Astro.props
+
+const items = images ?? (src ? [{ src, alt }] : [])
+
+const columnClassMap: Record<number, string> = {
+	1: '',
+	2: 'sm:grid-cols-2',
+	3: 'sm:grid-cols-3',
+	4: 'sm:grid-cols-2 lg:grid-cols-4'
+}
+
+const resolveSrc = (value: string) =>
+	value.startsWith('http://') || value.startsWith('https://')
+		? value
+		: withBasePath(value)
+---
+
+<figure class={className}>
+	{
+		items.length === 1 ? (
+			<img src={resolveSrc(items[0].src)} alt={items[0].alt} />
+		) : (
+			<div class={`grid gap-3 ${columnClassMap[columns] ?? columnClassMap[2]}`}>
+				{items.map(item => (
+					<img
+						src={resolveSrc(item.src)}
+						alt={item.alt}
+						class="aspect-video w-full rounded-xl object-cover"
+					/>
+				))}
+			</div>
+		)
+	}
+	{caption && <figcaption>{caption}</figcaption>}
+</figure>
