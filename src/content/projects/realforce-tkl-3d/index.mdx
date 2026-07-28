@@ -1,9 +1,29 @@
 ---
-name: 'Realforce TKL 3D'
-description: 'Dự án in 3D case TKL cho Realforce R1/R2: từ vỏ zin bị nứt, sai file plate, in hụt lần đầu cho tới bản case PETG dùng được.'
+name: 'Realforce TKL 3D Printed Case'
+description: 'Build log in 3D case Realforce TKL cho Realforce R1/R2: thiết kế vỏ PETG, sửa file plate, fit lòng Topre và chia sẻ file STL tham khảo.'
 image: '/static/realforce-tkl-3d/CAD-v1-1.webp'
 routeSlug: 'realforce-tkl-3d'
-tags: ['realforce', 'tkl', 'topre', 'print-3d', 'ec']
+tags:
+  [
+    'realforce',
+    'realforce-in-3d',
+    '3d-printed-case',
+    'tkl',
+    'topre',
+    'print-3d',
+    'ec'
+  ]
+keywords:
+  [
+    'realforce in 3d',
+    'realforce 3d printed case',
+    'realforce tkl 3d case',
+    'in 3d case realforce',
+    'realforce r1 r2 case',
+    'topre 3d printed case',
+    'realforce stl file',
+    'case PETG cho Realforce'
+  ]
 startDate: '2026-07-23'
 status: 'Completed'
 relatedPosts: ['realforce-tkl-3d']
@@ -34,6 +54,10 @@ sections:
 import Callout from '@/components/callout.astro'
 import ContentFigure from '@/components/mdx/content-figure.astro'
 
+Đây là build log **Realforce TKL 3D printed case**: tôi thử **in 3D case cho Realforce**
+R1/R2 bằng PETG, đưa cổng USB ra daughterboard/Type-C, rồi ghi lại cả phần sai file,
+fit lòng Topre, chi phí và file STL tham khảo.
+
 Ý tưởng ban đầu đến khá đơn giản: tôi mua một chiếc **Realforce R2 màu beige**
 trên chợ cá [Goofish](https://www.goofish.com/). Nhận hàng xong thì phát hiện
 case bị nứt và cấn vài vết. Về mặt thẩm mỹ thì còn nhắm mắt bỏ qua được, nhưng
@@ -56,9 +80,9 @@ Thế là tôi bắt đầu nghĩ tới chuyện: tại mình lại không thử
 	caption="Vỏ zin bị nứt/cấn. Nhìn thì vẫn dùng được, nhưng tiếng nhựa lạo xạo khi gõ thì đúng kiểu “không cứu”."
 />
 
-## 1. Bắt đầu từ file plate và một niềm tin hơi mong manh
+## 1. Realforce TKL 3D case: bắt đầu từ file plate và một niềm tin hơi mong manh
 
-### 1.1. Tìm file tham khảo
+### 1.1. Tìm file plate Realforce R1/R2 tham khảo
 
 Tôi có tìm được một file plate Realforce trên GitHub:
 [KB-Realforce_R1_plate](https://github.com/jerryxrj/KB-Realforce_R1_plate).
@@ -67,7 +91,7 @@ Tôi có tìm được một file plate Realforce trên GitHub:
 Nghe rất hợp lý cho đến khi thực tế vả một phát khá đau: file plate ban đầu sai
 thông số. Nhưng chuyện đó lúc đầu tôi chưa biết, nên vẫn in thử, và tất nhiên mọi sai lầm đều trả giá bằng tiền.
 
-### 1.2. Nhờ maker vẽ case
+### 1.2. Nhờ maker vẽ case Realforce TKL in 3D
 
 Vì tôi không có chuyên môn CAD/cơ khí, tôi nhờ một maker người Lào vẽ case. Anh
 này làm khá nhanh, tùy độ phức tạp mà khoảng 2 ngày làm việc đã trả file. Nhanh
@@ -81,22 +105,22 @@ Bạn có thể liên hệ maker tại đây:
 	images={[
 		{
 			src: '/static/realforce-tkl-3d/CAD-v1-1.webp',
-			alt: 'CAD v1 của case Realforce TKL góc nhìn thứ nhất'
+			alt: 'CAD v1 của Realforce TKL 3D printed case góc nhìn thứ nhất'
 		},
 		{
 			src: '/static/realforce-tkl-3d/CAD-v1-2.webp',
-			alt: 'CAD v1 của case Realforce TKL góc nhìn thứ hai'
+			alt: 'CAD v1 của Realforce TKL 3D printed case góc nhìn thứ hai'
 		}
 	]}
 />
 
 <ContentFigure
 	src="/static/realforce-tkl-3d/CAD-v1-3.webp"
-	alt="CAD v1 của case Realforce TKL góc nhìn thứ ba"
+	alt="CAD v1 của Realforce TKL 3D printed case góc nhìn thứ ba"
 	caption="Bản dựng đầu tiên."
 />
 
-## 2. Chuẩn bị dây và daughterboard
+## 2. Chuẩn bị dây USB và daughterboard cho Realforce TKL
 
 ### 2.1. Daughterboard
 
@@ -107,7 +131,7 @@ hơn.
 
 <ContentFigure
 	src="/static/realforce-tkl-3d/dtb-ai03.jpg"
-	alt="Ai03 Unified Daughterboard dùng cho case Realforce TKL in 3D"
+	alt="Ai03 Unified Daughterboard dùng cho Realforce TKL 3D printed case"
 	caption="Ai03 Unified Daughterboard dùng để đưa cổng USB ra ngoài case."
 />
 
@@ -207,7 +231,7 @@ vào daughterboard.
 	caption="Đấu thẳng ra Type-C đầu cái cũng được, miễn là không đảo dây data."
 />
 
-## 3. Bản in đầu tiên
+## 3. Bản in 3D case Realforce TKL đầu tiên
 
 Sau khoảng 3 ngày thì case in 3D về. Bản đầu tiên dùng PETG, vỏ khá dày, tiền
 nhựa in rơi vào khoảng **600k**. Cầm lên khá đầm.
@@ -303,7 +327,7 @@ lọt. Không có phép màu nào ở đây cả 🥲.
 	caption="Bản v1 bị hẹp lòng. top case hơi cao, làm chân keycap không lộ nhiều. Phần này tùy gu, nhưng với tôi thì cần chỉnh lại."
 />
 
-## 4. Tìm ra nguyên nhân và in lại lần hai
+## 4. Sửa file plate và in lại Realforce 3D printed case lần hai
 
 Sau vài ngày dò nguyên nhân, maker [Facebook Lê Hạ Thư](https://www.facebook.com/hathu.le.526438/). tìm được file Realforce R1 của maker **Sho**: [86u/87u 2023 Sho DWG](https://github.com/4xgk3/Keyboard-plate-files/blob/main/86u7u_2023_sho.dwg).
 Từ đó mới phát hiện file plate ban đầu sai thông số. Case được chỉnh lại và đem in lần hai.
@@ -474,7 +498,7 @@ nhất là không còn tiếng vỏ nứt lạo xạo như ban đầu.
 Các clip dưới đây chỉ để tham khảo tương đối. Âm gõ còn phụ thuộc dome, stab,
 keycap, mặt bàn, mic, phòng và cả tâm trạng người nghe hôm đó nữa.
 
-### 6.1. Case in 3D
+### 6.1. Sound test Realforce với case in 3D
 
 <figure>
 	<video
@@ -552,9 +576,9 @@ keycap, mặt bàn, mic, phòng và cả tâm trạng người nghe hôm đó n�
 	</figcaption>
 </figure>
 
-## 7. File 3D và link mua đồ
+## 7. File STL Realforce TKL 3D và link mua đồ
 
-### 7.1. File in 3D
+### 7.1. File STL in 3D case Realforce TKL
 
 File hoàn thiện cuối cùng nằm ở repo của Catto:
 https://github.com/4xgk3/CattoKeeb-RF

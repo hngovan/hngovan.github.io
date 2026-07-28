@@ -13,6 +13,7 @@ const blog = defineCollection({
 			order: z.number().optional(),
 			image: image().optional(),
 			tags: z.array(z.string()).optional(),
+			keywords: z.array(z.string()).optional(),
 			authors: z.array(z.string()).optional(),
 			draft: z.boolean().optional()
 		})
@@ -41,6 +42,7 @@ const projects = defineCollection({
 			name: z.string(),
 			description: z.string(),
 			tags: z.array(z.string()),
+			keywords: z.array(z.string()).optional(),
 			image: z.string().startsWith('/').or(z.url()).or(image()).optional(),
 			routeSlug: z.string().optional(),
 			startDate: z.coerce.date().optional(),
