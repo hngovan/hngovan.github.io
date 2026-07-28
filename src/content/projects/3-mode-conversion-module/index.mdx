@@ -31,6 +31,7 @@ sections:
 ---
 
 import Callout from '@/components/callout.astro'
+import ContentFigure from '@/components/mdx/content-figure.astro'
 
 Ý tưởng ban đầu khá đơn giản: tôi có một số bàn phím cũ như Realforce R1,
 Realforce R2. Phần lớn chúng là bàn phím có dây cố định, mỗi lần muốn dùng lại
@@ -65,16 +66,11 @@ layout phổ biến như 81, 67, 60. Các phím multimedia và ba đèn lock tr�
 phím vẫn có thể được chuyển qua module. Tuy nhiên, chế độ có dây cũng đi qua
 chip chuyển đổi, không phải kiểu nối USB trực tiếp bypass module hoàn toàn.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/module-feature-overview.png`}
-		alt="Mô tả chức năng của module chuyển đổi bàn phím có dây sang Bluetooth và 2.4G"
-	/>
-	<figcaption>
-		Module hỗ trợ USB, Bluetooth 5.3 và wireless 2.4G. Bluetooth và 2.4G có thể
-		lưu nhiều thiết bị để chuyển nhanh.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/module-feature-overview.png"
+	alt="Mô tả chức năng của module chuyển đổi bàn phím có dây sang Bluetooth và 2.4G"
+	caption="Module hỗ trợ USB, Bluetooth 5.3 và wireless 2.4G. Bluetooth và 2.4G có thể lưu nhiều thiết bị để chuyển nhanh."
+/>
 
 ### 1.2. Chuyển mode và chuyển thiết bị
 
@@ -89,15 +85,11 @@ Các tổ hợp phím chính:
 - `Ctrl + Alt + Shift + E`: chuyển sang Wireless 2.4G.
 - `Ctrl + Alt + Shift + 1` đến `8`: chuyển nhóm thiết bị.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/module-shortcuts.png`}
-		alt="Tổ hợp phím chuyển thiết bị của module bàn phím 3 mode"
-	/>
-	<figcaption>
-		Bảng tổ hợp phím chuyển mode và chuyển nhóm thiết bị từ người bán.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/module-shortcuts.png"
+	alt="Tổ hợp phím chuyển thiết bị của module bàn phím 3 mode"
+	caption="Bảng tổ hợp phím chuyển mode và chuyển nhóm thiết bị từ người bán."
+/>
 
 ### 1.3. Trạng thái đèn kết nối
 
@@ -140,13 +132,11 @@ kiểm tra các điểm sau:
 	module hoặc cháy IC trên PCB bàn phím.
 </Callout>
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/module-diy-notes.png`}
-		alt="Lưu ý khi DIY module bàn phím có dây sang không dây"
-	/>
-	<figcaption>Ảnh lưu ý từ người bán trên Taobao.</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/module-diy-notes.png"
+	alt="Lưu ý khi DIY module bàn phím có dây sang không dây"
+	caption="Ảnh lưu ý từ người bán trên Taobao."
+/>
 
 ### 2.2. Giới hạn của cách làm này
 
@@ -165,44 +155,39 @@ có thể giảm đáng kể.
 Đây là bộ module tôi dùng:
 https://item.taobao.com/item.htm?id=728976782961&skuId=5064767313028
 
-<figure>
-	<div class="grid gap-3 sm:grid-cols-2">
-		<img
-			src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/original_product-1.jpg`}
-			alt="Ảnh sản phẩm thực tế của module chuyển đổi 3 mode"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/original_product-2.jpg`}
-			alt="Ảnh sản phẩm thực tế của phụ kiện đi kèm module chuyển đổi 3 mode"
-		/>
-	</div>
-	<figcaption>Hình ảnh sản phẩm thực tế sau khi order từ Taobao về.</figcaption>
-</figure>
+<ContentFigure
+	columns={2}
+	images={[
+		{
+			src: '/static/3-mode-conversion-module/original_product-1.jpg',
+			alt: 'Ảnh sản phẩm thực tế của module chuyển đổi 3 mode'
+		},
+		{
+			src: '/static/3-mode-conversion-module/original_product-2.jpg',
+			alt: 'Ảnh sản phẩm thực tế của phụ kiện đi kèm module chuyển đổi 3 mode'
+		}
+	]}
+	caption="Hình ảnh sản phẩm thực tế sau khi order từ Taobao về."
+/>
 
 Mạch có kích thước khoảng 20 × 40 × 5 mm, đủ nhỏ để đặt trong một box rời hoặc
 trong một số vỏ bàn phím còn dư không gian.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/module-pcb-size.png`}
-		alt="Kích thước và hai mặt của bo mạch chuyển đổi bàn phím 3 mode"
-	/>
-	<figcaption>
-		Hai mặt của PCB. Kích thước được ghi là 20 × 40 × 5 mm.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/module-pcb-size.png"
+	alt="Kích thước và hai mặt của bo mạch chuyển đổi bàn phím 3 mode"
+	caption="Hai mặt của PCB. Kích thước được ghi là 20 × 40 × 5 mm."
+/>
 
 ### 3.2. Tài liệu đi kèm và phần mềm tùy chỉnh
 
 Module đi kèm một tờ hướng dẫn sử dụng và QR code để tải phần mềm tùy chỉnh.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/user-manual-included.jpg`}
-		alt="Giấy hướng dẫn sử dụng kèm QR code"
-	/>
-	<figcaption>Giấy hướng dẫn sử dụng kèm theo module.</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/user-manual-included.jpg"
+	alt="Giấy hướng dẫn sử dụng kèm QR code"
+	caption="Giấy hướng dẫn sử dụng kèm theo module."
+/>
 
 Vấn đề là QR code dẫn tới dịch vụ lưu trữ nội địa Trung Quốc, cần đăng nhập tài
 khoản mới tải được. Tôi vô tình thấy một video hướng dẫn làm
@@ -221,21 +206,17 @@ Phần mềm tùy chỉnh có thể dùng để:
 	hiểu rõ tác dụng của từng mục.
 </Callout>
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/app-setting.jpg`}
-		alt="Giao diện phần mềm tùy chỉnh module"
-	/>
-	<figcaption>Giao diện phần mềm tùy chỉnh module.</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/app-setting.jpg"
+	alt="Giao diện phần mềm tùy chỉnh module"
+	caption="Giao diện phần mềm tùy chỉnh module."
+/>
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/rename-bluetooth.jpg`}
-		alt="Giao diện đổi tên Bluetooth của module"
-	/>
-	<figcaption>Sau khi đổi tên Bluetooth trong phần mềm.</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/rename-bluetooth.jpg"
+	alt="Giao diện đổi tên Bluetooth của module"
+	caption="Sau khi đổi tên Bluetooth trong phần mềm."
+/>
 
 ### 3.3. Các chân cần quan tâm trên PCB
 
@@ -248,27 +229,17 @@ Các cụm chân chính:
 - `STATUS`: chân LED trạng thái, thường dùng để đưa LED ra ngoài vỏ.
 - `IPEX antenna`: cổng anten ngoài nếu cần cải thiện tín hiệu.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/module-front-status-led.png`}
-		alt="Mặt trước bo mạch với vị trí LED trạng thái, anten, cổng sạc và cổng bàn phím"
-	/>
-	<figcaption>
-		Mặt trước của PCB có anten onboard, chân pin, chân switch, cổng sạc, cổng
-		bàn phím và LED trạng thái.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/module-front-status-led.png"
+	alt="Mặt trước bo mạch với vị trí LED trạng thái, anten, cổng sạc và cổng bàn phím"
+	caption="Mặt trước của PCB có anten onboard, chân pin, chân switch, cổng sạc, cổng bàn phím và LED trạng thái."
+/>
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/module-back-pinout.png`}
-		alt="Mặt sau bo mạch với ký hiệu pinout cho Power, Keyboard, Battery, Switch và Status"
-	/>
-	<figcaption>
-		Mặt sau in rõ pinout. Khi hàn nên đối chiếu theo ký hiệu này thay vì đoán
-		theo màu dây.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/module-back-pinout.png"
+	alt="Mặt sau bo mạch với ký hiệu pinout cho Power, Keyboard, Battery, Switch và Status"
+	caption="Mặt sau in rõ pinout. Khi hàn nên đối chiếu theo ký hiệu này thay vì đoán theo màu dây."
+/>
 
 ## 4. Linh kiện sử dụng
 
@@ -287,26 +258,17 @@ Danh sách linh kiện tôi dùng cho bản build này:
 - Feet 8mm, trụ cấy ren M2 dài 5mm, ốc M2 x 5mm.
 - Trạm hàn, thiếc hàn, kìm cắt, keo nến.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/module-kit-package.png`}
-		alt="Bộ module chuyển đổi kèm dây, receiver 2.4G, Type-C và USB-A"
-	/>
-	<figcaption>
-		Bộ module đi kèm dây, receiver 2.4G, đầu Type-C và đầu USB-A.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/module-kit-package.png"
+	alt="Bộ module chuyển đổi kèm dây, receiver 2.4G, Type-C và USB-A"
+	caption="Bộ module đi kèm dây, receiver 2.4G, đầu Type-C và đầu USB-A."
+/>
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/module-wiring-kit.png`}
-		alt="Sơ đồ dây của module gồm Type-C, USB-A, công tắc nguồn và dây pin"
-	/>
-	<figcaption>
-		Cách chia dây tổng thể: Type-C cho sạc/USB mode, USB-A để cắm bàn phím, dây
-		pin 3.7V và cụm công tắc nguồn.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/module-wiring-kit.png"
+	alt="Sơ đồ dây của module gồm Type-C, USB-A, công tắc nguồn và dây pin"
+	caption="Cách chia dây tổng thể: Type-C cho sạc/USB mode, USB-A để cắm bàn phím, dây pin 3.7V và cụm công tắc nguồn."
+/>
 
 ### 4.2. Link mua linh kiện
 
@@ -333,61 +295,50 @@ Tôi làm box rời gồm hai phần: top và bottom. Mục tiêu là đặt đ�
 USB-A, Type-C, nút nguồn và LED trạng thái vào cùng một hộp nhỏ, đồng thời vẫn
 dễ mở ra nếu cần sửa chữa.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/box-3d-1.webp`}
-		alt="Bản CAD box module chuyển đổi 3 mode với lỗ cắm sạc phía sau"
-	/>
-	<figcaption>Lỗ cắm sạc được đưa ra phía sau box.</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/box-3d-1.webp"
+	alt="Bản CAD box module chuyển đổi 3 mode với lỗ cắm sạc phía sau"
+	caption="Lỗ cắm sạc được đưa ra phía sau box."
+/>
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/box-3d-3.webp`}
-		alt="Bản CAD box module chuyển đổi 3 mode với các lỗ I/O phía trước"
-	/>
-	<figcaption>
-		Các lỗ được bố trí cho USB-A, Type-C, nút nguồn và LED trạng thái.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/box-3d-3.webp"
+	alt="Bản CAD box module chuyển đổi 3 mode với các lỗ I/O phía trước"
+	caption="Các lỗ được bố trí cho USB-A, Type-C, nút nguồn và LED trạng thái."
+/>
 
 ### 5.2. Bên trong box
 
 có phần khuôn để cố định pin và lỗ tròn để bắt công tắc mini vào
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/box-inside-3d.webp`}
-		alt="Bản CAD box module chuyển đổi 3 mode bên trong có khuôn để đặt pin + lỗ để đặt công tắc vào"
-	/>
-	<figcaption>Phía bên trong box.</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/box-inside-3d.webp"
+	alt="Bản CAD box module chuyển đổi 3 mode bên trong có khuôn để đặt pin + lỗ để đặt công tắc vào"
+	caption="Phía bên trong box."
+/>
 
 ### 5.3. Gờ gá mạch và đáy box
 
-<figure>
-	<div class="grid gap-3 sm:grid-cols-2">
-		<img
-			src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/box-3d-2.webp`}
-			alt="Bản CAD phần nắp trên của box module 3 mode"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/box-3d-4.webp`}
-			alt="Bản CAD gờ gá mạch bên trong nắp trên"
-		/>
-	</div>
-	<figcaption>Nắp phía trên được thiết kế gờ để gá mạch vào.</figcaption>
-</figure>
+<ContentFigure
+	columns={2}
+	images={[
+		{
+			src: '/static/3-mode-conversion-module/box-3d-2.webp',
+			alt: 'Bản CAD phần nắp trên của box module 3 mode'
+		},
+		{
+			src: '/static/3-mode-conversion-module/box-3d-4.webp',
+			alt: 'Bản CAD gờ gá mạch bên trong nắp trên'
+		}
+	]}
+	caption="Nắp phía trên được thiết kế gờ để gá mạch vào."
+/>
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/box-3d-5.webp`}
-		alt="Bản CAD phần đáy box module 3 mode"
-	/>
-	<figcaption>
-		Phần đáy có 4 lỗ bắt ốc M2 x 5mm và 4 vị trí tròn để gắn feet 8mm.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/box-3d-5.webp"
+	alt="Bản CAD phần đáy box module 3 mode"
+	caption="Phần đáy có 4 lỗ bắt ốc M2 x 5mm và 4 vị trí tròn để gắn feet 8mm."
+/>
 
 ### 5.4. File STL
 
@@ -418,21 +369,17 @@ Tôi bắt đầu bằng LED 3 chân để đưa trạng thái pin/kết nối r
 nên test trước khi lắp vào box, vì sau khi cố định bằng thiếc hoặc keo thì sửa
 sẽ khó hơn.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/assem-led-2.jpg`}
-		alt="Lắp LED 3 chân vào vị trí trên box"
-	/>
-	<figcaption>Ướm LED 3 chân vào vị trí trên vỏ để kiểm tra độ vừa.</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/assem-led-2.jpg"
+	alt="Lắp LED 3 chân vào vị trí trên box"
+	caption="Ướm LED 3 chân vào vị trí trên vỏ để kiểm tra độ vừa."
+/>
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/assem-led-1.jpg`}
-		alt="Test LED trạng thái sau khi lắp vào box"
-	/>
-	<figcaption>Test LED sáng trước khi hàn dây cố định vào module.</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/assem-led-1.jpg"
+	alt="Test LED trạng thái sau khi lắp vào box"
+	caption="Test LED sáng trước khi hàn dây cố định vào module."
+/>
 
 ### 6.2. Cắt chân và hàn dây LED
 
@@ -443,15 +390,11 @@ PCB sang LED. Đoạn này không bắt buộc phải cắt ngắn; nếu muốn
 Vì PCB được gắn ở nắp trên, tôi ưu tiên hàn dây rời để khi tháo nắp ra không bị
 kẹt hoặc khó thao tác.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/assem-led-final.jpg`}
-		alt="LED đã được cắt chân và hàn dây hoàn chỉnh"
-	/>
-	<figcaption>
-		LED sau khi cắt chân, hàn dây và chuẩn bị cố định trong box.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/assem-led-final.jpg"
+	alt="LED đã được cắt chân và hàn dây hoàn chỉnh"
+	caption="LED sau khi cắt chân, hàn dây và chuẩn bị cố định trong box."
+/>
 
 ## 7. Lắp pin, USB-A, Type-C và nút nguồn
 
@@ -465,16 +408,11 @@ bàn phím, Type-C để sạc hoặc dùng USB mode, pin Li-Po và nút nguồn
 	kim loại mới gắn ra ngoài box.
 </Callout>
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/assem-pin-usb-type-c-button.jpg`}
-		alt="Lắp pin, USB-A, Type-C và nút nguồn vào đáy box"
-	/>
-	<figcaption>
-		Pin, USB-A, Type-C và nút nguồn được đặt vào phần đáy box trước khi nối với
-		PCB.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/assem-pin-usb-type-c-button.jpg"
+	alt="Lắp pin, USB-A, Type-C và nút nguồn vào đáy box"
+	caption="Pin, USB-A, Type-C và nút nguồn được đặt vào phần đáy box trước khi nối với PCB."
+/>
 
 ### 7.2. Lưu ý khi hàn
 
@@ -491,32 +429,22 @@ bàn phím, Type-C để sạc hoặc dùng USB mode, pin Li-Po và nút nguồn
 PCB được cố định vào phần top của box. Cách này giúp dây từ PCB đi xuống phần
 bottom gọn hơn, đồng thời giữ mặt anten của module ít bị che nhất có thể.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/assem-pcb-to-box-top.jpg`}
-		alt="Gắn PCB module 3 mode vào phần nắp trên của box"
-	/>
-	<figcaption>
-		PCB sau khi được đặt vào phần nắp trên. Nên giữ khu vực anten thoáng nhất có
-		thể.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/assem-pcb-to-box-top.jpg"
+	alt="Gắn PCB module 3 mode vào phần nắp trên của box"
+	caption="PCB sau khi được đặt vào phần nắp trên. Nên giữ khu vực anten thoáng nhất có thể."
+/>
 
 ### 8.2. Nối top và bottom
 
 Sau khi nối dây giữa top và bottom, nên kiểm tra lại bằng USB mode trước. Nếu
 USB mode nhận bàn phím ổn, tiếp tục test Bluetooth và 2.4G.
 
-<figure>
-	<img
-		src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/assem-compled.jpg`}
-		alt="Module chuyển đổi 3 mode sau khi lắp hoàn chỉnh"
-	/>
-	<figcaption>
-		Module sau khi nối dây giữa PCB, pin, USB-A, Type-C, nút nguồn và LED trạng
-		thái.
-	</figcaption>
-</figure>
+<ContentFigure
+	src="/static/3-mode-conversion-module/assem-compled.jpg"
+	alt="Module chuyển đổi 3 mode sau khi lắp hoàn chỉnh"
+	caption="Module sau khi nối dây giữa PCB, pin, USB-A, Type-C, nút nguồn và LED trạng thái."
+/>
 
 ## 9. Trình tự test
 
@@ -590,22 +518,20 @@ cắm bàn phím và cổng Type-C phía sau cho sạc/USB mode.
 	chắc chắn hoạt động.
 </Callout>
 
-<figure>
-	<div class="grid gap-3 sm:grid-cols-2">
-		<img
-			src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/box-3d-3.webp`}
-			alt="Thiết kế box ban đầu có thêm cổng Type-C bên cạnh"
-		/>
-		<img
-			src={`${import.meta.env.BASE_URL}static/3-mode-conversion-module/box-3d-fix.webp`}
-			alt="Thiết kế box sau khi bỏ cổng Type-C bên cạnh"
-		/>
-	</div>
-	<figcaption>
-		Trước và sau khi sửa thiết kế: bản đầu có thêm cổng Type-C bên cạnh, bản sau
-		đã bỏ cổng này để tránh lỗi kết nối.
-	</figcaption>
-</figure>
+<ContentFigure
+	columns={2}
+	images={[
+		{
+			src: '/static/3-mode-conversion-module/box-3d-3.webp',
+			alt: 'Thiết kế box ban đầu có thêm cổng Type-C bên cạnh'
+		},
+		{
+			src: '/static/3-mode-conversion-module/box-3d-fix.webp',
+			alt: 'Thiết kế box sau khi bỏ cổng Type-C bên cạnh'
+		}
+	]}
+	caption="Trước và sau khi sửa thiết kế: bản đầu có thêm cổng Type-C bên cạnh, bản sau đã bỏ cổng này để tránh lỗi kết nối."
+/>
 
 ### 10.3. Chi phí thực tế
 

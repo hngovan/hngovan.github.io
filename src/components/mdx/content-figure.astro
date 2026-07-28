@@ -44,13 +44,17 @@ const resolveSrc = (value: string) =>
 		items.length === 1 ? (
 			<img src={resolveSrc(items[0].src)} alt={items[0].alt} />
 		) : (
-			<div class={`grid gap-3 ${columnClassMap[columns] ?? columnClassMap[2]}`}>
+			<div
+				class={`grid items-stretch gap-3 ${columnClassMap[columns] ?? columnClassMap[2]}`}
+			>
 				{items.map(item => (
-					<img
-						src={resolveSrc(item.src)}
-						alt={item.alt}
-						class="aspect-video w-full rounded-xl object-cover"
-					/>
+					<div class="overflow-hidden">
+						<img
+							src={resolveSrc(item.src)}
+							alt={item.alt}
+							class="size-full object-cover"
+						/>
+					</div>
 				))}
 			</div>
 		)
