@@ -1,0 +1,465 @@
+---
+name: 'Realforce R1 Plate Refinishing'
+description: 'Phục hồi plate thép của Realforce R1/R2: tẩy lớp sơn cũ, xử lý rỉ sét, chà nhám, phủ lót epoxy Samurai 2K06 và sơn lại màu đen.'
+image: '/static/realforce-plate-refinishing/applying-the-black-topcoat-2.jpg'
+routeSlug: 'realforce-r1-plate-refinishing'
+tags: ['build-log', 'realforce', 'topre', 'plate', 'restoration', 'painting']
+keywords:
+  [
+    'realforce plate refinishing',
+    'realforce r1 plate restoration',
+    'realforce r2 plate restoration',
+    'sơn lại plate realforce',
+    'tẩy rỉ plate realforce',
+    'phục hồi plate bàn phím realforce',
+    'topre plate restoration',
+    'realforce rust plate'
+  ]
+startDate: '2026-07-28'
+status: 'Completed'
+relatedPosts: ['realforce-tkl-3d', 'realforce-r1-usb-c-conversion']
+sections:
+  - title: 'Linh kiện'
+    type: 'list'
+    items:
+      - 'Dung dịch tẩy sơn Hudson Stripease Paint Remover'
+      - 'Giấy nhám P320, P400, P600 và P800'
+      - 'Sơn lót epoxy Samurai 2K06 màu xám bạc'
+      - 'Sơn xịt Samurai 109 màu đen'
+      - 'Dung dịch vệ sinh và tẩy dầu bề mặt kim loại'
+      - 'Găng tay, khẩu trang lọc hơi sơn và kính bảo hộ'
+  - title: 'Mục tiêu'
+    type: 'list'
+    items:
+      - 'Loại bỏ lớp sơn cũ, lớp phủ bong tróc và các vùng rỉ trên plate'
+      - 'Làm phẳng bề mặt trước khi sơn lại'
+      - 'Phủ lót epoxy để tăng độ bám và hạn chế ăn mòn'
+      - 'Sơn lại plate bằng màu đen để đồng bộ với tổng thể bàn phím'
+      - 'Giữ dung sai quanh lỗ slider/stabilizer để lắp lại housing Topre'
+      - 'Ghi lại khác biệt khi xử lý plate Realforce R1 và R2'
+---
+
+import Callout from '@/components/callout.astro'
+import ContentFigure from '@/components/mdx/content-figure.astro'
+
+## 1. Giới thiệu
+
+Rỉ sét trên plate là một trong những lỗi khá khó chịu khi mua lại các mẫu
+Realforce đã qua sử dụng, đặc biệt là Realforce R1/87U có tuổi đời lâu năm. Bàn
+phím vẫn gõ được, nhưng mỗi lần tháo keycap ra nhìn thấy plate lốm đốm rỉ là tự
+nhiên thấy ví tiền lạnh gáy.
+
+Plate Realforce về cơ bản là một tấm kim loại giữ housing Topre, stabilizer và
+toàn bộ cụm slider. Nếu lớp phủ bảo vệ bị xước, bong hoặc đã xuống cấp, phần
+thép bên dưới có thể tiếp xúc với hơi ẩm và bắt đầu oxy hóa. Ban đầu chỉ là vài
+chấm nhỏ quanh housing, nhưng nếu để lâu thì rỉ có thể ăn lan dưới lớp sơn còn
+lại.
+
+Tôi không tìm được tài liệu chính thức từ Realforce/Topre xác nhận chính xác
+thành phần lớp sơn/phủ nguyên bản trên plate Realforce R1 và R2. Vì vậy trong
+bài này tôi chỉ dùng các nguồn tham khảo để xác nhận các điểm có thể kiểm chứng:
+Realforce/Topre là dòng bàn phím electrostatic capacitive chính hãng, cộng đồng
+đã ghi nhận nhiều trường hợp plate Realforce bị rỉ, và một số bên aftermarket
+thay plate Realforce bằng stainless steel để tăng khả năng chống rỉ.
+
+<Callout variant="warning" title="⚠️ Không kết luận quá tay">
+	Khác biệt giữa plate R1 và R2 trong bài là quan sát trên hai plate tôi có
+	trong tay. Nó không đủ để kết luận mọi Realforce R1/R2 đều dùng hai loại sơn
+	khác nhau. Nói ngắn gọn: bài này là build log thực tế, không phải tài liệu vật
+	liệu học của Topre.
+</Callout>
+
+## 2. Plate Realforce làm bằng gì và vì sao bị rỉ?
+
+Một nguồn aftermarket là Sho Labs/Thocc Exchange mô tả các plate thay thế của họ
+dùng stainless steel, khác với **cold-rolled steel** của line-up Realforce gốc.
+Đây không phải tài liệu chính thức từ Realforce, nhưng nó khớp với thực tế người
+dùng thường gặp: plate gốc có thể rỉ, còn stainless steel được chọn để tăng khả
+năng kháng rỉ.
+
+Ngoài ra, trên Geekhack từng có thread interest check cho việc thay plate
+Realforce bị rỉ bằng stainless steel; trên Reddit và KeebTalk cũng có nhiều bài
+ghi nhận plate Topre/Realforce bị rỉ rồi xử lý bằng cách sanding, repaint hoặc
+powder coat. Những nguồn này không nói chính xác lớp phủ gốc là loại sơn gì,
+nhưng đủ để xác nhận đây là vấn đề có thật trong cộng đồng Topre.
+
+Từ trải nghiệm của tôi, có thể hiểu đơn giản:
+
+- Plate là thép/cold-rolled steel nên cần lớp phủ để chống ẩm.
+- Khi lớp phủ bị trầy, bong hoặc xuống cấp, thép lộ ra sẽ rỉ.
+- Rỉ có thể nằm quanh mép lỗ slider, mép gập, cạnh plate hoặc mặt dưới khó quan
+  sát.
+- Sơn lại chỉ giải quyết được bề mặt; nếu plate đã bị ăn mòn sâu hoặc cong vênh
+  thì nên cân nhắc thay plate.
+
+## 3. Tình trạng plate ban đầu
+
+Trước khi bắt đầu, tôi tháo keycap và kiểm tra plate để xác định các điểm cần xử
+lý:
+
+- Vị trí đang bị rỉ.
+- Phần sơn bị bong/phồng.
+- Khu vực bị xước làm lộ thép.
+- Mép lỗ slider và stabilizer.
+- Mặt dưới plate, nơi hơi ẩm có thể tích tụ nhưng bình thường khó nhìn thấy.
+
+<ContentFigure
+	src="/static/realforce-plate-refinishing/plate-before-restoration.jpg"
+	alt="Plate Realforce trước khi phục hồi, sau khi tháo keycap để vệ sinh"
+	caption="Plate trước khi phục hồi. Nhìn từ xa thì còn ổn, nhìn gần thì bắt đầu nghe tiếng ví rên."
+/>
+
+Nếu plate chỉ có vài chấm rỉ nhỏ, có thể xử lý cục bộ. Nhưng khi lớp phủ đã xuống
+cấp trên diện rộng, việc loại bỏ lớp phủ cũ và sơn lại toàn bộ sẽ cho bề mặt đều
+hơn, đồng thời giảm khả năng rỉ tiếp tục bò dưới lớp sơn mới.
+
+## 4. Tháo rời bàn phím
+
+Trước khi tẩy sơn hoặc chà nhám, cần tháo toàn bộ các phần nhựa/cao su/PCB ra
+khỏi plate:
+
+1. Keycap.
+2. Vỏ trên và vỏ dưới.
+3. PCB.
+4. Rubber dome.
+5. Conical spring.
+6. Slider và housing.
+7. Thanh wire stabilizer.
+8. Các miếng đệm hoặc vật liệu chống rung nếu có.
+
+Tôi khuyên nên chụp ảnh từng bước, đặc biệt là vị trí dome, spring và stabilizer.
+Đến lúc lắp lại mà thiếu ảnh thì dự án đang từ “phục hồi plate” sẽ chuyển thành
+“trò chơi trí nhớ phiên bản Topre”.
+
+<Callout variant="danger" title="🚨 Đừng để hóa chất chạm vào dome">
+	Không dùng dung dịch tẩy sơn, acetone, thinner hoặc chất tẩy dầu mạnh trên
+	rubber dome, slider, membrane và PCB. Những thứ này sinh ra để xử lý sơn/kim
+	loại, không phải để tắm cho cao su Topre.
+</Callout>
+
+## 5. Loại bỏ lớp sơn cũ
+
+Tôi dùng **Hudson Stripease Paint Remover** để làm mềm và bóc lớp phủ cũ trên
+plate Realforce R1. Theo trang sản phẩm Hudson, Stripease là dung dịch tẩy sơn
+dùng được trên bề mặt gỗ và kim loại; nhà sản xuất cũng khuyến nghị vệ sinh bề
+mặt trước khi sơn lại.
+
+<ContentFigure
+	src="/static/realforce-plate-refinishing/paint-stripping-the-realforce-plate.jpg"
+	alt="Quét dung dịch tẩy sơn Hudson Stripease lên plate Realforce R1"
+	caption="Hudson Stripease làm lớp phủ trên plate R1 mềm và nhão ra, nhưng không phải cứ quét là phép màu xảy ra."
+/>
+
+Quy trình tôi làm:
+
+1. Đặt plate ở nơi thoáng khí.
+2. Đeo găng tay, khẩu trang và kính bảo hộ.
+3. Quét dung dịch thành lớp tương đối đều.
+4. Tập trung thêm ở mép gập, góc nhỏ và quanh lỗ slider.
+5. Chờ lớp phủ bắt đầu mềm/phồng.
+6. Dùng dụng cụ nhựa để gạt lớp sơn đã mềm.
+7. Xử lý phần còn sót bằng giấy nhám.
+
+Ở plate R1 của tôi, dung dịch làm lớp phủ mềm, nhão ra khá rõ. Tuy nhiên do tôi quét
+lớp hơi mỏng, dung môi bay hơi nhanh nên có nhiều chỗ chỉ mềm bề mặt chứ chưa
+tách hẳn tới lớp tiếp xúc giữa sơn và thép. Kết quả là vẫn phải xử lý thêm bước chà nhám.
+
+Không nên dùng dao hoặc vật kim loại sắc để cạo mạnh. Các rãnh xước sâu vẫn có
+thể hiện lại sau khi phun lót và sơn màu.
+
+### 5.1. Khác biệt khi thử trên plate Realforce R2
+
+Tôi cũng thử cùng loại dung dịch trên plate Realforce R2, nhưng lớp phủ gần như
+không bong ra và nhão giống plate R1.
+
+Quan sát này cho thấy lớp hoàn thiện trên plate R2 tôi có có thể chịu dung môi
+tốt hơn, hoặc dùng hệ sơn/phủ khác với plate R1. Nhưng vì không có tài liệu chính
+thức từ Realforce xác nhận thành phần lớp phủ, tôi chỉ ghi nhận nó như kết quả
+thực tế trên mẫu của tôi:
+
+<Callout variant="summary" title="🧪 Kết quả test dung dịch tẩy sơn">
+	<div className="grid gap-3 md:grid-cols-2">
+		<div className="rounded-xl border border-current/20 bg-background/40 p-3">
+			<div className="font-bold text-yellow-500">Plate Realforce R1</div>
+			<p className="mt-1">
+				Dung dịch làm mềm và bóc được phần lớn lớp phủ.
+			</p>
+			<p className="mt-2 text-xs opacity-80">
+				Cách xử lý chính: tẩy sơn hóa học trước, sau đó chà nhám hoàn thiện
+				bề mặt.
+			</p>
+		</div>
+		<div className="rounded-xl border border-current/20 bg-background/40 p-3">
+			<div className="font-bold text-yellow-500">Plate Realforce R2</div>
+			<p className="mt-1">
+				Dung dịch không tạo phản ứng rõ rệt.
+			</p>
+			<p className="mt-2 text-xs opacity-80">
+				Cách xử lý chính: phải xử lý chủ yếu bằng chà nhám cơ học.
+			</p>
+		</div>
+	</div>
+
+    <p className="mt-3">
+    	Kết luận ngắn: cùng một chai tẩy sơn, R1 hợp tác khá ngoan còn R2 thì
+    	kiểu “không thích, không làm”, nên cuối cùng vẫn phải chuyển sang dùng
+    	sức tay.
+    </p>
+
+</Callout>
+
+<Callout variant="note" title="🧪 Test trước một vùng nhỏ">
+	Hiệu quả của dung dịch tẩy sơn có thể khác nhau theo model, năm sản xuất, tình
+	trạng lớp phủ và cả việc plate đã từng bị sơn lại hay chưa. Trước khi quét
+	toàn bộ, nên thử ở một góc nhỏ mặt dưới. Đừng all-in như chơi gacha.
+</Callout>
+
+## 6. Xử lý rỉ sét và chà nhám
+
+Sau khi tẩy được phần lớn sơn cũ trên R1, tôi dùng giấy nhám để xử lý rỉ và các
+vùng sơn còn bám. Với R2, vì dung dịch không tẩy được nên, Việc loại bỏ
+sơn được thực hiện bằng chà nhám.
+
+Tôi dùng các cấp nhám:
+
+- P320: tẩy lớp sơn còn lại và xử lý rỉ sét.
+- P400: làm đều bề mặt trước khi phun lót.
+- P600: làm phẳng nhẹ lớp lót epoxy sau khi khô.
+- P800: hoàn thiện bề mặt trước khi phun lớp sơn đen.
+
+<ContentFigure
+	src="/static/realforce-plate-refinishing/removing-old-paint-by-sanding.jpg"
+	alt="Plate Realforce R2 sau khi xử lý lớp sơn cũ bằng giấy nhám"
+	caption="Plate R2 sau khi chuyển sang phương án chà nhám. Cụ thể là chà bằng tay 🫣."
+/>
+
+<ContentFigure
+	src="/static/realforce-plate-refinishing/sandpaper-400.jpg"
+	alt="Giấy nhám P400 dùng để xử lý bề mặt plate Realforce trước khi sơn"
+	caption="P400 dùng để làm đều bề mặt trước khi sơn lót."
+/>
+
+Mục tiêu không phải đánh bóng plate như gương. Bề mặt chỉ cần sạch rỉ, không còn
+sơn bong và có độ nhám đều để lớp lót epoxy bám chắc.
+
+<Callout variant="warning" title="⚠️ Đừng mài quá hăng quanh lỗ slider">
+	Lỗ slider/housing cần giữ dung sai tương đối chuẩn. Nếu mài quá mạnh hoặc để
+	sơn tích quá dày, housing có thể lắp khó, kẹt hoặc cào bong lớp sơn mới. Đây
+	là đoạn mà tay nhanh hơn não thì lát nữa não phải trả góp.
+</Callout>
+
+## 7. Làm sạch và tẩy dầu
+
+Sau khi chà nhám, plate cần được làm sạch hoàn toàn trước khi sơn.
+
+Các lỗi thường gặp nếu bề mặt chưa sạch:
+
+- Sơn bị mắt cá.
+- Lớp lót không bám.
+- Bề mặt sần, loang hoặc không đều.
+- Rỉ tiếp tục phát triển dưới lớp sơn mới.
+
+Tôi rửa sạch bụi nhám, để plate khô hoàn toàn rồi dùng dung dịch tẩy dầu phù hợp
+với bề mặt kim loại. Sau bước này, tôi chỉ cầm plate bằng găng tay sạch.
+
+Không nên chạm tay trực tiếp lên bề mặt đã tẩy dầu. Dầu tay ít thôi nhưng đủ làm
+cho sơn “dỗi”.
+
+## 8. Che các vị trí không cần sơn
+
+Trước khi phun, tôi che những khu vực không muốn sơn tích tụ quá dày:
+
+- Lỗ bắt vít.
+- Lỗ ren.
+- Điểm tiếp xúc mass nếu có.
+- Mép lắp housing quá chặt.
+- Các vị trí cần giữ dung sai chính xác.
+
+Không nhất thiết phải che toàn bộ lỗ slider, nhưng nên kiểm soát hướng phun và
+số lớp. Phun nhiều lớp mỏng vẫn an toàn hơn một lớp dày kiểu “cho chắc ăn” rồi
+lát nữa housing không chịu vào.
+
+## 9. Phun sơn lót epoxy Samurai 2K06
+
+Tôi dùng **Samurai 2K06 Epoxy Metal Primer** làm lớp lót. Theo trang sản phẩm
+Samurai, 2K06 là sơn lót epoxy hai thành phần cho kim loại. Một số trang phân
+phối cũng mô tả sản phẩm này tạo lớp cản không khí/nước, hỗ trợ chống ăn mòn và
+dùng cho bề mặt kim loại mới hoặc hơi rỉ.
+
+<Callout variant="note" title="💡 Vì sao dùng epoxy primer?">
+	Plate là thép nên cần lớp lót có độ bám tốt và khả năng cách ly ẩm. Sơn màu
+	phủ thẳng lên thép trần vẫn có thể đẹp lúc đầu, nhưng phần chuẩn bị bề mặt và
+	lớp lót mới là thứ quyết định nó sống lâu hay bong sớm.
+</Callout>
+
+Trước khi dùng sơn 2K, cần kích hoạt lon theo hướng dẫn. Sau khi đã kích hoạt
+chất đóng rắn, thời gian sử dụng của lon sẽ bị giới hạn, thường chỉ vài giờ tùy
+điều kiện. Vì vậy nên chuẩn bị xong toàn bộ plate rồi hãy kích hoạt. Đừng bấm
+xong mới đi tìm dây treo plate, lúc đó lon sơn sẽ nhìn bạn bằng ánh mắt phán xét.
+
+Quy trình phun:
+
+1. Lắc lon thật kỹ.
+2. Phun thử lên bề mặt khác.
+3. Phun lớp đầu tiên thật mỏng để tạo độ bám.
+4. Đợi lớp trước se mặt.
+5. Phun thêm các lớp mỏng cho tới khi phủ đều.
+6. Tránh che kín bằng một lớp dày.
+
+<ContentFigure
+	columns={2}
+	images={[
+		{
+			src: '/static/realforce-plate-refinishing/applying-2k06-epoxy-primer-1.jpg',
+			alt: 'Plate Realforce sau khi phủ lớp lót epoxy Samurai 2K06'
+		},
+		{
+			src: '/static/realforce-plate-refinishing/applying-2k06-epoxy-primer-2.jpg',
+			alt: 'Cận cảnh lớp lót epoxy Samurai 2K06 trên plate Realforce'
+		}
+	]}
+	caption="Plate sau khi phủ lớp lót epoxy Samurai 2K06."
+/>
+
+Nếu lớp lót bị sần hoặc có bụi bám, có thể chà nhẹ bằng P600/P800 sau khi epoxy
+đã khô đủ. Không nên chà xuyên qua lớp lót làm lộ lại thép.
+
+<ContentFigure
+	columns={3}
+	images={[
+		{
+			src: '/static/realforce-plate-refinishing/wet-sanding-the-2k06-primer-1.jpg',
+			alt: 'Chà nhám nhẹ lớp lót epoxy Samurai 2K06 trên plate Realforce'
+		},
+		{
+			src: '/static/realforce-plate-refinishing/wet-sanding-the-2k06-primer-2.jpg',
+			alt: 'Bề mặt plate Realforce sau khi xử lý lại lớp lót 2K06'
+		},
+		{
+			src: '/static/realforce-plate-refinishing/wet-sanding-the-2k06-primer-3.jpg',
+			alt: 'Plate Realforce sau khi làm phẳng lớp lót epoxy trước khi sơn màu'
+		}
+	]}
+	caption="Plate sau khi chà nhám nhẹ lớp lót epoxy trước khi sơn màu."
+/>
+
+## 10. Sơn màu đen Samurai 109
+
+Sau khi lớp lót đã khô và bề mặt ổn, tôi dùng **Samurai 109 màu đen** làm lớp
+màu hoàn thiện.
+
+Tôi phun theo thứ tự:
+
+1. Một lớp bụi mỏng.
+2. Chờ lớp sơn se mặt.
+3. Phun lớp thứ hai theo hướng khác.
+4. Kiểm tra mép gập và vùng quanh lỗ slider.
+5. Phun bổ sung một lớp mỏng nếu bề mặt chưa đều.
+
+Giữ khoảng cách phun ổn định. Đưa lon quá gần có thể làm sơn chảy; phun quá xa
+có thể làm bề mặt bị khô và sần trước khi sơn bám vào plate.
+
+## 11. Thời gian khô và đóng rắn
+
+Khô bề mặt không có nghĩa là sơn đã đóng rắn hoàn toàn.
+
+Tôi để plate ở nơi sạch, thoáng và tránh bụi trong vài ngày trước khi lắp lại
+housing. Nếu lắp quá sớm, mép housing có thể cào hoặc ép vào lớp sơn còn mềm.
+
+Trước khi lắp, tôi kiểm tra:
+
+- Bề mặt không còn dính tay.
+- Sơn không để lại dấu khi ấn nhẹ ở vị trí khuất.
+- Mép lỗ không có cục sơn hoặc gờ sắc.
+- Các vị trí bắt vít không bị bít.
+
+## 12. Lắp lại housing và stabilizer
+
+Housing Topre cần được lắp thẳng vào plate. Không nên ép nghiêng vì mép housing
+có thể làm bong lớp sơn mới.
+
+Nếu một housing khó lắp hơn bình thường, cần dừng lại và kiểm tra phần sơn tích
+tụ quanh lỗ. Có thể xử lý cục bộ bằng giấy nhám mịn hoặc dụng cụ cạo nhỏ, nhưng
+chỉ loại bỏ phần sơn thừa, không mài vào thép.
+
+Thứ tự lắp lại:
+
+1. Housing và slider.
+2. Stabilizer wire.
+3. Rubber dome.
+4. Conical spring.
+5. PCB.
+6. Vỏ bàn phím.
+7. Keycap.
+
+## 13. Kết quả và kinh nghiệm rút ra
+
+Sau khi hoàn thiện, plate không còn các vùng rỉ rõ rệt và bề mặt có màu đen đều
+hơn. Lớp lót epoxy mới giúp cách ly bề mặt thép khỏi độ ẩm tốt hơn so với việc
+chỉ sơn màu trực tiếp.
+
+<ContentFigure
+	columns={2}
+	images={[
+		{
+			src: '/static/realforce-plate-refinishing/applying-the-black-topcoat-1.jpg',
+			alt: 'Plate Realforce sau khi phun lớp sơn đen Samurai 109'
+		},
+		{
+			src: '/static/realforce-plate-refinishing/applying-the-black-topcoat-2.jpg',
+			alt: 'Bề mặt plate Realforce sau khi phục hồi và sơn đen'
+		}
+	]}
+	caption="Plate sau khi phun lớp màu đen. Tuy còn một vài chỗ không đều nhưng nhìn chung là ổn."
+/>
+
+Những điểm đáng nhớ:
+
+- Không phun lớp sơn quá dày quanh lỗ slider.
+- Làm sạch dung dịch tẩy sơn thật kỹ trước khi chà/sơn.
+- Tẩy dầu ngay trước khi phun lót.
+- Nhiều lớp mỏng tốt hơn một lớp dày.
+- Để sơn đóng rắn đủ lâu trước khi lắp lại housing.
+- Chụp ảnh vị trí dome/stabilizer trước khi tháo.
+- Nếu plate bị ăn mòn sâu hoặc biến dạng, sơn lại không cứu được phần cơ khí.
+
+<Callout variant="tip" title="🐧 Đúc kết">
+	Phần khó nhất của quá trình sơn lại plate không nằm ở lúc phun sơn, mà ở khâu
+	chuẩn bị bề mặt. Việc tẩy sạch lớp sơn cũ, xử lý rỉ sét và loại bỏ dầu mỡ có
+	thể mất khá nhiều thời gian, nhưng đây là yếu tố quyết định độ bám và độ bền
+	của lớp sơn mới. Nếu làm qua loa hoặc nóng vội ở bước này, lớp sơn có thể
+	nhanh chóng phồng rộp, bong tróc hoặc xuất hiện rỉ sét trở lại sau khi lắp bàn
+	phím.
+</Callout>
+
+## 14. Sản phẩm đã dùng
+
+- Dung dịch tẩy sơn Hudson Stripease:
+  https://shopee.vn/-CHAI-350G-Dung-d%E1%BB%8Bch-xo%C3%A1-s%C6%A1n-Hudson-Paint-Remover-i.66873535.51850723782
+- Giấy nhám nước:
+  https://shopee.vn/Gi%E1%BA%A5y-nh%C3%A1m-n%C6%B0%E1%BB%9Bc-gi%C3%BAp-x%E1%BB%AD-l%C3%BD-b%E1%BB%81-m%E1%BA%B7t-tr%C6%B0%E1%BB%9Bc-khi-s%C6%A1n-ho%E1%BA%B7c-%C4%91%C3%A1nh-b%C3%B3ng-kh%E1%BB%95-230mm-x-280mm-i.66873535.49701245433
+- Sơn xịt Samurai màu đen mờ 109A:
+  https://shopee.vn/S%C6%A1n-x%E1%BB%8Bt-Samurai-m%C3%A0u-%C4%90en-M%E1%BB%9D-%C4%90en-Nh%C3%A1m-109A-(400ml-chai)-i.66873535.58000102702
+- Sơn lót kim loại Samurai 2K06:
+  https://shopee.vn/S%C6%A1n-Samurai-s%C6%A1n-2K06-L%C3%B3t-kim-lo%E1%BA%A1i-Epoxy-(m%C3%A0u-x%C3%A1m-b%E1%BA%A1c)-i.391828246.19636552492
+
+## 15. Nguồn tham khảo
+
+- Realforce 87U discontinued specification:
+  https://www.realforce.co.jp/en/products/discontinued/87U_SE07T0/
+- Sho Labs EC & Topre Keyboard Plates, tham khảo về plate stainless và cold-rolled steel:
+  https://thoccexchange.com/products/sho-labs-ec-topre-keyboard-plates
+- Geekhack thread về thay plate Realforce bị rỉ bằng stainless steel:
+  https://geekhack.org/index.php?topic=97096.0
+- Geekhack thread về Realforce rusting plate:
+  https://geekhack.org/index.php?topic=119056.0
+- Reddit: Realforce 87U powder coated switch plate:
+  https://www.reddit.com/r/MechanicalKeyboards/comments/xsgc15/realforce_87u_powder_coated_switch_plate_and_usbc/
+- KeebTalk: Topre modding thread, ví dụ sanding/cleaning/varnish plate:
+  https://www.keebtalk.com/t/a-thread-on-topre-modding/13265?page=7
+- Samurai 2K06 Epoxy Metal Primer:
+  https://www.samuraipaint.com.ph/product/2k06-epoxy-metal-primer-silver-grey/
+- Hudson Stripease Paint Remover:
+  https://hudsonpaint.vn/product/hudson-stripease-paint-remover/
+- Ronseal hướng dẫn tẩy sơn trên kim loại:
+  https://www.ronseal.com/how-to-guides/how-to-remove-paint-from-metal/

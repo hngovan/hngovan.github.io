@@ -13,6 +13,10 @@ import 'lightgallery/css/lightgallery.css'
 
 	const IMAGE_SELECTOR = '[data-lightbox-image], [data-content-lightbox] img'
 	const LIGHTBOX_ROOT_ID = 'content-lightbox-root'
+	const PAGE_SCROLL_LOCK_CLASS = 'keeb-log-lightbox-open'
+
+	let restorePageScroll: (() => void) | null = null
+	let wheelZoomCleanup: (() => void) | null = null
 
 	const escapeHtml = (value: string) =>
 		value
@@ -31,6 +35,78 @@ import 'lightgallery/css/lightgallery.css'
 
 	const getImageUrl = (image: HTMLImageElement) =>
 		image.currentSrc || image.src || image.getAttribute('src') || ''
+
+	const lockPageScroll = () => {
+		if (restorePageScroll) return
+
+		const scrollY = window.scrollY
+		const { body, documentElement } = document
+		const previousStyles = {
+			bodyOverflow: body.style.overflow,
+			bodyOverscrollBehavior: body.style.overscrollBehavior,
+			bodyPosition: body.style.position,
+			bodyTop: body.style.top,
+			bodyWidth: body.style.width,
+			htmlOverflow: documentElement.style.overflow,
+			htmlOverscrollBehavior: documentElement.style.overscrollBehavior
+		}
+
+		body.classList.add(PAGE_SCROLL_LOCK_CLASS)
+		documentElement.style.overflow = 'hidden'
+		documentElement.style.overscrollBehavior = 'none'
+		body.style.overflow = 'hidden'
+		body.style.overscrollBehavior = 'none'
+		body.style.position = 'fixed'
+		body.style.top = `-${scrollY}px`
+		body.style.width = '100%'
+
+		restorePageScroll = () => {
+			body.classList.remove(PAGE_SCROLL_LOCK_CLASS)
+			documentElement.style.overflow = previousStyles.htmlOverflow
+			documentElement.style.overscrollBehavior =
+				previousStyles.htmlOverscrollBehavior
+			body.style.overflow = previousStyles.bodyOverflow
+			body.style.overscrollBehavior = previousStyles.bodyOverscrollBehavior
+			body.style.position = previousStyles.bodyPosition
+			body.style.top = previousStyles.bodyTop
+			body.style.width = previousStyles.bodyWidth
+			window.scrollTo(0, scrollY)
+			restorePageScroll = null
+		}
+	}
+
+	const unlockPageScroll = () => {
+		restorePageScroll?.()
+	}
+
+	const enableWheelZoom = () => {
+		if (wheelZoomCleanup) return
+
+		const handleWheel = (event: WheelEvent) => {
+			if (!document.body.classList.contains(PAGE_SCROLL_LOCK_CLASS)) return
+
+			event.preventDefault()
+			event.stopPropagation()
+
+			const zoomButtonSelector =
+				event.deltaY < 0 ? '.lg-zoom-in' : '.lg-zoom-out'
+			document.querySelector<HTMLButtonElement>(zoomButtonSelector)?.click()
+		}
+
+		document.addEventListener('wheel', handleWheel, {
+			capture: true,
+			passive: false
+		})
+
+		wheelZoomCleanup = () => {
+			document.removeEventListener('wheel', handleWheel, { capture: true })
+			wheelZoomCleanup = null
+		}
+	}
+
+	const disableWheelZoom = () => {
+		wheelZoomCleanup?.()
+	}
 
 	const initContentLightbox = () => {
 		window.__keebLogContentLightbox?.destroy?.()
@@ -74,10 +150,25 @@ import 'lightgallery/css/lightgallery.css'
 			licenseKey: '0000-0000-000-0000',
 			plugins: [lgZoom, lgRotate],
 			rotate: true,
+			scale: 0.5,
 			selector: '',
+			showZoomInOutIcons: true,
 			speed: 250,
 			zoom: true
 		})
+
+		const handleBeforeOpen = () => {
+			lockPageScroll()
+			enableWheelZoom()
+		}
+
+		const handleAfterClose = () => {
+			disableWheelZoom()
+			unlockPageScroll()
+		}
+
+		root.addEventListener('lgBeforeOpen', handleBeforeOpen)
+		root.addEventListener('lgAfterClose', handleAfterClose)
 
 		const cleanups = images.map((image, index) => {
 			image.classList.add('cursor-zoom-in')
@@ -113,6 +204,10 @@ import 'lightgallery/css/lightgallery.css'
 
 		window.__keebLogContentLightbox = {
 			destroy() {
+				root.removeEventListener('lgBeforeOpen', handleBeforeOpen)
+				root.removeEventListener('lgAfterClose', handleAfterClose)
+				disableWheelZoom()
+				unlockPageScroll()
 				cleanups.forEach(cleanup => cleanup())
 				gallery.destroy()
 			}
