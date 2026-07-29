@@ -1,384 +1,418 @@
 ---
-title: 'Review code FE và BE nên nhìn vào đâu?'
-description: 'Checklist review code thực dụng cho frontend và backend: lint, typecheck, query plan, duplicated query, memory, transaction, security, accessibility và performance.'
+title: '[Review code] Review code và những điều cần biết'
+description: 'Ghi chú thực dụng về review code: mục tiêu, lợi ích, tiêu chí cần nhìn, quy trình review, cách comment và cách review nhanh nhưng vẫn hiệu quả.'
 date: '2026-07-29'
 image: '/static/blog/code-review-banner.webp'
 order: 2
-routeSlug: 'review-code-fe-va-be-nen-nhin-vao-dau'
-tags: ['code-review', 'frontend', 'backend', 'performance']
+routeSlug: 'review-code-review-code-va-nhung-dieu-can-biet'
+tags: ['code-review', 'software-engineering', 'teamwork', 'best-practices']
 keywords:
   [
-    'frontend code review',
-    'backend code review',
-    'lint',
-    'query performance',
-    'memory',
-    'security review'
+    'review code',
+    'code review',
+    'pull request',
+    'merge request',
+    'review checklist',
+    'software quality'
   ]
 authors: ['keeb-log']
 ---
 
 import DataTable from '@/components/mdx/data-table.astro'
 
-Review code không chỉ là bắt lỗi format hoặc hỏi "sao viết thế này?". Một review tốt nên giúp team giảm bug, giữ code dễ đọc, giảm chi phí vận hành và tránh những lỗi chỉ lộ ra khi production có dữ liệu thật.
+Review code là một trong những hoạt động dễ bị xem nhẹ trong team phần mềm. Nếu làm hời hợt, nó chỉ còn là bước bấm approve sau khi CI xanh. Nếu làm quá cực đoan, nó biến thành cuộc tranh luận style, kéo dài merge request và làm người gửi code ngại mở PR.
 
-Tôi thường tách review thành hai lớp: checklist chung cho mọi PR, rồi checklist riêng cho frontend và backend. Bài này là ghi chú thực dụng, không phải quy trình cứng. Với PR nhỏ, chỉ cần quét nhanh; với PR đụng luồng thanh toán, quyền truy cập, query lớn hoặc transaction, review phải kỹ hơn.
+Một review tốt nằm ở giữa hai thái cực đó: đủ kỹ để bảo vệ chất lượng codebase, đủ thực dụng để không chặn tiến độ bằng những góp ý không quan trọng, và đủ tôn trọng để cả reviewer lẫn author đều học được điều gì đó sau mỗi lần review.
 
 ## Mục lục nhanh
 
-- [Ví dụ thực tế: review tính năng publish bài viết](#vi-du-thuc-te-review-tinh-nang-publish-bai-viet)
-- [Checklist chung cho mọi PR](#checklist-chung-cho-moi-pr)
-- [Review frontend](#review-frontend)
-- [Review backend](#review-backend)
-- [Review database query](#review-database-query)
-- [Review memory và tài nguyên](#review-memory-va-tai-nguyen)
-- [Review transaction và consistency](#review-transaction-va-consistency)
-- [Review security](#review-security)
-- [Câu hỏi nên để lại khi review](#cau-hoi-nen-de-lai-khi-review)
+- [Review code là gì?](#review-code-la-gi)
+- [Mục tiêu thật sự của review code](#muc-tieu-that-su-cua-review-code)
+- [Lợi ích của review code](#loi-ich-cua-review-code)
+- [Reviewer nên nhìn vào những gì?](#reviewer-nen-nhin-vao-nhung-gi)
+- [Những thứ nên để tool xử lý trước](#nhung-thu-nen-de-tool-xu-ly-truoc)
+- [Quy trình review một pull request](#quy-trinh-review-mot-pull-request)
+- [Cách comment để người khác dễ sửa](#cach-comment-de-nguoi-khac-de-sua)
+- [Cách review nhanh mà vẫn hiệu quả](#cach-review-nhanh-ma-van-hieu-qua)
+- [Checklist cho author trước khi gửi review](#checklist-cho-author-truoc-khi-gui-review)
+- [Checklist cho reviewer](#checklist-cho-reviewer)
+- [Khi nào nên approve?](#khi-nao-nen-approve)
 - [Nguồn tham khảo](#nguon-tham-khao)
 
-<a
-	id="vi-du-thuc-te-review-tinh-nang-publish-bai-viet"
-	class="block scroll-mt-31"
-></a>
+<a id="review-code-la-gi" class="block scroll-mt-31"></a>
 
-## Ví dụ thực tế: review tính năng publish bài viết
+## Review code là gì?
 
-Giả sử PR thêm màn publish bài viết trong CMS:
+Review code là quá trình một hoặc nhiều lập trình viên đọc thay đổi code của người khác trước khi merge vào nhánh chính. Mục tiêu không chỉ là bắt bug. Review còn là nơi kiểm tra thiết kế, độ dễ đọc, test, bảo mật, hiệu năng, khả năng vận hành và mức độ phù hợp với kiến trúc hiện tại.
 
-- FE có form nhập tiêu đề, slug, nội dung, tag và trạng thái publish.
-- BE có endpoint `POST /posts`.
-- Database ghi `posts`, `post_tags` và `audit_logs`.
+Trong thực tế, review thường diễn ra qua pull request hoặc merge request. Author gửi thay đổi, reviewer đọc diff, đặt câu hỏi, yêu cầu sửa nếu cần, rồi approve khi thay đổi đủ tốt để vào codebase.
 
-Một diff nhìn qua có thể "chạy được", nhưng reviewer cần đi theo luồng thật của người dùng:
+Điểm quan trọng: reviewer không phải người đi tìm lỗi để thắng tranh luận. Reviewer là người chịu trách nhiệm cùng author để codebase tốt lên sau thay đổi đó.
+
+<a id="muc-tieu-that-su-cua-review-code" class="block scroll-mt-31"></a>
+
+## Mục tiêu thật sự của review code
+
+Google Engineering Practices đặt mục tiêu cốt lõi của code review là làm cho sức khỏe tổng thể của codebase tốt lên theo thời gian. Cách hiểu này rất thực dụng: không cần PR nào cũng hoàn hảo tuyệt đối, nhưng mỗi PR được merge nên làm hệ thống tiến lên, không làm nó khó hiểu hơn, mong manh hơn hoặc khó vận hành hơn.
+
+Vậy khi review, câu hỏi chính không phải là:
+
+- "Tôi có viết khác người này không?"
+- "Style này có đúng gu của tôi không?"
+- "Có thể tối ưu thêm 1% không?"
+
+Câu hỏi chính nên là:
+
+- Thay đổi này có đúng yêu cầu không?
+- Nó có phù hợp kiến trúc hiện tại không?
+- Người khác có đọc, sửa, debug được không?
+- Có test và bằng chứng đủ cho rủi ro của thay đổi không?
+- Nó có làm codebase tốt hơn hoặc ít nhất không làm xấu đi không?
+
+<a id="loi-ich-cua-review-code" class="block scroll-mt-31"></a>
+
+## Lợi ích của review code
+
+Review code có lợi cho cả sản phẩm, team và từng cá nhân.
 
 <DataTable
-	headers={['Bước', 'Người dùng/app làm gì', 'Reviewer nên hỏi gì']}
+	headers={['Góc nhìn', 'Lợi ích']}
 	rows={[
 		[
-			'1',
-			'User để trống title, nhập slug trùng, hoặc chọn tag không tồn tại',
-			'FE chỉ disable button hay BE cũng validate? Error message trả về có rõ không?'
+			'Sản phẩm',
+			'Giảm bug trước khi lên production, phát hiện case thiếu, lỗi permission, lỗi dữ liệu, lỗi hiệu năng và lỗi bảo mật.'
 		],
 		[
-			'2',
-			'User bấm publish hai lần do mạng chậm',
-			'Endpoint có guard duplicate slug hoặc unique constraint phù hợp không?'
+			'Codebase',
+			'Giữ kiến trúc nhất quán, giảm duplication, tránh thêm abstraction quá sớm hoặc đặt logic sai module.'
 		],
 		[
-			'3',
-			'BE tạo post rồi gắn tag và ghi audit log',
-			'Các thay đổi có nằm trong cùng transaction DB không? Nếu ghi tag fail thì rollback thế nào?'
+			'Team',
+			'Lan truyền hiểu biết về hệ thống, giúp nhiều người nắm được phần code quan trọng thay vì chỉ một người biết.'
 		],
 		[
-			'4',
-			'FE gọi API xong refetch danh sách bài viết',
-			'Có tạo N+1 query hoặc refetch quá nhiều endpoint không? Loading/error state có đúng không?'
+			'Author',
+			'Học cách trình bày ý định, viết PR rõ hơn, nhận feedback cụ thể và tránh lặp lại lỗi cũ.'
 		],
 		[
-			'5',
-			'Hệ thống ghi log lỗi',
-			'Log có lộ token, nội dung nháp nhạy cảm, hoặc thông tin không nên ghi không?'
+			'Reviewer',
+			'Luyện khả năng đọc code, nhìn rủi ro, giải thích vấn đề và đưa feedback có tính xây dựng.'
 		]
 	]}
 />
 
-Ví dụ review comment có bằng chứng:
+Review tốt không chỉ tạo ra code tốt hơn. Nó còn tạo ra team hiểu hệ thống tốt hơn.
 
-```txt
-Endpoint POST /posts đang cho phép tạo trùng slug nếu user bấm publish hai lần rất nhanh.
-Nên thêm unique constraint cho slug active và xử lý lỗi duplicate thành message rõ cho FE.
-```
+<a id="reviewer-nen-nhin-vao-nhung-gi" class="block scroll-mt-31"></a>
 
-Ví dụ review FE:
+## Reviewer nên nhìn vào những gì?
 
-```txt
-Form đang dùng if (title) nhưng không trim trước khi submit.
-Title toàn khoảng trắng vẫn qua được UI, sau đó BE mới trả lỗi.
-Nên normalize input ở FE để feedback nhanh hơn, nhưng BE vẫn phải validate lại.
-```
-
-Ví dụ review query:
-
-```txt
-Màn danh sách bài viết gọi /posts rồi mỗi item gọi /authors/:id và /tags?post_id=...
-Với 50 bài sẽ thành hơn 100 request/query. Nên trả đủ author/tag summary từ API list hoặc batch theo ids.
-```
-
-Các comment kiểu này dễ xử lý hơn nhiều so với "đoạn này có vẻ không ổn", vì nó chỉ ra kịch bản lỗi, tác động và hướng sửa.
-
-<a id="checklist-chung-cho-moi-pr" class="block scroll-mt-31"></a>
-
-## Checklist chung cho mọi PR
-
-Trước khi đi vào FE/BE, nên check các điểm nền:
+Reviewer nên ưu tiên các vấn đề có ảnh hưởng thật tới correctness, maintainability, security và vận hành. Những vấn đề format nhỏ nên để formatter/linter bắt trước.
 
 <DataTable
-	headers={['Nhóm', 'Câu hỏi review', 'Bằng chứng nên có']}
+	headers={['Tiêu chí', 'Câu hỏi cần đặt ra', 'Dấu hiệu cần comment']}
 	rows={[
 		[
-			'Scope',
-			'PR này có làm đúng một mục tiêu không, hay kèm refactor/format unrelated?',
-			'Diff gọn, file thay đổi khớp ticket.'
+			'Design',
+			'Thay đổi này có nằm đúng module, đúng boundary, đúng hướng kiến trúc không?',
+			'Logic domain bị nhét vào controller/UI, hoặc thêm abstraction quá rộng so với nhu cầu hiện tại.'
 		],
 		[
-			'Correctness',
-			'Có case nào input rỗng, null, 0, timezone, permission, retry bị bỏ qua không?',
-			'Test hoặc mô tả manual verification.'
+			'Functionality',
+			'Code có xử lý đúng yêu cầu, đủ happy path và edge case không?',
+			'Bỏ qua null, empty string, timezone, retry, permission, trạng thái lỗi hoặc dữ liệu không tồn tại.'
+		],
+		[
+			'Readability',
+			'Người khác có hiểu ý định của code mà không cần hỏi tác giả không?',
+			'Tên biến mơ hồ, function quá dài, điều kiện lồng nhau khó theo dõi, comment giải thích lại code thay vì giải thích lý do.'
 		],
 		[
 			'Maintainability',
-			'Tên biến/function có nói đúng ý định không? Logic có bị copy paste không?',
-			'Code đọc được từ call site, không phải mở sâu mới hiểu.'
+			'Code có dễ sửa tiếp khi yêu cầu thay đổi không?',
+			'Copy paste logic, query/filter viết lại nhiều nơi, coupling giữa các module không cần thiết.'
 		],
 		[
-			'Observability',
-			'Khi lỗi xảy ra có log/metric đủ tìm nguyên nhân không?',
-			'Log không lộ PII/secret, error message rõ.'
+			'Tests',
+			'Có test đúng tầng cho logic mới hoặc phần rủi ro không?',
+			'Test chỉ cover happy path, không có case lỗi, hoặc test phụ thuộc thứ tự/time/network.'
 		],
 		[
-			'Compatibility',
-			'Thay đổi có phá API contract, route, schema, migration hoặc client cũ không?',
-			'Migration/backward compatibility note.'
+			'Performance',
+			'Thay đổi có tạo query chậm, N+1, loop lớn, memory tăng hoặc request dư không?',
+			'Fetch toàn bộ dữ liệu rồi filter trong app, query không có plan, import thư viện lớn cho việc nhỏ.'
+		],
+		[
+			'Security',
+			'Input, authorization, secret, log, file upload, query raw đã được kiểm soát chưa?',
+			'Tin dữ liệu từ client, thiếu ownership check, log token, hoặc build SQL/string template từ input.'
+		],
+		[
+			'Documentation',
+			'Thay đổi có cần cập nhật README, API docs, migration note hoặc runbook không?',
+			'Đổi config/env/schema nhưng không ghi cách deploy hoặc rollback.'
 		]
 	]}
 />
 
-ESLint là lớp kiểm tra cơ bản cho JavaScript/TypeScript. Tài liệu ESLint mô tả nó là công cụ tìm và sửa vấn đề trong code JavaScript: https://eslint.org/docs/latest/. TypeScript cũng nên chạy typecheck riêng; tùy repo có thể dùng `tsc --noEmit`, với `noEmit` nghĩa là compiler không ghi output file: https://www.typescriptlang.org/tsconfig/#noEmit
+GitLab cũng nhấn mạnh code review phải giúp code hiệu quả, dễ hiểu, dễ bảo trì và an toàn. Đây là một thước đo tốt: nếu comment của mình không giúp một trong các mục tiêu đó, hãy cân nhắc nó có đáng chặn PR không.
 
-Nhưng lint/typecheck chỉ là cửa đầu. PR pass lint vẫn có thể sai nghiệp vụ, query chậm, transaction sai hoặc render UI tệ trên mobile.
+<a id="nhung-thu-nen-de-tool-xu-ly-truoc" class="block scroll-mt-31"></a>
 
-<a id="review-frontend" class="block scroll-mt-31"></a>
+## Những thứ nên để tool xử lý trước
 
-## Review frontend
+Reviewer không nên tốn thời gian bắt lỗi format thủ công nếu repo đã có tool. Những việc có rule khách quan nên tự động hóa:
 
-Frontend review nên nhìn vào trải nghiệm, state flow, accessibility, performance và data contract với backend.
+- Formatter: khoảng trắng, line break, quote style.
+- Linter: unused import, pattern nguy hiểm, rule code style.
+- Typecheck: lỗi type, field thiếu, contract sai.
+- Unit/integration test: logic cốt lõi và case hồi quy.
+- Static analysis/security scan: dependency vulnerability, secret scan, rule bảo mật cơ bản.
+- CI build: build app, migration check, test command bắt buộc.
+
+Automation không thay thế reviewer, nhưng nó giải phóng reviewer khỏi việc cơ học. Con người nên tập trung vào ý định, thiết kế, rủi ro, sự rõ ràng và những lỗi tool khó hiểu được.
+
+<a id="quy-trinh-review-mot-pull-request" class="block scroll-mt-31"></a>
+
+## Quy trình review một pull request
+
+Một quy trình gọn nhưng hiệu quả:
+
+1. Đọc mô tả PR trước khi đọc diff.
+2. Xác định mục tiêu: PR này sửa bug gì, thêm feature gì, hoặc refactor phần nào?
+3. Nhìn tổng quan file thay đổi để biết phạm vi.
+4. Đọc file chính trước, sau đó mới đọc helper/test/style liên quan.
+5. Chạy hoặc xem bằng chứng: test, screenshot, log, query plan, migration output.
+6. Comment vào rủi ro cụ thể, không comment lan man.
+7. Phân biệt comment bắt buộc sửa và góp ý tùy chọn.
+8. Approve khi PR đủ tốt, hoặc request changes với lý do rõ.
+
+Với PR lớn, đừng cố review như một khối. Hãy yêu cầu tách nếu có thể:
 
 <DataTable
-	headers={['Hạng mục', 'Cần kiểm tra', 'Ví dụ câu hỏi']}
+	headers={['PR lớn vì...', 'Cách xử lý tốt hơn']}
 	rows={[
 		[
-			'State',
-			'State có bị duplicate giữa URL, store, form và local state không?',
-			'Đổi filter rồi back browser có giữ đúng trạng thái không?'
+			'Vừa refactor vừa thêm feature',
+			'Tách refactor cơ học thành PR riêng, feature thành PR riêng.'
 		],
 		[
-			'Render',
-			'Component có re-render vì object/function tạo mới liên tục không?',
-			'Có cần memoization hay tách component nhỏ hơn không?'
+			'Đổi schema, API và UI cùng lúc',
+			'Tách migration/API contract trước, UI dùng contract sau.'
 		],
 		[
-			'Loading/error/empty',
-			'Có đủ trạng thái loading, error, empty, permission denied không?',
-			'API lỗi 403/500 thì UI hiển thị gì?'
+			'Diff có quá nhiều file format',
+			'Chạy format riêng hoặc tách commit format để reviewer không bị nhiễu.'
 		],
 		[
-			'Accessibility',
-			'Button/link/form control có label, focus state, keyboard flow không?',
-			'Dùng tab có đi được hết luồng chính không?'
-		],
-		[
-			'Responsive',
-			'Text dài, table rộng, modal, sidebar có vỡ trên mobile không?',
-			'Có screenshot hoặc tự test viewport nhỏ chưa?'
-		],
-		[
-			'Bundle/perf',
-			'Có import thư viện lớn chỉ để dùng một helper nhỏ không?',
-			'Route này có làm tăng bundle đáng kể không?'
+			'Thay đổi logic nhiều module',
+			'Tách theo luồng nghiệp vụ hoặc theo boundary module nếu không phá release.'
 		]
 	]}
 />
 
-React docs khuyến nghị dùng Profiler để đo hiệu năng render của component tree: https://react.dev/reference/react/Profiler. Với web performance, web.dev có tài liệu về performance budgets để đặt giới hạn tài nguyên như JavaScript size, image weight hoặc metrics mục tiêu: https://web.dev/articles/performance-budgets-101
+Review nhanh không phải là đọc lướt. Review nhanh là giảm nhiễu để đọc đúng phần quan trọng.
 
-Về accessibility, MDN nhấn mạnh HTML semantic là nền tảng quan trọng vì browser, assistive technology và keyboard behavior dựa vào semantic đúng: https://developer.mozilla.org/en-US/docs/Learn/Accessibility/HTML
+<a id="cach-comment-de-nguoi-khac-de-sua" class="block scroll-mt-31"></a>
 
-Một lỗi review FE phổ biến là chỉ xem component có "đẹp" không, nhưng bỏ qua contract dữ liệu. Ví dụ backend trả `null`, `0`, `false`, empty array; frontend lại dùng `if (value)` rồi vô tình coi `0` là không có dữ liệu. Những lỗi kiểu này nên review từ payload thật hoặc type generated, không đoán.
+## Cách comment để người khác dễ sửa
 
-<a id="review-backend" class="block scroll-mt-31"></a>
+Comment tốt nên có ba phần: vấn đề, tác động, gợi ý. Không nhất thiết lúc nào cũng đủ cả ba, nhưng càng rõ thì author càng dễ xử lý.
 
-## Review backend
+Ví dụ comment chưa tốt:
 
-Backend review cần quan tâm đến correctness, API contract, query, transaction, memory, idempotency và failure mode.
-
-<DataTable
-	headers={['Hạng mục', 'Cần kiểm tra', 'Dấu hiệu cần hỏi lại']}
-	rows={[
-		[
-			'API contract',
-			'Request/response có rõ type, nullable field, error code không?',
-			'Một field lúc thì missing, lúc thì null, lúc thì empty string.'
-		],
-		[
-			'Validation',
-			'Validate ở boundary chưa, message lỗi có đủ rõ không?',
-			'Logic tin input client hoặc bỏ qua permission.'
-		],
-		[
-			'Query',
-			'Có N+1, full scan, sort lớn, duplicated query không?',
-			'Một câu query được viết lại 2 lần ở hai service khác nhau.'
-		],
-		[
-			'Transaction',
-			'Có giữ transaction quá lâu không?',
-			'Gọi API ngoài, gửi email, upload file trong transaction DB.'
-		],
-		[
-			'Idempotency',
-			'Retry request có tạo duplicate không?',
-			'Webhook/payment/import không có idempotency key.'
-		],
-		[
-			'Memory',
-			'Có load toàn bộ dataset vào memory không?',
-			'Export/report đọc cả triệu row rồi map trong RAM.'
-		]
-	]}
-/>
-
-Backend nên có test ở đúng tầng. Unit test bắt pure logic, integration test bắt database/API contract, migration test hoặc build step bắt schema mismatch. Với endpoint quan trọng, reviewer nên hỏi: "lỗi nào sẽ xảy ra nếu request bị retry, transaction rollback, hoặc worker chết giữa chừng?"
-
-<a id="review-database-query" class="block scroll-mt-31"></a>
-
-## Review database query
-
-Nếu PR thêm hoặc sửa query, chỉ nhìn SQL text là chưa đủ. Cần xem plan và dữ liệu thực tế gần production.
-
-PostgreSQL `EXPLAIN` cho biết execution plan, scan type, join algorithm và estimate; `ANALYZE` thực thi query để lấy runtime thật: https://www.postgresql.org/docs/current/sql-explain.html. MySQL `EXPLAIN` cũng mô tả cách statement được execute, và `EXPLAIN ANALYZE` chạy statement rồi trả thêm timing/iterator information: https://dev.mysql.com/doc/refman/8.4/en/explain.html
-
-Checklist query:
-
-<DataTable
-	headers={['Điểm review', 'Cần nhìn', 'Ví dụ']}
-	rows={[
-		[
-			'Thời gian query',
-			'P95/P99 hoặc ít nhất runtime với dữ liệu đủ lớn.',
-			'<code>EXPLAIN ANALYZE</code> thay vì đo bằng cảm giác.'
-		],
-		[
-			'Rows scanned',
-			'Query trả 20 row nhưng scan hàng trăm nghìn row không?',
-			'Pagination <code>OFFSET</code> sâu hoặc thiếu composite index.'
-		],
-		[
-			'Duplicated query',
-			'Cùng một query logic viết lại ở hai nơi không?',
-			'Service A và service B cùng tự build điều kiện filter.'
-		],
-		[
-			'N+1',
-			'Một request có gọi query theo từng item không?',
-			'Load 50 orders rồi loop query từng customer.'
-		],
-		[
-			'Memory query',
-			'Có fetch toàn bộ rồi filter/sort trong app không?',
-			'Nên đẩy filter/sort/page xuống database nếu hợp lý.'
-		],
-		[
-			'Lock',
-			'Query update/delete có lock nhiều row hơn dự kiến không?',
-			'Thiếu index ở điều kiện update làm lock scan rộng.'
-		]
-	]}
-/>
-
-Một review comment tốt không chỉ nói "query này chậm". Nên chỉ ra bằng chứng: plan nào, rows estimate/actual ra sao, index nào bị bỏ qua, dữ liệu test có kích thước bao nhiêu, và đề xuất thay đổi có kiểm chứng.
-
-<a id="review-memory-va-tai-nguyen" class="block scroll-mt-31"></a>
-
-## Review memory và tài nguyên
-
-Memory bug thường không lộ trong test nhỏ. Một đoạn code đọc file, export CSV, aggregate report hoặc gọi API batch có thể pass local nhưng gây OOM khi dữ liệu thật lớn.
-
-Các câu hỏi nên hỏi:
-
-- Có đang load toàn bộ table/file vào array không?
-- Có thể streaming, cursor, pagination hoặc chunking không?
-- Có giữ buffer lớn trong closure/cache không giới hạn không?
-- Có timeout/cancel khi downstream chậm không?
-- Có retry không giới hạn làm nhân đôi memory/network không?
-
-Ở FE, memory leak hay đến từ event listener/subscription/timer không cleanup, object URL không revoke, cache không có limit. Ở BE, leak thường đến từ global cache, queue in-memory, giữ request payload lớn, hoặc ORM load quan hệ quá rộng.
-
-<a id="review-transaction-va-consistency" class="block scroll-mt-31"></a>
-
-## Review transaction và consistency
-
-Transaction không chỉ là bọc `BEGIN/COMMIT`. Cần review phạm vi transaction, isolation, retry và side effect.
-
-Ví dụ flow xấu:
-
-```ts
-await db.transaction(async tx => {
-	await tx.order.create(...)
-	await paymentGateway.charge(...)
-	await tx.payment.create(...)
-})
+```txt
+Đoạn này hơi sai sai.
 ```
 
-Gọi payment gateway trong transaction làm transaction giữ lock lâu, và nếu rollback sau khi charge thành công thì hệ thống rơi vào trạng thái khó bù. Flow tốt hơn thường là tách side effect ra khỏi transaction DB, dùng outbox/idempotency hoặc state machine tùy domain.
+Comment tốt hơn:
 
-Về visibility, PostgreSQL docs giải thích ở `READ COMMITTED`, query chỉ thấy dữ liệu đã commit trước khi query bắt đầu: https://www.postgresql.org/docs/current/transaction-iso.html. MySQL InnoDB docs giải thích isolation levels và consistent reads trong InnoDB: https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-isolation-levels.html. Khi review bug "trong transaction thấy row mới, ngoài transaction chưa thấy", đó thường là behavior đúng cho dữ liệu chưa commit, không phải database lỗi.
+```txt
+Case title toàn khoảng trắng vẫn qua validate vì đang check if (title).
+Khi submit, BE sẽ trả lỗi muộn và UI mất trạng thái form.
+Nên trim title trước khi validate ở FE, nhưng vẫn giữ validate ở BE.
+```
 
-<a id="review-security" class="block scroll-mt-31"></a>
+Ví dụ comment về query:
 
-## Review security
+```txt
+Endpoint /posts đang load author theo từng item.
+Với 50 bài sẽ tạo 51 query, dễ thành N+1 khi list lớn.
+Nên preload author theo author_ids hoặc join ngay trong query list.
+```
 
-OWASP Code Review Guide nhấn mạnh code review bảo mật nên tìm lỗi security ở source code, đặc biệt các lỗi không dễ bị bắt bởi tool tự động: https://owasp.org/www-project-code-review-guide/
+Ví dụ comment về thiết kế:
 
-Checklist security tối thiểu:
+```txt
+Logic tính publish_state đang nằm trong component UI.
+Rule này cũng được dùng ở API list và job schedule, nên nếu để ở UI sẽ dễ lệch.
+Nên đưa về domain helper dùng chung và test riêng rule này.
+```
+
+Một thói quen hữu ích là đánh dấu mức độ comment:
 
 <DataTable
-	headers={['Nhóm', 'Câu hỏi']}
+	headers={['Loại comment', 'Ý nghĩa']}
 	rows={[
 		[
-			'AuthN/AuthZ',
-			'Endpoint có kiểm tra đúng user, role, tenant, ownership không?'
+			'Blocking',
+			'Phải sửa trước khi merge vì có bug, rủi ro bảo mật, sai contract hoặc phá kiến trúc.'
 		],
-		['Input', 'Có validate input ở server không, kể cả FE đã validate?'],
-		['Injection', 'SQL/query/template/shell có dùng parameterized API không?'],
-		['Secrets', 'Log, error, analytics có lộ token, password, API key không?'],
 		[
-			'File/upload',
-			'Có check type, size, path traversal, virus scan hoặc sandbox nếu cần không?'
+			'Suggestion',
+			'Gợi ý cải thiện, author nên cân nhắc nhưng không nhất thiết chặn PR.'
 		],
-		['Rate limit', 'Endpoint tốn CPU/query/network có bị spam được không?']
+		[
+			'Question',
+			'Reviewer chưa rõ ngữ cảnh, cần author giải thích trước khi kết luận.'
+		],
+		[
+			'Nit',
+			'Góp ý nhỏ, thường không nên chặn merge nếu không ảnh hưởng chất lượng thật.'
+		]
 	]}
 />
 
-Với FE, security review cũng cần xem XSS, `dangerouslySetInnerHTML`, link ngoài, token storage, CSP và dữ liệu user-generated content. Với BE, phải xem authorization theo object, không chỉ theo route.
+Microsoft Engineering Playbook cũng nhấn mạnh review nên tích cực, hiệu quả và có checklist rõ. Một comment tốt tập trung vào code và rủi ro, không công kích người viết code.
 
-<a id="cau-hoi-nen-de-lai-khi-review" class="block scroll-mt-31"></a>
+<a id="cach-review-nhanh-ma-van-hieu-qua" class="block scroll-mt-31"></a>
 
-## Câu hỏi nên để lại khi review
+## Cách review nhanh mà vẫn hiệu quả
 
-Review comment nên cụ thể và có bằng chứng. Một số câu hỏi tôi hay dùng:
+Review nhanh không đến từ việc bỏ qua chi tiết quan trọng. Nó đến từ chuẩn bị tốt và giảm kích thước mỗi lần review.
 
-- "Query này đã chạy `EXPLAIN ANALYZE` với dữ liệu gần production chưa?"
-- "Đoạn này có thể tạo N+1 query khi danh sách có 50 item không?"
-- "Nếu request bị retry sau timeout, có tạo duplicate record không?"
-- "Field này có thể là `0` hoặc `null` không? Nếu có thì điều kiện `if (value)` có đúng không?"
-- "Transaction này có cần bao cả API call bên ngoài không?"
-- "Có test case cho permission khác tenant/user khác chưa?"
-- "Trên mobile/tablet text dài trong button/table có vỡ layout không?"
+Một số nguyên tắc thực dụng:
 
-Comment tốt nên nói rõ rủi ro và gợi ý hướng sửa. Nếu chưa chắc, hỏi bằng câu hỏi có ngữ cảnh thay vì chặn PR bằng nhận định mơ hồ.
+- PR nhỏ hơn thì review nhanh hơn.
+- Mô tả PR rõ thì reviewer đỡ phải đoán.
+- CI xanh trước khi request review.
+- Screenshot/video/log/query plan đính kèm nếu thay đổi khó thấy bằng diff.
+- Review file chính trước, test sau, rồi mới tới phần phụ.
+- Không dành quá lâu cho một lượt review; nếu mệt, dừng lại và quay lại sau.
+- Với vấn đề thiết kế lớn, trao đổi trực tiếp rồi chốt lại bằng comment ngắn trong PR.
+
+Checklist thời gian:
+
+<DataTable
+	headers={['Tình huống', 'Cách review']}
+	rows={[
+		[
+			'PR nhỏ, ít rủi ro',
+			'Đọc diff, kiểm tra test/CI, comment nếu có vấn đề rõ, approve nhanh.'
+		],
+		[
+			'PR có logic nghiệp vụ',
+			'Đọc spec, đọc flow chính, kiểm tra edge case, test và dữ liệu lỗi.'
+		],
+		[
+			'PR có query/migration',
+			'Yêu cầu plan, dữ liệu test, rollback plan hoặc bằng chứng chạy migration.'
+		],
+		[
+			'PR quá lớn',
+			'Không cố review hết trong im lặng. Yêu cầu chia nhỏ hoặc review theo từng commit/phạm vi.'
+		]
+	]}
+/>
+
+<a
+	id="checklist-cho-author-truoc-khi-gui-review"
+	class="block scroll-mt-31"
+></a>
+
+## Checklist cho author trước khi gửi review
+
+Author chuẩn bị tốt thì reviewer nhanh hơn rất nhiều.
+
+Trước khi request review, nên tự hỏi:
+
+1. PR này có một mục tiêu rõ không?
+2. Mô tả PR có nói rõ thay đổi gì, vì sao đổi, cách test không?
+3. Có file unrelated, format unrelated hoặc debug log sót lại không?
+4. Test/lint/typecheck đã chạy chưa?
+5. Có screenshot hoặc video nếu thay đổi UI không?
+6. Có query plan nếu thêm query quan trọng không?
+7. Có migration note nếu thay đổi schema không?
+8. Có rollback plan nếu thay đổi rủi ro cao không?
+9. Có đánh dấu phần muốn reviewer nhìn kỹ không?
+
+Một PR tốt không bắt reviewer tự đi tìm ý định của tác giả.
+
+<a id="checklist-cho-reviewer" class="block scroll-mt-31"></a>
+
+## Checklist cho reviewer
+
+Khi đọc PR, tôi thường đi theo checklist này:
+
+<DataTable
+	headers={['Câu hỏi', 'Vì sao quan trọng']}
+	rows={[
+		[
+			'Thay đổi có đúng scope không?',
+			'Tránh PR nhỏ biến thành refactor lớn hoặc đổi behavior ngoài ticket.'
+		],
+		[
+			'Luồng chính có chạy đúng không?',
+			'Bắt bug correctness trước khi tranh luận style.'
+		],
+		[
+			'Có edge case quan trọng nào bị bỏ qua không?',
+			'Null, empty, permission, timezone, retry, concurrency thường gây lỗi production.'
+		],
+		[
+			'Code có đơn giản hơn được không?',
+			'Complexity dư làm chi phí bảo trì tăng về sau.'
+		],
+		[
+			'Tên và cấu trúc có dễ hiểu không?',
+			'Code được đọc nhiều lần hơn số lần nó được viết.'
+		],
+		[
+			'Test có bảo vệ behavior quan trọng không?',
+			'Test tốt giúp reviewer tự tin approve và giúp future refactor an toàn hơn.'
+		],
+		[
+			'Có rủi ro performance/security/operation không?',
+			'Đây là nhóm lỗi thường không hiện trong local happy path.'
+		],
+		[
+			'Comment của mình có actionable không?',
+			'Author cần biết phải sửa gì hoặc cần giải thích gì.'
+		]
+	]}
+/>
+
+<a id="khi-nao-nen-approve" class="block scroll-mt-31"></a>
+
+## Khi nào nên approve?
+
+Approve không có nghĩa là "code hoàn hảo". Approve nghĩa là reviewer tin rằng thay đổi này đủ tốt để đi tiếp và làm codebase tốt hơn hoặc không làm nó xấu đi.
+
+Nên approve khi:
+
+- Yêu cầu chính đã đúng.
+- Rủi ro lớn đã được xử lý hoặc có kế hoạch rõ.
+- Test/bằng chứng phù hợp với mức độ rủi ro.
+- Các comment còn lại chỉ là nit hoặc suggestion không chặn.
+- Code phù hợp với hướng kiến trúc hiện tại.
+
+Nên request changes khi:
+
+- Có bug correctness rõ.
+- Có rủi ro security hoặc data loss.
+- API/schema contract bị phá mà không có migration/compatibility plan.
+- Query/migration có rủi ro production nhưng không có bằng chứng kiểm tra.
+- Thiết kế đi ngược boundary hệ thống và sẽ tạo nợ kỹ thuật rõ ràng.
+
+Điểm khó nhất của review code là cân bằng. Quá dễ dãi thì codebase xuống cấp. Quá cầu toàn thì team bị chậm và review trở thành điểm nghẽn. Một reviewer tốt biết phân biệt đâu là vấn đề phải sửa, đâu là góp ý để sau, và đâu chỉ là sở thích cá nhân.
 
 <a id="nguon-tham-khao" class="block scroll-mt-31"></a>
 
 ## Nguồn tham khảo
 
-- ESLint Documentation: https://eslint.org/docs/latest/
-- TypeScript `noEmit` option: https://www.typescriptlang.org/tsconfig/#noEmit
-- React Profiler API: https://react.dev/reference/react/Profiler
-- web.dev Performance Budgets 101: https://web.dev/articles/performance-budgets-101
-- MDN Accessibility: HTML: https://developer.mozilla.org/en-US/docs/Learn/Accessibility/HTML
-- OWASP Code Review Guide: https://owasp.org/www-project-code-review-guide/
-- PostgreSQL EXPLAIN: https://www.postgresql.org/docs/current/sql-explain.html
-- PostgreSQL Transaction Isolation: https://www.postgresql.org/docs/current/transaction-iso.html
-- MySQL EXPLAIN Statement: https://dev.mysql.com/doc/refman/8.4/en/explain.html
-- MySQL InnoDB Transaction Isolation Levels: https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-isolation-levels.html
+- Viblo, "[Review code] Review code và những điều cần biết": https://viblo.asia/p/review-code-review-code-va-nhung-dieu-can-biet-924lJ8L0KPM
+- Viblo, "Những Tiêu Chí Và Vấn Đề Khi Review Code": https://viblo.asia/p/nhung-tieu-chi-va-van-de-khi-review-code-EbNVQ8wALvR
+- Viblo, "Cách để review code nhanh mà hiệu quả": https://viblo.asia/p/cach-de-review-code-nhanh-ma-hieu-qua-Ljy5VYnblra
+- Google Engineering Practices, "The Standard of Code Review": https://google.github.io/eng-practices/review/reviewer/standard.html
+- GitLab Docs, "Code Review Guidelines": https://docs.gitlab.com/development/code_review/
+- Microsoft Engineering Fundamentals Playbook, "Reviewer Guidance": https://microsoft.github.io/code-with-engineering-playbook/code-reviews/process-guidance/reviewer-guidance/
