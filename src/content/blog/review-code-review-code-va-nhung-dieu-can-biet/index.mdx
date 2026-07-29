@@ -215,16 +215,6 @@ Review nhanh không phải là đọc lướt. Review nhanh là giảm nhiễu �
 
 <a id="cach-comment-de-nguoi-khac-de-sua" class="block scroll-mt-31"></a>
 
-## Cách comment để người khác dễ sửa
-
-Comment tốt nên có ba phần: vấn đề, tác động, gợi ý. Không nhất thiết lúc nào cũng đủ cả ba, nhưng càng rõ thì author càng dễ xử lý.
-
-Ví dụ cùng một vấn đề nhưng cách comment khác nhau:                                                                    
-
-| Chưa tốt | Tốt hơn |
-| --- | --- |
-| `✕ This looks wrong.` | `✓ A whitespace-only title still passes validation because the code checks if (title) before trimming. The API then rejects it later and the UI loses the form state. Please trim before validating in the UI, while keeping the backend validation as the source of truth.` |
-
 ```js filename="review-comment-examples.js" del={2} ins={5-10}
 // bad
 const badReviewComment = 'This looks wrong.'
@@ -235,24 +225,6 @@ A whitespace-only title still passes validation because the code checks if (titl
 The API then rejects it later and the UI loses the form state.
 Please trim before validating in the UI, while keeping the backend validation as the source of truth.
 `
-```
-
-Câu tốt hơn chỉ rõ case lỗi, tác động và hướng sửa.
-
-Ví dụ comment về query:
-
-```txt filename="query-review-comment.txt"
-Endpoint /posts đang load author theo từng item.
-Với 50 bài sẽ tạo 51 query, dễ thành N+1 khi list lớn.
-Nên preload author theo author_ids hoặc join ngay trong query list.
-```
-
-Ví dụ comment về thiết kế:
-
-```txt filename="design-review-comment.txt"
-Logic tính publish_state đang nằm trong component UI.
-Rule này cũng được dùng ở API list và job schedule, nên nếu để ở UI sẽ dễ lệch.
-Nên đưa về domain helper dùng chung và test riêng rule này.
 ```
 
 Một thói quen hữu ích là đánh dấu mức độ comment:
