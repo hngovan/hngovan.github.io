@@ -3,8 +3,9 @@ import mdx from '@astrojs/mdx'
 import react from '@astrojs/react'
 import sitemap from '@astrojs/sitemap'
 import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections'
+import { pluginFrames } from '@expressive-code/plugin-frames'
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
-import rehypeShiki from '@shikijs/rehype'
+import { pluginTextMarkers } from '@expressive-code/plugin-text-markers'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'astro/config'
 import icon from 'astro-icon'
@@ -14,6 +15,40 @@ import rehypeExternalLinks from 'rehype-external-links'
 import rehypeKatex from 'rehype-katex'
 import remarkEmoji from 'remark-emoji'
 import remarkMath from 'remark-math'
+
+const remarkCodeFenceMetaAliases = () => {
+	const normalizeMeta = (meta: string) => {
+		if (/\btitle=/.test(meta) || !/\bfilename=/.test(meta)) return meta
+
+		return meta.replace(
+			/\bfilename=(?:"([^"]+)"|'([^']+)'|(\S+))/g,
+			(_, doubleQuoted: string, singleQuoted: string, bare: string) => {
+				const value = doubleQuoted ?? singleQuoted ?? bare
+				return `title="${value}"`
+			}
+		)
+	}
+
+	const visit = (node: {
+		type?: string
+		meta?: string
+		children?: unknown[]
+	}) => {
+		if (node.type === 'code' && typeof node.meta === 'string') {
+			node.meta = normalizeMeta(node.meta)
+		}
+
+		if (Array.isArray(node.children)) {
+			for (const child of node.children) {
+				visit(child as { type?: string; meta?: string; children?: unknown[] })
+			}
+		}
+	}
+
+	return (tree: { type?: string; meta?: string; children?: unknown[] }) => {
+		visit(tree)
+	}
+}
 
 export default defineConfig({
 	site: 'https://hngovan.github.io',
@@ -44,7 +79,12 @@ export default defineConfig({
 				rehypeExpressiveCode,
 				{
 					themes: ['github-light', 'github-dark'],
-					plugins: [pluginCollapsibleSections(), pluginLineNumbers()],
+					plugins: [
+						pluginFrames(),
+						pluginLineNumbers(),
+						pluginCollapsibleSections(),
+						pluginTextMarkers()
+					],
 					useDarkModeMediaQuery: false,
 					themeCssSelector: (theme: ExpressiveCodeTheme) =>
 						`[data-theme="${theme.name.split('-')[1]}"]`,
@@ -86,18 +126,8 @@ export default defineConfig({
 						uiFontFamily: 'var(--font-sans)'
 					}
 				}
-			],
-			[
-				rehypeShiki,
-				{
-					themes: {
-						light: 'github-light',
-						dark: 'github-dark'
-					},
-					inline: 'tailing-curly-colon'
-				}
 			]
 		],
-		remarkPlugins: [remarkMath, remarkEmoji]
+		remarkPlugins: [remarkMath, remarkEmoji, remarkCodeFenceMetaAliases]
 	}
 })
