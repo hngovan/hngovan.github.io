@@ -1,0 +1,60 @@
+---
+type Props = {
+	chart: string
+	title?: string
+}
+
+const { chart, title } = Astro.props
+const encodedChart = encodeURIComponent(chart.trim())
+---
+
+<figure class="not-prose bg-background my-6 rounded-lg border p-4">
+	{title && <figcaption class="mb-3 text-sm font-medium">{title}</figcaption>}
+	<div
+		class="mermaid-diagram overflow-x-auto"
+		data-chart={encodedChart}
+		aria-label={title ?? 'Mermaid diagram'}
+	>
+	</div>
+</figure>
+
+<script>
+	const renderMermaidDiagrams = async () => {
+		const { default: mermaid } = await import('mermaid')
+		const theme =
+			document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
+
+		mermaid.initialize({
+			startOnLoad: false,
+			securityLevel: 'strict',
+			theme,
+			themeVariables: {
+				fontFamily: 'var(--font-sans)',
+				primaryColor: 'color-mix(in oklab, var(--primary) 12%, white)',
+				primaryTextColor: 'var(--foreground)',
+				lineColor: 'var(--muted-foreground)'
+			}
+		})
+
+		const diagrams = document.querySelectorAll<HTMLElement>('.mermaid-diagram')
+
+		for (const [index, diagram] of diagrams.entries()) {
+			const chart = diagram.dataset.chart
+			if (!chart) continue
+
+			const source = decodeURIComponent(chart)
+			const renderKey = `${theme}-${source}`
+
+			if (diagram.dataset.renderKey === renderKey) continue
+
+			const id = `mermaid-${index}-${Math.random().toString(36).slice(2)}`
+			const { svg } = await mermaid.render(id, source)
+			diagram.innerHTML = svg
+			diagram.dataset.renderKey = renderKey
+		}
+	}
+
+	document.addEventListener('astro:page-load', renderMermaidDiagrams)
+	document.addEventListener('astro:after-swap', renderMermaidDiagrams)
+	document.addEventListener('theme-change', renderMermaidDiagrams)
+</script>

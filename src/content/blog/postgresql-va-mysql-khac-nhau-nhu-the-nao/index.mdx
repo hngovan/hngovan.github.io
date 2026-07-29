@@ -19,6 +19,7 @@ authors: ['keeb-log']
 ---
 
 import DataTable from '@/components/mdx/data-table.astro'
+import MermaidDiagram from '@/components/mdx/mermaid-diagram.astro'
 
 PostgreSQL và MySQL đều là relational database rất mạnh, nhưng cách chúng lưu phiên bản row, xóa dữ liệu, lập kế hoạch query và xử lý transaction có nhiều khác biệt. Nếu chỉ nhìn từ cú pháp `SELECT`, `INSERT`, `UPDATE`, `DELETE` thì hai hệ này khá giống nhau; khác biệt thật sự xuất hiện khi dữ liệu lớn, nhiều transaction chạy song song, query phức tạp hoặc hệ thống có workload rất lệch đọc/ghi.
 
@@ -129,6 +130,30 @@ Minh họa visibility:
 />
 
 Nếu giữa chừng có lỗi và chạy `ROLLBACK`, cả hai update đều bị hủy. Đây là điểm quan trọng khi so PostgreSQL/MySQL: concept transaction giống nhau, nhưng chi tiết MVCC, isolation mặc định, cách lưu version cũ và cách dọn rác sau update/delete khác nhau.
+
+<MermaidDiagram
+	title="Luồng transaction chuyển tiền và visibility với session khác"
+	chart={`
+sequenceDiagram
+	participant A as Session A
+	participant DB as Database
+	participant B as Session B
+	A->>DB: BEGIN
+	A->>DB: UPDATE account A -100000
+	A->>DB: UPDATE account B +100000
+	B->>DB: SELECT balances
+	DB-->>B: Still old committed balances
+	alt Commit thanh cong
+		A->>DB: COMMIT
+		B->>DB: SELECT balances
+		DB-->>B: New balances visible
+	else Co loi
+		A->>DB: ROLLBACK
+		B->>DB: SELECT balances
+		DB-->>B: Old balances remain
+	end
+`}
+/>
 
 ```sql
 BEGIN;

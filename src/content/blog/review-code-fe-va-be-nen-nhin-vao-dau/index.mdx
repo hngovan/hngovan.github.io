@@ -19,6 +19,7 @@ authors: ['keeb-log']
 ---
 
 import DataTable from '@/components/mdx/data-table.astro'
+import MermaidDiagram from '@/components/mdx/mermaid-diagram.astro'
 
 Review code không chỉ là bắt lỗi format hoặc hỏi "sao viết thế này?". Một review tốt nên giúp team giảm bug, giữ code dễ đọc, giảm chi phí vận hành và tránh những lỗi chỉ lộ ra khi production có dữ liệu thật.
 
@@ -106,6 +107,31 @@ Với 50 giao dịch sẽ thành 51 request/query. Nên trả đủ account summ
 ```
 
 Các comment kiểu này dễ xử lý hơn nhiều so với "đoạn này có vẻ không ổn", vì nó chỉ ra kịch bản lỗi, tác động và hướng sửa.
+
+<MermaidDiagram
+	title="Luồng review một PR full-stack từ UI tới database"
+	chart={`
+flowchart TD
+	PR[Pull request] --> FE[Frontend review]
+	PR --> BE[Backend review]
+	FE --> UX[State, loading, error, accessibility]
+	FE --> Contract[API contract: null, 0, false, empty array]
+	BE --> Validation[Validation and authorization]
+	BE --> Tx[Transaction and idempotency]
+	BE --> Query[EXPLAIN ANALYZE, N+1, duplicated query]
+	Query --> Memory[Memory and streaming]
+	Tx --> Risk{Co side effect trong transaction?}
+	Risk -->|Yes| Fix[Can outbox, retry, idempotency]
+	Risk -->|No| MergeReady[Review tiep security/perf]
+	UX --> MergeReady
+	Contract --> MergeReady
+	Validation --> MergeReady
+	Memory --> MergeReady
+	MergeReady --> Decision{Du bang chung?}
+	Decision -->|No| Ask[Hoi them benchmark/test/screenshot]
+	Decision -->|Yes| Approve[Approve hoac request change ro rang]
+`}
+/>
 
 <a id="checklist-chung-cho-moi-pr" class="block scroll-mt-31"></a>
 

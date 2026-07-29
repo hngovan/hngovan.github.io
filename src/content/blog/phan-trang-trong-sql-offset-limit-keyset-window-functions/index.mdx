@@ -17,6 +17,7 @@ authors: ['keeb-log']
 ---
 
 import DataTable from '@/components/mdx/data-table.astro'
+import MermaidDiagram from '@/components/mdx/mermaid-diagram.astro'
 
 Phân trang nghe giống một bài toán giao diện: trang 1, trang 2, mỗi trang 20 dòng. Nhưng khi dữ liệu lớn dần, cách viết query quyết định rất nhiều tới tốc độ, độ ổn định kết quả và cả cách thiết kế API.
 
@@ -80,6 +81,20 @@ Minh họa timeline:
 />
 
 Với keyset pagination, trang tiếp theo không nói "bỏ qua 5 dòng" nữa, mà nói "lấy các giao dịch cũ hơn giao dịch cuối tôi đã thấy", ví dụ cursor là `(created_at = 10:01:00, transaction_id = 101)`. Khi đó giao dịch mới `106` chen lên đầu không làm trang tiếp theo bị lệch.
+
+<MermaidDiagram
+	title="Luồng xử lý pagination khi dữ liệu mới chen vào đầu danh sách"
+	chart={`
+flowchart LR
+	User[User xem trang 1] --> Page1[Rows 105..101]
+	Page1 --> NewRow[Transaction 106 moi xuat hien]
+	NewRow --> Offset[OFFSET 5 bo qua 106..102]
+	Offset --> Duplicate[Trang 2 bi lap row 101]
+	Page1 --> Cursor[Cursor luu last_seen = 101]
+	NewRow --> Keyset[WHERE row cu hon cursor 101]
+	Keyset --> Stable[Trang 2 on dinh, khong bi lech]
+`}
+/>
 
 ```sql
 SELECT transaction_id, amount, created_at, description
