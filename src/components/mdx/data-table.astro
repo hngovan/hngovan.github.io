@@ -1,0 +1,59 @@
+---
+import { cn } from '@/lib/utils'
+
+type Align = 'left' | 'center' | 'right'
+
+type Props = {
+	headers: string[]
+	rows: string[][]
+	align?: Align[]
+}
+
+const { headers, rows, align = [] } = Astro.props
+
+const getAlignClass = (columnIndex: number) =>
+	({
+		left: 'text-left',
+		center: 'text-center',
+		right: 'text-right'
+	})[align[columnIndex] ?? 'left']
+---
+
+<div class="not-prose my-6 overflow-x-auto rounded-lg border">
+	<table class="w-full min-w-max border-collapse text-sm">
+		<thead class="bg-muted/60">
+			<tr>
+				{
+					headers.map((header, columnIndex) => (
+						<th
+							class={cn(
+								'border-border border-b px-4 py-3 font-medium',
+								getAlignClass(columnIndex)
+							)}
+						>
+							{header}
+						</th>
+					))
+				}
+			</tr>
+		</thead>
+		<tbody>
+			{
+				rows.map(row => (
+					<tr class="border-border border-b last:border-b-0">
+						{headers.map((_, columnIndex) => (
+							<td
+								class={cn(
+									'text-muted-foreground px-4 py-3 align-top',
+									getAlignClass(columnIndex)
+								)}
+							>
+								<Fragment set:html={row[columnIndex] ?? ''} />
+							</td>
+						))}
+					</tr>
+				))
+			}
+		</tbody>
+	</table>
+</div>

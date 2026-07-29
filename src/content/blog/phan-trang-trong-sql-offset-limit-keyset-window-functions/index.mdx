@@ -1,0 +1,286 @@
+---
+title: 'Phân trang trong SQL: Từ OFFSET/LIMIT đến Keyset Pagination và Window Functions'
+description: 'Ghi chú về ba cách phân trang thường gặp trong SQL, khi nào dùng OFFSET/LIMIT, khi nào nên chuyển sang keyset pagination và vai trò thực tế của window functions.'
+date: '2026-07-29'
+image: '/static/sql/SQL.png'
+routeSlug: 'phan-trang-trong-sql-offset-limit-keyset-window-functions'
+tags: ['sql', 'database', 'pagination', 'backend']
+keywords:
+  [
+    'OFFSET LIMIT',
+    'keyset pagination',
+    'cursor pagination',
+    'window functions',
+    'ROW_NUMBER'
+  ]
+authors: ['keeb-log']
+---
+
+import DataTable from '@/components/mdx/data-table.astro'
+
+Phân trang nghe giống một bài toán giao diện: trang 1, trang 2, mỗi trang 20 dòng. Nhưng khi dữ liệu lớn dần, cách viết query quyết định rất nhiều tới tốc độ, độ ổn định kết quả và cả cách thiết kế API.
+
+Bài này là ghi chú lại ba hướng phổ biến khi phân trang trong SQL: `OFFSET/LIMIT`, keyset pagination và window functions. Mỗi cách đều có chỗ dùng riêng, nên mục tiêu không phải là chọn một "cách tốt nhất", mà là biết khi nào nên dùng cách nào.
+
+## Mục lục nhanh
+
+- [OFFSET/LIMIT: cách dễ hiểu nhất](#offsetlimit-cach-de-hieu-nhat)
+- [Vấn đề của OFFSET ở trang sâu](#van-de-cua-offset-o-trang-sau)
+- [Keyset pagination: đi tiếp từ bản ghi cuối](#keyset-pagination-di-tiep-tu-ban-ghi-cuoi)
+- [Cursor nên chứa gì?](#cursor-nen-chua-gi)
+- [Window functions và ROW_NUMBER](#window-functions-va-row_number)
+- [COUNT(\*) cũng là một điểm nghẽn](#count-cung-la-mot-diem-nghen)
+- [Nên chọn cách nào?](#nen-chon-cach-nao)
+- [Checklist khi triển khai](#checklist-khi-trien-khai)
+
+<a id="offsetlimit-cach-de-hieu-nhat" class="block scroll-mt-31"></a>
+
+## OFFSET/LIMIT: cách dễ hiểu nhất
+
+Đây là cách phân trang quen thuộc nhất trong PostgreSQL, MySQL hoặc SQLite:
+
+```sql
+SELECT id, title, created_at
+FROM articles
+ORDER BY created_at DESC
+LIMIT 20 OFFSET 40;
+```
+
+Nếu mỗi trang có 20 bản ghi, `OFFSET 40` nghĩa là bỏ qua 40 bản ghi đầu và lấy 20 bản ghi tiếp theo. Với SQL Server hoặc Oracle mới hơn, cú pháp thường là:
+
+```sql
+SELECT id, title, created_at
+FROM articles
+ORDER BY created_at DESC
+OFFSET 40 ROWS
+FETCH NEXT 20 ROWS ONLY;
+```
+
+Ưu điểm của cách này là đơn giản, dễ map với UI có số trang và hỗ trợ nhảy thẳng đến một trang bất kỳ. Với bảng nhỏ, trang quản trị nội bộ hoặc dữ liệu không tăng quá nhanh, đây vẫn là lựa chọn thực dụng.
+
+### Khi OFFSET/LIMIT hợp lý
+
+- Dữ liệu vừa phải và số trang sâu ít được truy cập.
+- Người dùng cần nhảy đến trang 12, 50 hoặc 200.
+- UI cần hiển thị tổng số trang rõ ràng.
+- Query phục vụ màn admin, báo cáo nội bộ hoặc dữ liệu đã lọc hẹp.
+
+<a id="van-de-cua-offset-o-trang-sau" class="block scroll-mt-31"></a>
+
+## Vấn đề của OFFSET ở trang sâu
+
+Điểm dễ nhầm là database không "nhảy cóc" miễn phí tới vị trí offset. Để trả về trang sâu, database vẫn phải xác định thứ tự dữ liệu, đi qua các bản ghi bị bỏ qua, rồi mới lấy phần cần trả về.
+
+Ví dụ:
+
+```sql
+SELECT id, title, created_at
+FROM articles
+ORDER BY created_at DESC
+LIMIT 20 OFFSET 200000;
+```
+
+Query này chỉ trả về 20 dòng, nhưng database vẫn phải xử lý một lượng lớn dòng trước đó. Càng đi sâu, chi phí càng tăng.
+
+### Vấn đề nhất quán dữ liệu
+
+`OFFSET` cũng dễ tạo trải nghiệm lặp hoặc thiếu bản ghi nếu dữ liệu thay đổi giữa hai lần request.
+
+Giả sử người dùng vừa đọc trang 1, sau đó có vài bản ghi mới được insert lên đầu danh sách. Khi người dùng sang trang 2, một số bản ghi cuối của trang 1 có thể bị đẩy xuống và xuất hiện lại. Ngược lại, nếu có bản ghi bị xóa, một vài dòng có thể bị bỏ qua.
+
+Vấn đề này không phải lúc nào cũng nghiêm trọng. Với dashboard nội bộ, đôi khi chấp nhận được. Với feed, log sự kiện, timeline hoặc API public, nó đáng để xử lý kỹ hơn.
+
+<a
+	id="keyset-pagination-di-tiep-tu-ban-ghi-cuoi"
+	class="block scroll-mt-31"
+></a>
+
+## Keyset pagination: đi tiếp từ bản ghi cuối
+
+Keyset pagination, còn gọi là cursor pagination hoặc seek method, không yêu cầu database bỏ qua N bản ghi. Thay vào đó, request tiếp theo gửi lại mốc cuối cùng của trang trước.
+
+Trang đầu:
+
+```sql
+SELECT id, title, created_at
+FROM articles
+ORDER BY created_at DESC, id DESC
+LIMIT 20;
+```
+
+Trang tiếp theo:
+
+```sql
+SELECT id, title, created_at
+FROM articles
+WHERE (created_at, id) < ('2026-07-29 10:30:00', 12045)
+ORDER BY created_at DESC, id DESC
+LIMIT 20;
+```
+
+Nếu có index phù hợp, database có thể bắt đầu gần đúng vị trí trong index rồi đọc tiếp 20 dòng. Vì vậy chi phí thường ổn định hơn nhiều khi dữ liệu lớn.
+
+### Vì sao cần thêm id vào ORDER BY?
+
+Nếu chỉ sort theo `created_at`, nhiều bản ghi có thể trùng thời điểm. Khi đó cursor chỉ chứa `created_at` sẽ không đủ để biết bản ghi nào đã đọc và bản ghi nào chưa đọc.
+
+Cách phổ biến là thêm một cột duy nhất để phá hòa:
+
+```sql
+ORDER BY created_at DESC, id DESC
+```
+
+Cursor lúc này gồm cả `created_at` và `id`. Điều kiện tuple:
+
+```sql
+WHERE (created_at, id) < (:last_created_at, :last_id)
+```
+
+có thể hiểu là: lấy các bản ghi đứng sau cặp giá trị cuối cùng theo đúng thứ tự sort.
+
+### Khi database không hỗ trợ tuple comparison
+
+Một số database hoặc phiên bản cũ không dùng được cú pháp `(a, b) < (?, ?)`. Khi đó viết tường minh:
+
+```sql
+WHERE created_at < :last_created_at
+   OR (created_at = :last_created_at AND id < :last_id)
+```
+
+Điều quan trọng là điều kiện `WHERE` phải khớp với `ORDER BY`. Nếu đổi chiều sort hoặc đổi cột sort, cursor cũ không còn ý nghĩa và nên reset về trang đầu.
+
+<a id="cursor-nen-chua-gi" class="block scroll-mt-31"></a>
+
+## Cursor nên chứa gì?
+
+Cursor không nhất thiết chỉ là `last_id`. Với danh sách sort theo `id ASC`, `last_id` là đủ:
+
+```sql
+SELECT id, name
+FROM customers
+WHERE id > :last_id
+ORDER BY id ASC
+LIMIT 50;
+```
+
+Nhưng với danh sách sort theo `created_at DESC, id DESC`, cursor nên chứa cả hai giá trị:
+
+```json
+{
+	"created_at": "2026-07-29T10:30:00Z",
+	"id": 12045
+}
+```
+
+Trong API thực tế, có thể mã hóa cursor thành chuỗi opaque để client không phụ thuộc vào cấu trúc bên trong. Server vẫn giải mã được để dựng điều kiện SQL.
+
+### Nhược điểm của keyset
+
+Keyset không phù hợp với mọi UI. Người dùng thường chỉ đi tiếp/lùi tuần tự, khó nhảy thẳng đến trang bất kỳ. Tổng số trang cũng không còn tự nhiên như mô hình page number.
+
+Vì vậy keyset hợp với:
+
+- Feed, activity log, inbox, danh sách event.
+- API cần hiệu năng ổn định khi dữ liệu lớn.
+- UI dạng "Tải thêm" hoặc infinite scroll.
+- Bảng thay đổi liên tục và không muốn lặp/mất dòng giữa các trang.
+
+<a id="window-functions-va-row_number" class="block scroll-mt-31"></a>
+
+## Window functions và ROW_NUMBER
+
+Một cách khác là đánh số dòng bằng `ROW_NUMBER()` rồi lọc theo khoảng:
+
+```sql
+WITH numbered AS (
+	SELECT
+		id,
+		title,
+		created_at,
+		ROW_NUMBER() OVER (ORDER BY created_at DESC) AS row_index
+	FROM articles
+)
+SELECT id, title, created_at
+FROM numbered
+WHERE row_index BETWEEN 41 AND 60;
+```
+
+Cách này hữu ích khi cần duy trì code cũ, làm việc với database/cú pháp cũ, hoặc cần phân trang theo nhóm. Nhưng với phân trang thông thường, nó thường không nhanh hơn `OFFSET/LIMIT`, vì database vẫn cần đánh số trên tập kết quả trước khi lọc.
+
+### Trường hợp window functions thật sự sáng giá
+
+Window functions mạnh khi bài toán không chỉ là "lấy trang N". Ví dụ lấy top 3 sản phẩm theo doanh số trong từng danh mục:
+
+```sql
+SELECT category, product_name, sales
+FROM (
+	SELECT
+		category,
+		product_name,
+		sales,
+		DENSE_RANK() OVER (
+			PARTITION BY category
+			ORDER BY sales DESC
+		) AS rank_in_category
+	FROM products
+) ranked
+WHERE rank_in_category <= 3;
+```
+
+Ở đây `PARTITION BY` chia dữ liệu theo nhóm, còn `ORDER BY` xác định thứ tự trong từng nhóm. Đây là dạng bài toán mà `OFFSET/LIMIT` không diễn đạt gọn bằng.
+
+<a id="count-cung-la-mot-diem-nghen" class="block scroll-mt-31"></a>
+
+## COUNT(\*) cũng là một điểm nghẽn
+
+Ngay cả khi query lấy dữ liệu đã tối ưu, phần đếm tổng số dòng vẫn có thể chậm:
+
+```sql
+SELECT COUNT(*)
+FROM articles
+WHERE status = 'published';
+```
+
+Với bảng lớn, database có thể phải đọc rất nhiều dữ liệu để trả về con số chính xác. Nếu UI luôn cần "trang 5 / 10.432", chi phí `COUNT(*)` có thể trở thành vấn đề riêng.
+
+Một vài hướng xử lý:
+
+- Bỏ tổng số trang, chỉ hiển thị "Trước" và "Sau".
+- Dùng "Load more" thay vì page number.
+- Cache tổng số theo điều kiện lọc phổ biến.
+- Hiển thị mốc gần đúng như `1000+` nếu sản phẩm cho phép.
+
+<a id="nen-chon-cach-nao" class="block scroll-mt-31"></a>
+
+## Nên chọn cách nào?
+
+<DataTable
+	headers={['Nhu cầu', 'Cách phù hợp']}
+	rows={[
+		['Bảng nhỏ, cần nhảy trang', '<code>OFFSET/LIMIT</code>'],
+		['Admin nội bộ, dữ liệu đã lọc hẹp', '<code>OFFSET/LIMIT</code>'],
+		['Feed hoặc timeline lớn', 'Keyset pagination'],
+		['API public cần tốc độ ổn định', 'Keyset pagination'],
+		['Cần top N theo từng nhóm', 'Window functions'],
+		['Maintain SQL cũ có <code>ROW_NUMBER()</code>', 'Window functions']
+	]}
+/>
+
+Nếu đang làm một màn hình mới và dữ liệu có khả năng tăng lớn, mình thường ưu tiên thiết kế API theo cursor ngay từ đầu. Việc đổi từ page number sang cursor sau này thường ảnh hưởng cả backend, frontend và cách người dùng điều hướng.
+
+<a id="checklist-khi-trien-khai" class="block scroll-mt-31"></a>
+
+## Checklist khi triển khai
+
+1. Luôn có `ORDER BY` rõ ràng. Không có thứ tự ổn định thì phân trang không đáng tin.
+2. Sort theo cột có index. Với keyset, cân nhắc composite index đúng thứ tự, ví dụ `(created_at, id)`.
+3. Thêm cột unique để phá hòa khi sort theo cột có thể trùng.
+4. Giới hạn `limit` từ phía server, ví dụ tối đa 50 hoặc 100.
+5. Reset cursor khi user đổi filter, đổi sort field hoặc đổi sort direction.
+6. Test với dữ liệu đủ lớn, không chỉ vài nghìn dòng dev.
+7. Đừng mặc định cần `COUNT(*)` chính xác nếu UI không thật sự cần.
+
+## Nguồn tham khảo
+
+- Viblo: Phân trang trong SQL: Từ OFFSET/LIMIT đến Keyset Pagination và Window Functions: https://viblo.asia/p/phan-trang-trong-sql-tu-offsetlimit-den-keyset-pagination-va-window-functions-1j4lQPK7Jwl
+- Viblo: Keyset Pagination (Truy vấn theo Last ID) - Giải Pháp Tối Ưu Cho Dữ Liệu Lớn: https://viblo.asia/p/keyset-pagination-truy-van-theo-last-id-giai-phap-toi-uu-cho-du-lieu-lon-oK9VyAgdVQR

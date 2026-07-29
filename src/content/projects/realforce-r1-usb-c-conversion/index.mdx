@@ -42,6 +42,7 @@ sections:
 
 import Callout from '@/components/callout.astro'
 import ContentFigure from '@/components/mdx/content-figure.astro'
+import DataTable from '@/components/mdx/data-table.astro'
 
 Trong project [Realforce TKL 3D](/project/realforce-tkl-3d), tôi đã đề cập đến đầu nối
 USB bên trong bàn phím Realforce và cách xác định các đường dây **VCC**, **GND**,
@@ -308,12 +309,15 @@ Sau đó tuốt bốn đầu dây để lộ lõi đồng.
 
 Ở bản dây này, tôi đi dây theo màu như sau:
 
-| Màu dây | Tín hiệu |
-| ------- | -------- |
-| Đỏ      | VCC / 5V |
-| Đen     | GND      |
-| Trắng   | D-       |
-| Vàng    | D+       |
+<DataTable
+	headers={['Màu dây', 'Tín hiệu']}
+	rows={[
+		['Đỏ', 'VCC / 5V'],
+		['Đen', 'GND'],
+		['Trắng', 'D-'],
+		['Vàng', 'D+']
+	]}
+/>
 
 Tôi quên quay lại đoạn hàn đầu USB-C, nhưng nguyên tắc vẫn giống phần xử lý USB trong
 bài [Realforce TKL 3D](/project/realforce-tkl-3d): hàn nhanh, không dí mỏ hàn quá lâu, và phải kiểm tra lại mối hàn trước khi đóng vỏ.
@@ -470,15 +474,39 @@ Chi phí phụ thuộc vào việc bạn đã có sẵn dụng cụ hay chưa. B
 linh kiện tiêu hao để làm **một sợi cáp chuyển**, không tính mỏ hàn, đồng hồ đo điện,
 kìm tuốt dây hay các món dụng cụ dùng lâu dài.
 
-| Hạng mục                              | Ước lượng     | Ghi chú                                      |
-| ------------------------------------- | ------------- | -------------------------------------------- |
-| Dây dù Paracord 7 lõi 4mm             | 15.000-30.000 | Dùng để bọc ngoài dây tín hiệu               |
-| Dây cáp tín hiệu 4 lõi                | 10.000-20.000 | Dùng cho VCC, GND, D+ và D-                  |
-| Ống lưới bện PET trong suốt 4mm       | 10.000-20.000 | Không bắt buộc, chủ yếu để bảo vệ và làm đẹp |
-| Vỏ đầu dây USB-C cái + cổng USB-C cái | 40.000-70.000 | Phần đầu cắm rời bên ngoài                   |
-| JST EHR 4 pin                         | 10.000-20.000 | Đầu cắm vào PCB Realforce R1                 |
-| Ống co nhiệt, keo, thiếc hàn          | 10.000-30.000 | Nếu đã có sẵn thì gần như không đáng kể      |
-| Phí ship / gom đơn                    | 30.000-80.000 | Dao động mạnh tùy mua Shopee hay Taobao      |
+<DataTable
+	headers={['Hạng mục', 'Ước lượng', 'Ghi chú']}
+	align={['left', 'right', 'left']}
+	rows={[
+		[
+			'Dây dù Paracord 7 lõi 4mm',
+			'15.000-30.000',
+			'Dùng để bọc ngoài dây tín hiệu'
+		],
+		['Dây cáp tín hiệu 4 lõi', '10.000-20.000', 'Dùng cho VCC, GND, D+ và D-'],
+		[
+			'Ống lưới bện PET trong suốt 4mm',
+			'10.000-20.000',
+			'Không bắt buộc, chủ yếu để bảo vệ và làm đẹp'
+		],
+		[
+			'Vỏ đầu dây USB-C cái + cổng USB-C cái',
+			'40.000-70.000',
+			'Phần đầu cắm rời bên ngoài'
+		],
+		['JST EHR 4 pin', '10.000-20.000', 'Đầu cắm vào PCB Realforce R1'],
+		[
+			'Ống co nhiệt, keo, thiếc hàn',
+			'10.000-30.000',
+			'Nếu đã có sẵn thì gần như không đáng kể'
+		],
+		[
+			'Phí ship / gom đơn',
+			'30.000-80.000',
+			'Dao động mạnh tùy mua Shopee hay Taobao'
+		]
+	]}
+/>
 
 Tổng lại, nếu đã có sẵn dụng cụ thì chi phí thực tế rơi vào khoảng **125.000-270.000đ**.
 Nếu bỏ PET sleeve hoặc tận dụng được dây/cos có sẵn thì có thể thấp hơn. Ngược lại, nếu

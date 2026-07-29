@@ -30,7 +30,7 @@ import {
 	isSubpost,
 	parseAuthors
 } from '@/lib/data-utils'
-import { formatDate } from '@/lib/utils'
+import { formatDate, withBasePath } from '@/lib/utils'
 
 export async function getStaticPaths() {
 	const posts = await getAllPostsAndSubposts()
@@ -44,6 +44,8 @@ const post = Astro.props
 const currentPostId = post.id
 const { Content, headings } = await render(post)
 const authors = await parseAuthors(post.data.authors ?? [])
+const image = post.data.image
+const isPublicImage = typeof image === 'string'
 
 const isCurrentSubpost = isSubpost(currentPostId)
 const navigation = await getAdjacentPosts(currentPostId)
@@ -113,16 +115,28 @@ const tocSections = await getTOCSections(currentPostId)
 		</div>
 
 		{
-			post.data.image && (
-				<Image
-					src={post.data.image}
-					alt={post.data.title}
-					width={1200}
-					height={630}
-					class="col-span-full mx-auto w-full max-w-5xl object-cover"
-					data-lightbox-image
-				/>
-			)
+			image &&
+				(isPublicImage ? (
+					<img
+						src={withBasePath(image)}
+						alt={post.data.title}
+						width="1200"
+						height="630"
+						loading="eager"
+						decoding="async"
+						class="col-span-full mx-auto w-full max-w-5xl object-cover"
+						data-lightbox-image
+					/>
+				) : (
+					<Image
+						src={image}
+						alt={post.data.title}
+						width={1200}
+						height={630}
+						class="col-span-full mx-auto w-full max-w-5xl object-cover"
+						data-lightbox-image
+					/>
+				))
 		}
 
 		<section class="col-start-2 flex flex-col gap-y-6 text-center">

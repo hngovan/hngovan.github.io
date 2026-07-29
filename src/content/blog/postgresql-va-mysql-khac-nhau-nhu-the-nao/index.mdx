@@ -1,0 +1,306 @@
+---
+title: 'PostgreSQL và MySQL khác nhau như thế nào?'
+description: 'So sánh PostgreSQL và MySQL từ MVCC, cơ chế xóa, VACUUM/purge, query planner, transaction visibility đến cách chọn database theo workload thực tế.'
+date: '2026-07-29'
+order: 1
+routeSlug: 'postgresql-va-mysql-khac-nhau-nhu-the-nao'
+tags: ['postgresql', 'mysql', 'database', 'backend']
+keywords:
+  [
+    'PostgreSQL vs MySQL',
+    'MVCC',
+    'VACUUM',
+    'InnoDB purge',
+    'transaction isolation',
+    'query planner'
+  ]
+authors: ['keeb-log']
+---
+
+import DataTable from '@/components/mdx/data-table.astro'
+
+PostgreSQL và MySQL đều là relational database rất mạnh, nhưng cách chúng lưu phiên bản row, xóa dữ liệu, lập kế hoạch query và xử lý transaction có nhiều khác biệt. Nếu chỉ nhìn từ cú pháp `SELECT`, `INSERT`, `UPDATE`, `DELETE` thì hai hệ này khá giống nhau; khác biệt thật sự xuất hiện khi dữ liệu lớn, nhiều transaction chạy song song, query phức tạp hoặc hệ thống có workload rất lệch đọc/ghi.
+
+Bài này dùng `PostgreSQL` để chỉ PostgreSQL hiện đại, và `MySQL` chủ yếu nói về MySQL dùng storage engine `InnoDB`, vì InnoDB là engine mặc định và là nơi phần lớn cơ chế transaction/MVCC của MySQL diễn ra.
+
+## Mục lục nhanh
+
+- [Tóm tắt nhanh](#tom-tat-nhanh)
+- [MVCC và dữ liệu nhìn thấy trong transaction](#mvcc-va-du-lieu-nhin-thay-trong-transaction)
+- [DELETE, VACUUM và purge khác nhau ở đâu?](#delete-vacuum-va-purge-khac-nhau-o-dau)
+- [Một câu query được thực hiện như thế nào?](#mot-cau-query-duoc-thuc-hien-nhu-the-nao)
+- [Commit trong và ngoài transaction](#commit-trong-va-ngoai-transaction)
+- [Dự án nào hợp PostgreSQL, dự án nào hợp MySQL?](#du-an-nao-hop-postgresql-du-an-nao-hop-mysql)
+- [Các chủ đề nên đọc tiếp](#cac-chu-de-nen-doc-tiep)
+- [Nguồn tham khảo](#nguon-tham-khao)
+
+<a id="tom-tat-nhanh" class="block scroll-mt-31"></a>
+
+## Tóm tắt nhanh
+
+<DataTable
+	headers={['Góc nhìn', 'PostgreSQL', 'MySQL/InnoDB']}
+	rows={[
+		[
+			'Triết lý',
+			'Nhiều tính năng SQL nâng cao, kiểu dữ liệu phong phú, planner mạnh cho query phức tạp.',
+			'Rất phổ biến cho web app, vận hành quen thuộc, replication và hệ sinh thái hosting rộng.'
+		],
+		[
+			'MVCC',
+			'Row version nằm trong heap tuple; UPDATE thường tạo phiên bản row mới, bản cũ thành dead tuple.',
+			'Clustered index record trỏ tới undo log để dựng lại version cũ; secondary index xử lý MVCC khác clustered index.'
+		],
+		[
+			'Dọn rác sau DELETE/UPDATE',
+			'<code>VACUUM</code> dọn dead row versions; <code>VACUUM FULL</code> rewrite table để thu nhỏ file mạnh hơn.',
+			'Purge process xóa record đã delete-marked khi undo log không còn cần cho MVCC/rollback.'
+		],
+		[
+			'Isolation mặc định',
+			'<code>READ COMMITTED</code>. Mỗi statement thấy snapshot committed tại lúc statement bắt đầu.',
+			'<code>REPEATABLE READ</code>. Transaction thường giữ read view ổn định hơn trong cùng transaction.'
+		],
+		[
+			'Query phức tạp',
+			'Thường mạnh với CTE, window functions, JSONB, extension, analytical/relational query phức tạp.',
+			'Tốt cho OLTP web app phổ biến, query đơn giản, read-heavy, pattern rõ index.'
+		]
+	]}
+/>
+
+<a
+	id="mvcc-va-du-lieu-nhin-thay-trong-transaction"
+	class="block scroll-mt-31"
+></a>
+
+## MVCC và dữ liệu nhìn thấy trong transaction
+
+MVCC là cơ chế cho phép nhiều transaction đọc/ghi cùng lúc mà không buộc mọi thao tác đọc phải chặn thao tác ghi. Tài liệu PostgreSQL mô tả lợi thế chính của MVCC là lock khi đọc không xung đột với lock khi ghi, nên đọc không block ghi và ghi không block đọc trong mô hình thông thường: https://www.postgresql.org/docs/current/mvcc-intro.html
+
+Ví dụ có bảng:
+
+```sql
+CREATE TABLE posts (
+	id integer PRIMARY KEY,
+	title text
+);
+
+INSERT INTO posts (id, title) VALUES (1, 'A'), (2, 'B');
+```
+
+Session A mở transaction và insert id 3:
+
+```sql
+BEGIN;
+
+INSERT INTO posts (id, title) VALUES (3, 'C');
+
+SELECT id FROM posts ORDER BY id;
+-- 1, 2, 3
+```
+
+Trong chính transaction đó, session A thấy row mình vừa insert. Nhưng session B ở ngoài transaction chưa thấy id 3:
+
+```sql
+SELECT id FROM posts ORDER BY id;
+-- 1, 2
+```
+
+Sau khi session A `COMMIT`, session B chạy query mới thì mới thấy id 3:
+
+```sql
+COMMIT;
+```
+
+```sql
+SELECT id FROM posts ORDER BY id;
+-- 1, 2, 3
+```
+
+Điểm quan trọng: "thấy gì" phụ thuộc isolation level. PostgreSQL mặc định là `READ COMMITTED`; tài liệu PostgreSQL nói một `SELECT` ở mức này chỉ thấy dữ liệu đã commit trước khi query bắt đầu, không thấy uncommitted data hoặc thay đổi được commit bởi transaction khác trong lúc query đang chạy: https://www.postgresql.org/docs/current/transaction-iso.html
+
+MySQL InnoDB hỗ trợ các isolation level chuẩn và mặc định là `REPEATABLE READ`: https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-isolation-levels.html. Vì vậy cùng một flow đọc nhiều lần trong transaction có thể cho cảm giác khác PostgreSQL mặc định. Khi review bug "vì sao query trong transaction thấy khác query ngoài transaction", câu hỏi đầu tiên nên là: đang dùng database nào, isolation level nào, và query đó là consistent read hay locking read?
+
+<a id="delete-vacuum-va-purge-khac-nhau-o-dau" class="block scroll-mt-31"></a>
+
+## DELETE, VACUUM và purge khác nhau ở đâu?
+
+Trong PostgreSQL, `DELETE` không đồng nghĩa với "xóa vật lý ngay lập tức khỏi file table". Row version cũ/deleted có thể còn nằm lại để transaction khác đang giữ snapshot cũ vẫn đọc được. Vì vậy PostgreSQL cần `VACUUM` để dọn các dead row versions. Tài liệu routine vacuuming nói `VACUUM` chuẩn sẽ remove dead row versions trong table/index và đánh dấu space có thể tái sử dụng; nó thường không trả space về OS trừ một số trường hợp cuối file table trống: https://www.postgresql.org/docs/current/routine-vacuuming.html
+
+`VACUUM FULL` thì mạnh hơn nhưng cũng nặng hơn: nó compact table bằng cách viết lại một bản table mới không có dead space. Vì vậy không nên xem `VACUUM FULL` là thao tác định kỳ bình thường cho hệ thống production đang phục vụ traffic.
+
+Trong MySQL InnoDB, tài liệu InnoDB multi-versioning nói row không bị remove vật lý ngay khi `DELETE`; nó chỉ bị xóa vật lý khi InnoDB discard undo log record liên quan, và thao tác đó gọi là purge: https://dev.mysql.com/doc/refman/8.4/en/innodb-multi-versioning.html. Tài liệu purge configuration cũng nhấn mạnh row/index record chỉ bị physically removed khi không còn cần cho MVCC hoặc rollback: https://dev.mysql.com/doc/refman/8.4/en/innodb-purge-configuration.html
+
+<DataTable
+	headers={['Tình huống', 'PostgreSQL', 'MySQL/InnoDB']}
+	rows={[
+		[
+			'DELETE một row',
+			'Tạo dead tuple/row version không còn visible với transaction mới.',
+			'Mark record là deleted và ghi undo information.'
+		],
+		[
+			'Transaction cũ còn mở',
+			'Có thể giữ dead tuple chưa dọn được, gây table bloat nếu kéo dài.',
+			'Có thể giữ undo/history list, khiến purge chưa xóa được version cũ.'
+		],
+		[
+			'Dọn dẹp nền',
+			'<code>autovacuum</code>/<code>VACUUM</code>.',
+			'InnoDB purge threads/process.'
+		],
+		[
+			'Thu nhỏ file thật sự',
+			'<code>VACUUM FULL</code> hoặc rewrite table, chi phí cao hơn.',
+			'Phụ thuộc tablespace, purge, optimize/rebuild table tùy cấu hình và engine behavior.'
+		]
+	]}
+/>
+
+Kết luận thực dụng: cả hai đều không nên để transaction mở quá lâu. Ở PostgreSQL, idle transaction lâu có thể cản vacuum dọn dead tuples; tài liệu client connection defaults cũng cảnh báo open transaction có thể góp phần gây table bloat: https://www.postgresql.org/docs/current/runtime-config-client.html. Ở MySQL, long transaction có thể làm undo/history phình ra vì purge phải giữ version cũ.
+
+<a id="mot-cau-query-duoc-thuc-hien-nhu-the-nao" class="block scroll-mt-31"></a>
+
+## Một câu query được thực hiện như thế nào?
+
+Ở mức đơn giản, cả PostgreSQL và MySQL đều đi qua các bước quen thuộc: parse SQL, phân tích/resolve object, rewrite/transform nếu cần, chọn execution plan, rồi executor/storage engine đọc dữ liệu.
+
+PostgreSQL có planner/optimizer chọn execution plan cho query. Tài liệu PostgreSQL nói planner có thể thực hiện một SQL query bằng nhiều cách khác nhau và sẽ chọn plan được ước tính nhanh nhất nếu việc xét plan khả thi: https://www.postgresql.org/docs/current/planner-optimizer.html. Khi cần xem plan, dùng `EXPLAIN`; tài liệu `EXPLAIN` mô tả plan sẽ cho biết table scan kiểu gì, join algorithm nào được dùng: https://www.postgresql.org/docs/current/sql-explain.html
+
+```sql
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT *
+FROM orders
+WHERE customer_id = 10
+ORDER BY created_at DESC
+LIMIT 20;
+```
+
+MySQL cũng có `EXPLAIN`. Tài liệu MySQL nói `EXPLAIN` cung cấp thông tin cách MySQL execute statement, có thể chọn format như traditional/json/tree, và `TREE` là format dùng cho `EXPLAIN ANALYZE`: https://dev.mysql.com/doc/refman/8.4/en/explain.html
+
+```sql
+EXPLAIN ANALYZE
+SELECT *
+FROM orders
+WHERE customer_id = 10
+ORDER BY created_at DESC
+LIMIT 20;
+```
+
+Điểm review quan trọng không phải là "có index chưa" theo cảm tính, mà là plan thật sự có dùng index phù hợp không, estimated rows có lệch actual rows quá nhiều không, sort/hash/temp table có xuất hiện bất thường không, và query có bị chạy lặp N lần từ application không.
+
+<a id="commit-trong-va-ngoai-transaction" class="block scroll-mt-31"></a>
+
+## Commit trong và ngoài transaction
+
+Trong transaction, session luôn thấy thay đổi của chính nó. Bên ngoài transaction, session khác chỉ thấy dữ liệu đã commit theo rule của isolation level.
+
+Ví dụ:
+
+```sql
+-- Session A
+BEGIN;
+INSERT INTO users (id, name) VALUES (3, 'Linh');
+SELECT id FROM users ORDER BY id;
+-- 1, 2, 3
+```
+
+```sql
+-- Session B, trước khi A commit
+SELECT id FROM users ORDER BY id;
+-- 1, 2
+```
+
+```sql
+-- Session A
+COMMIT;
+```
+
+```sql
+-- Session B, query mới sau commit
+SELECT id FROM users ORDER BY id;
+-- 1, 2, 3
+```
+
+Với PostgreSQL mặc định `READ COMMITTED`, mỗi statement đọc snapshot mới tại thời điểm statement bắt đầu. Với MySQL InnoDB mặc định `REPEATABLE READ`, một transaction đọc lặp lại thường giữ read view ổn định trong transaction, nên session đó có thể không thấy row mới từ transaction khác cho tới khi transaction hiện tại kết thúc hoặc dùng pattern đọc có lock/tùy isolation.
+
+Đây là lý do bug transaction hay khó debug: cùng một query text, nhưng kết quả khác nhau tùy nó chạy trong transaction nào, isolation nào, trước hay sau commit.
+
+<a
+	id="du-an-nao-hop-postgresql-du-an-nao-hop-mysql"
+	class="block scroll-mt-31"
+></a>
+
+## Dự án nào hợp PostgreSQL, dự án nào hợp MySQL?
+
+Không nên chọn database chỉ vì "nghe mạnh hơn". Chọn theo workload, đội vận hành và pattern query.
+
+<DataTable
+	headers={['Dự án/workload', 'Nghiêng PostgreSQL khi', 'Nghiêng MySQL khi']}
+	rows={[
+		[
+			'Insert ít, get nhiều, query đơn giản',
+			'Vẫn ổn, nhưng có thể hơi dư nếu chỉ CRUD rất cơ bản.',
+			'Rất hợp cho web app đọc nhiều, pattern index rõ, hosting phổ biến.'
+		],
+		[
+			'Query báo cáo, nhiều join, window functions, CTE',
+			'Hợp hơn nếu cần SQL phức tạp, planner mạnh, extension và kiểu dữ liệu phong phú.',
+			'Dùng được, nhưng cần kiểm tra kỹ plan và giới hạn tính năng theo phiên bản.'
+		],
+		[
+			'Dữ liệu JSON nhưng vẫn cần relational query',
+			'<code>JSONB</code>, index và function hệ sinh thái PostgreSQL thường rất tiện.',
+			'JSON có hỗ trợ, nhưng nếu query JSON phức tạp cần benchmark kỹ.'
+		],
+		[
+			'SaaS CRUD phổ thông, team quen MySQL',
+			'Chọn được nếu team muốn Postgres stack.',
+			'Hợp nếu team đã có tooling, replication, backup, monitoring MySQL tốt.'
+		],
+		[
+			'Write/update/delete nhiều',
+			'Cần chăm autovacuum, bloat, index, transaction dài.',
+			'Cần chăm purge lag, undo log, lock/gap lock, transaction dài.'
+		],
+		[
+			'Cần extension như PostGIS, full text, custom type',
+			'Thường là lựa chọn tự nhiên.',
+			'Không phải điểm mạnh chính của MySQL.'
+		]
+	]}
+/>
+
+Rule ngắn của tôi:
+
+- Nếu hệ thống là CRUD web app phổ thông, team vận hành MySQL tốt, query đơn giản và read-heavy: MySQL là lựa chọn thực dụng.
+- Nếu hệ thống có query phức tạp, report, nhiều constraint, JSONB, search/index đặc thù, hoặc muốn tận dụng hệ sinh thái extension: PostgreSQL thường đáng chọn hơn.
+- Nếu workload write/update/delete lớn: cả hai đều cần vận hành nghiêm túc, không có lựa chọn "khỏi cần dọn rác".
+
+<a id="cac-chu-de-nen-doc-tiep" class="block scroll-mt-31"></a>
+
+## Các chủ đề nên đọc tiếp
+
+- `EXPLAIN` và `EXPLAIN ANALYZE`: đọc plan, rows estimate, actual time, buffer/temp.
+- Index design: composite index, covering index, partial index trong PostgreSQL, clustered/secondary index trong InnoDB.
+- Isolation level: `READ COMMITTED`, `REPEATABLE READ`, `SERIALIZABLE`, phantom read, locking read.
+- Long-running transaction: vì sao một transaction quên commit có thể làm database phình.
+- Partitioning: khi table quá lớn, dọn dữ liệu cũ bằng partition có thể sạch hơn delete từng dòng.
+- Connection pool: database nhanh vẫn chết nếu application mở quá nhiều connection hoặc transaction quá lâu.
+
+<a id="nguon-tham-khao" class="block scroll-mt-31"></a>
+
+## Nguồn tham khảo
+
+- PostgreSQL Concurrency Control / MVCC: https://www.postgresql.org/docs/current/mvcc.html
+- PostgreSQL MVCC Introduction: https://www.postgresql.org/docs/current/mvcc-intro.html
+- PostgreSQL Transaction Isolation: https://www.postgresql.org/docs/current/transaction-iso.html
+- PostgreSQL Routine Vacuuming: https://www.postgresql.org/docs/current/routine-vacuuming.html
+- PostgreSQL EXPLAIN: https://www.postgresql.org/docs/current/sql-explain.html
+- PostgreSQL Planner/Optimizer: https://www.postgresql.org/docs/current/planner-optimizer.html
+- PostgreSQL Client Connection Defaults, idle transaction note: https://www.postgresql.org/docs/current/runtime-config-client.html
+- MySQL InnoDB Multi-Versioning: https://dev.mysql.com/doc/refman/8.4/en/innodb-multi-versioning.html
+- MySQL InnoDB Transaction Isolation Levels: https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-isolation-levels.html
+- MySQL InnoDB Purge Configuration: https://dev.mysql.com/doc/refman/8.4/en/innodb-purge-configuration.html
+- MySQL EXPLAIN Statement: https://dev.mysql.com/doc/refman/8.4/en/explain.html

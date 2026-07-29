@@ -43,6 +43,7 @@ sections:
 
 import Callout from '@/components/callout.astro'
 import ContentFigure from '@/components/mdx/content-figure.astro'
+import DataTable from '@/components/mdx/data-table.astro'
 
 Ý tưởng ban đầu khá đơn giản: tôi có một số bàn phím cũ như Realforce R1,
 Realforce R2. Phần lớn chúng là bàn phím có dây cố định, mỗi lần muốn dùng lại
@@ -107,11 +108,14 @@ Các tổ hợp phím chính:
 Tôi dùng LED 3 chân để đưa trạng thái kết nối ra ngoài vỏ box. Màu LED sau khi
 lắp thực tế như sau:
 
-| Chế độ        | Trạng thái LED       |
-| ------------- | -------------------- |
-| USB có dây    | 🔴 Đèn sáng màu đỏ   |
-| Bluetooth     | 🔵 Đèn sáng màu xanh |
-| Wireless 2.4G | 🟣 Đèn sáng màu tím  |
+<DataTable
+	headers={['Chế độ', 'Trạng thái LED']}
+	rows={[
+		['USB có dây', '🔴 Đèn sáng màu đỏ'],
+		['Bluetooth', '🔵 Đèn sáng màu xanh'],
+		['Wireless 2.4G', '🟣 Đèn sáng màu tím']
+	]}
+/>
 
 Với chế độ Wireless 2.4G, LED tím thực chất là do hai màu sáng cùng lúc:
 **xanh dương + đỏ = tím**.
@@ -548,14 +552,18 @@ cắm bàn phím và cổng Type-C phía sau cho sạc/USB mode.
 
 Chi phí ước tính cho bản build này:
 
-| Hạng mục                 |           Chi phí |
-| ------------------------ | ----------------: |
-| Module chuyển đổi 3 mode |         ~300.000đ |
-| Vỏ in 3D                 |          ~40.000đ |
-| Nút bấm mini             |          ~20.000đ |
-| Pin                      |   ~45.000-70.000đ |
-| Phụ kiện linh tinh khác  |   ~30.000-50.000đ |
-| Tổng ước tính            | ~450.000-500.000đ |
+<DataTable
+	headers={['Hạng mục', 'Chi phí']}
+	align={['left', 'right']}
+	rows={[
+		['Module chuyển đổi 3 mode', '~300.000đ'],
+		['Vỏ in 3D', '~40.000đ'],
+		['Nút bấm mini', '~20.000đ'],
+		['Pin', '~45.000-70.000đ'],
+		['Phụ kiện linh tinh khác', '~30.000-50.000đ'],
+		['Tổng ước tính', '~450.000-500.000đ']
+	]}
+/>
 
 <Callout variant="warning" title="🤔 Đúc kết hơi đau ví">
 	Với chi phí xấp xỉ 500.000đ, thực tế bạn đã có thể mua một bàn phím có sẵn 3

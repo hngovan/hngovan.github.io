@@ -1,0 +1,312 @@
+---
+title: 'Review code FE và BE nên nhìn vào đâu?'
+description: 'Checklist review code thực dụng cho frontend và backend: lint, typecheck, query plan, duplicated query, memory, transaction, security, accessibility và performance.'
+date: '2026-07-29'
+order: 2
+routeSlug: 'review-code-fe-va-be-nen-nhin-vao-dau'
+tags: ['code-review', 'frontend', 'backend', 'performance']
+keywords:
+  [
+    'frontend code review',
+    'backend code review',
+    'lint',
+    'query performance',
+    'memory',
+    'security review'
+  ]
+authors: ['keeb-log']
+---
+
+import DataTable from '@/components/mdx/data-table.astro'
+
+Review code không chỉ là bắt lỗi format hoặc hỏi "sao viết thế này?". Một review tốt nên giúp team giảm bug, giữ code dễ đọc, giảm chi phí vận hành và tránh những lỗi chỉ lộ ra khi production có dữ liệu thật.
+
+Tôi thường tách review thành hai lớp: checklist chung cho mọi PR, rồi checklist riêng cho frontend và backend. Bài này là ghi chú thực dụng, không phải quy trình cứng. Với PR nhỏ, chỉ cần quét nhanh; với PR đụng luồng thanh toán, quyền truy cập, query lớn hoặc transaction, review phải kỹ hơn.
+
+## Mục lục nhanh
+
+- [Checklist chung cho mọi PR](#checklist-chung-cho-moi-pr)
+- [Review frontend](#review-frontend)
+- [Review backend](#review-backend)
+- [Review database query](#review-database-query)
+- [Review memory và tài nguyên](#review-memory-va-tai-nguyen)
+- [Review transaction và consistency](#review-transaction-va-consistency)
+- [Review security](#review-security)
+- [Câu hỏi nên để lại khi review](#cau-hoi-nen-de-lai-khi-review)
+- [Nguồn tham khảo](#nguon-tham-khao)
+
+<a id="checklist-chung-cho-moi-pr" class="block scroll-mt-31"></a>
+
+## Checklist chung cho mọi PR
+
+Trước khi đi vào FE/BE, nên check các điểm nền:
+
+<DataTable
+	headers={['Nhóm', 'Câu hỏi review', 'Bằng chứng nên có']}
+	rows={[
+		[
+			'Scope',
+			'PR này có làm đúng một mục tiêu không, hay kèm refactor/format unrelated?',
+			'Diff gọn, file thay đổi khớp ticket.'
+		],
+		[
+			'Correctness',
+			'Có case nào input rỗng, null, 0, timezone, permission, retry bị bỏ qua không?',
+			'Test hoặc mô tả manual verification.'
+		],
+		[
+			'Maintainability',
+			'Tên biến/function có nói đúng ý định không? Logic có bị copy paste không?',
+			'Code đọc được từ call site, không phải mở sâu mới hiểu.'
+		],
+		[
+			'Observability',
+			'Khi lỗi xảy ra có log/metric đủ tìm nguyên nhân không?',
+			'Log không lộ PII/secret, error message rõ.'
+		],
+		[
+			'Compatibility',
+			'Thay đổi có phá API contract, route, schema, migration hoặc client cũ không?',
+			'Migration/backward compatibility note.'
+		]
+	]}
+/>
+
+ESLint là lớp kiểm tra cơ bản cho JavaScript/TypeScript. Tài liệu ESLint mô tả nó là công cụ tìm và sửa vấn đề trong code JavaScript: https://eslint.org/docs/latest/. TypeScript cũng nên chạy typecheck riêng; tùy repo có thể dùng `tsc --noEmit`, với `noEmit` nghĩa là compiler không ghi output file: https://www.typescriptlang.org/tsconfig/#noEmit
+
+Nhưng lint/typecheck chỉ là cửa đầu. PR pass lint vẫn có thể sai nghiệp vụ, query chậm, transaction sai hoặc render UI tệ trên mobile.
+
+<a id="review-frontend" class="block scroll-mt-31"></a>
+
+## Review frontend
+
+Frontend review nên nhìn vào trải nghiệm, state flow, accessibility, performance và data contract với backend.
+
+<DataTable
+	headers={['Hạng mục', 'Cần kiểm tra', 'Ví dụ câu hỏi']}
+	rows={[
+		[
+			'State',
+			'State có bị duplicate giữa URL, store, form và local state không?',
+			'Đổi filter rồi back browser có giữ đúng trạng thái không?'
+		],
+		[
+			'Render',
+			'Component có re-render vì object/function tạo mới liên tục không?',
+			'Có cần memoization hay tách component nhỏ hơn không?'
+		],
+		[
+			'Loading/error/empty',
+			'Có đủ trạng thái loading, error, empty, permission denied không?',
+			'API lỗi 403/500 thì UI hiển thị gì?'
+		],
+		[
+			'Accessibility',
+			'Button/link/form control có label, focus state, keyboard flow không?',
+			'Dùng tab có đi được hết luồng chính không?'
+		],
+		[
+			'Responsive',
+			'Text dài, table rộng, modal, sidebar có vỡ trên mobile không?',
+			'Có screenshot hoặc tự test viewport nhỏ chưa?'
+		],
+		[
+			'Bundle/perf',
+			'Có import thư viện lớn chỉ để dùng một helper nhỏ không?',
+			'Route này có làm tăng bundle đáng kể không?'
+		]
+	]}
+/>
+
+React docs khuyến nghị dùng Profiler để đo hiệu năng render của component tree: https://react.dev/reference/react/Profiler. Với web performance, web.dev có tài liệu về performance budgets để đặt giới hạn tài nguyên như JavaScript size, image weight hoặc metrics mục tiêu: https://web.dev/articles/performance-budgets-101
+
+Về accessibility, MDN nhấn mạnh HTML semantic là nền tảng quan trọng vì browser, assistive technology và keyboard behavior dựa vào semantic đúng: https://developer.mozilla.org/en-US/docs/Learn/Accessibility/HTML
+
+Một lỗi review FE phổ biến là chỉ xem component có "đẹp" không, nhưng bỏ qua contract dữ liệu. Ví dụ backend trả `null`, `0`, `false`, empty array; frontend lại dùng `if (value)` rồi vô tình coi `0` là không có dữ liệu. Những lỗi kiểu này nên review từ payload thật hoặc type generated, không đoán.
+
+<a id="review-backend" class="block scroll-mt-31"></a>
+
+## Review backend
+
+Backend review cần quan tâm đến correctness, API contract, query, transaction, memory, idempotency và failure mode.
+
+<DataTable
+	headers={['Hạng mục', 'Cần kiểm tra', 'Dấu hiệu cần hỏi lại']}
+	rows={[
+		[
+			'API contract',
+			'Request/response có rõ type, nullable field, error code không?',
+			'Một field lúc thì missing, lúc thì null, lúc thì empty string.'
+		],
+		[
+			'Validation',
+			'Validate ở boundary chưa, message lỗi có đủ rõ không?',
+			'Logic tin input client hoặc bỏ qua permission.'
+		],
+		[
+			'Query',
+			'Có N+1, full scan, sort lớn, duplicated query không?',
+			'Một câu query được viết lại 2 lần ở hai service khác nhau.'
+		],
+		[
+			'Transaction',
+			'Có giữ transaction quá lâu không?',
+			'Gọi API ngoài, gửi email, upload file trong transaction DB.'
+		],
+		[
+			'Idempotency',
+			'Retry request có tạo duplicate không?',
+			'Webhook/payment/import không có idempotency key.'
+		],
+		[
+			'Memory',
+			'Có load toàn bộ dataset vào memory không?',
+			'Export/report đọc cả triệu row rồi map trong RAM.'
+		]
+	]}
+/>
+
+Backend nên có test ở đúng tầng. Unit test bắt pure logic, integration test bắt database/API contract, migration test hoặc build step bắt schema mismatch. Với endpoint quan trọng, reviewer nên hỏi: "lỗi nào sẽ xảy ra nếu request bị retry, transaction rollback, hoặc worker chết giữa chừng?"
+
+<a id="review-database-query" class="block scroll-mt-31"></a>
+
+## Review database query
+
+Nếu PR thêm hoặc sửa query, chỉ nhìn SQL text là chưa đủ. Cần xem plan và dữ liệu thực tế gần production.
+
+PostgreSQL `EXPLAIN` cho biết execution plan, scan type, join algorithm và estimate; `ANALYZE` thực thi query để lấy runtime thật: https://www.postgresql.org/docs/current/sql-explain.html. MySQL `EXPLAIN` cũng mô tả cách statement được execute, và `EXPLAIN ANALYZE` chạy statement rồi trả thêm timing/iterator information: https://dev.mysql.com/doc/refman/8.4/en/explain.html
+
+Checklist query:
+
+<DataTable
+	headers={['Điểm review', 'Cần nhìn', 'Ví dụ']}
+	rows={[
+		[
+			'Thời gian query',
+			'P95/P99 hoặc ít nhất runtime với dữ liệu đủ lớn.',
+			'<code>EXPLAIN ANALYZE</code> thay vì đo bằng cảm giác.'
+		],
+		[
+			'Rows scanned',
+			'Query trả 20 row nhưng scan hàng trăm nghìn row không?',
+			'Pagination <code>OFFSET</code> sâu hoặc thiếu composite index.'
+		],
+		[
+			'Duplicated query',
+			'Cùng một query logic viết lại ở hai nơi không?',
+			'Service A và service B cùng tự build điều kiện filter.'
+		],
+		[
+			'N+1',
+			'Một request có gọi query theo từng item không?',
+			'Load 50 orders rồi loop query từng customer.'
+		],
+		[
+			'Memory query',
+			'Có fetch toàn bộ rồi filter/sort trong app không?',
+			'Nên đẩy filter/sort/page xuống database nếu hợp lý.'
+		],
+		[
+			'Lock',
+			'Query update/delete có lock nhiều row hơn dự kiến không?',
+			'Thiếu index ở điều kiện update làm lock scan rộng.'
+		]
+	]}
+/>
+
+Một review comment tốt không chỉ nói "query này chậm". Nên chỉ ra bằng chứng: plan nào, rows estimate/actual ra sao, index nào bị bỏ qua, dữ liệu test có kích thước bao nhiêu, và đề xuất thay đổi có kiểm chứng.
+
+<a id="review-memory-va-tai-nguyen" class="block scroll-mt-31"></a>
+
+## Review memory và tài nguyên
+
+Memory bug thường không lộ trong test nhỏ. Một đoạn code đọc file, export CSV, aggregate report hoặc gọi API batch có thể pass local nhưng gây OOM khi dữ liệu thật lớn.
+
+Các câu hỏi nên hỏi:
+
+- Có đang load toàn bộ table/file vào array không?
+- Có thể streaming, cursor, pagination hoặc chunking không?
+- Có giữ buffer lớn trong closure/cache không giới hạn không?
+- Có timeout/cancel khi downstream chậm không?
+- Có retry không giới hạn làm nhân đôi memory/network không?
+
+Ở FE, memory leak hay đến từ event listener/subscription/timer không cleanup, object URL không revoke, cache không có limit. Ở BE, leak thường đến từ global cache, queue in-memory, giữ request payload lớn, hoặc ORM load quan hệ quá rộng.
+
+<a id="review-transaction-va-consistency" class="block scroll-mt-31"></a>
+
+## Review transaction và consistency
+
+Transaction không chỉ là bọc `BEGIN/COMMIT`. Cần review phạm vi transaction, isolation, retry và side effect.
+
+Ví dụ flow xấu:
+
+```ts
+await db.transaction(async tx => {
+	await tx.order.create(...)
+	await paymentGateway.charge(...)
+	await tx.payment.create(...)
+})
+```
+
+Gọi payment gateway trong transaction làm transaction giữ lock lâu, và nếu rollback sau khi charge thành công thì hệ thống rơi vào trạng thái khó bù. Flow tốt hơn thường là tách side effect ra khỏi transaction DB, dùng outbox/idempotency hoặc state machine tùy domain.
+
+Về visibility, PostgreSQL docs giải thích ở `READ COMMITTED`, query chỉ thấy dữ liệu đã commit trước khi query bắt đầu: https://www.postgresql.org/docs/current/transaction-iso.html. MySQL InnoDB docs giải thích isolation levels và consistent reads trong InnoDB: https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-isolation-levels.html. Khi review bug "trong transaction thấy row mới, ngoài transaction chưa thấy", đó thường là behavior đúng cho dữ liệu chưa commit, không phải database lỗi.
+
+<a id="review-security" class="block scroll-mt-31"></a>
+
+## Review security
+
+OWASP Code Review Guide nhấn mạnh code review bảo mật nên tìm lỗi security ở source code, đặc biệt các lỗi không dễ bị bắt bởi tool tự động: https://owasp.org/www-project-code-review-guide/
+
+Checklist security tối thiểu:
+
+<DataTable
+	headers={['Nhóm', 'Câu hỏi']}
+	rows={[
+		[
+			'AuthN/AuthZ',
+			'Endpoint có kiểm tra đúng user, role, tenant, ownership không?'
+		],
+		['Input', 'Có validate input ở server không, kể cả FE đã validate?'],
+		['Injection', 'SQL/query/template/shell có dùng parameterized API không?'],
+		['Secrets', 'Log, error, analytics có lộ token, password, API key không?'],
+		[
+			'File/upload',
+			'Có check type, size, path traversal, virus scan hoặc sandbox nếu cần không?'
+		],
+		['Rate limit', 'Endpoint tốn CPU/query/network có bị spam được không?']
+	]}
+/>
+
+Với FE, security review cũng cần xem XSS, `dangerouslySetInnerHTML`, link ngoài, token storage, CSP và dữ liệu user-generated content. Với BE, phải xem authorization theo object, không chỉ theo route.
+
+<a id="cau-hoi-nen-de-lai-khi-review" class="block scroll-mt-31"></a>
+
+## Câu hỏi nên để lại khi review
+
+Review comment nên cụ thể và có bằng chứng. Một số câu hỏi tôi hay dùng:
+
+- "Query này đã chạy `EXPLAIN ANALYZE` với dữ liệu gần production chưa?"
+- "Đoạn này có thể tạo N+1 query khi danh sách có 50 item không?"
+- "Nếu request bị retry sau timeout, có tạo duplicate record không?"
+- "Field này có thể là `0` hoặc `null` không? Nếu có thì điều kiện `if (value)` có đúng không?"
+- "Transaction này có cần bao cả API call bên ngoài không?"
+- "Có test case cho permission khác tenant/user khác chưa?"
+- "Trên mobile/tablet text dài trong button/table có vỡ layout không?"
+
+Comment tốt nên nói rõ rủi ro và gợi ý hướng sửa. Nếu chưa chắc, hỏi bằng câu hỏi có ngữ cảnh thay vì chặn PR bằng nhận định mơ hồ.
+
+<a id="nguon-tham-khao" class="block scroll-mt-31"></a>
+
+## Nguồn tham khảo
+
+- ESLint Documentation: https://eslint.org/docs/latest/
+- TypeScript `noEmit` option: https://www.typescriptlang.org/tsconfig/#noEmit
+- React Profiler API: https://react.dev/reference/react/Profiler
+- web.dev Performance Budgets 101: https://web.dev/articles/performance-budgets-101
+- MDN Accessibility: HTML: https://developer.mozilla.org/en-US/docs/Learn/Accessibility/HTML
+- OWASP Code Review Guide: https://owasp.org/www-project-code-review-guide/
+- PostgreSQL EXPLAIN: https://www.postgresql.org/docs/current/sql-explain.html
+- PostgreSQL Transaction Isolation: https://www.postgresql.org/docs/current/transaction-iso.html
+- MySQL EXPLAIN Statement: https://dev.mysql.com/doc/refman/8.4/en/explain.html
+- MySQL InnoDB Transaction Isolation Levels: https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-isolation-levels.html

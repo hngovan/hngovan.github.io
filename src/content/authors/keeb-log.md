@@ -1,7 +1,7 @@
 ---
 name: 'Keeb Log'
 avatar: '/static/logo.webp'
-bio: 'Ghi chú thực tế về bàn phím cơ custom, từ layout, switch, keycap đến build log.'
+bio: 'Ghi chú thực tế về bàn phím cơ custom, từ layout, switch, keycap đến build log và đồng thời các kiến thức liên quan đến code vì đơn giản mình là dev 🤪'
 mail: 'hello@keeb-log.local'
 website: 'https://keeb-log.local'
 github: 'https://github.com/'

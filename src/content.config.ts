@@ -11,7 +11,7 @@ const blog = defineCollection({
 			date: z.coerce.date(),
 			routeSlug: z.string().optional(),
 			order: z.number().optional(),
-			image: image().optional(),
+			image: z.string().startsWith('/').or(z.url()).or(image()).optional(),
 			tags: z.array(z.string()).optional(),
 			keywords: z.array(z.string()).optional(),
 			authors: z.array(z.string()).optional(),

@@ -27,6 +27,8 @@ const readTime = await getCombinedReadingTime(entry.id)
 const authors = await parseAuthors(entry.data.authors ?? [])
 const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
 const href = `/blog/${getEntrySlug(entry)}`
+const image = entry.data.image
+const isPublicImage = typeof image === 'string'
 ---
 
 <div
@@ -34,20 +36,28 @@ const href = `/blog/${getEntrySlug(entry)}`
 >
 	<Link href={href} class="flex flex-col gap-4 sm:flex-row">
 		{
-			entry.data.image ? (
+			image ? (
 				<div class="w-full object-contain sm:max-w-[200px] sm:shrink-0">
-					<Image
-						src={entry.data.image}
-						alt={entry.data.title}
-						class="rounded-xl object-cover"
-					/>
+					{isPublicImage ? (
+						<img
+							src={withBasePath(image)}
+							alt={entry.data.title}
+							class="h-full w-full rounded-xl object-contain"
+						/>
+					) : (
+						<Image
+							src={image}
+							alt={entry.data.title}
+							class="h-full w-full rounded-xl object-contain"
+						/>
+					)}
 				</div>
 			) : (
 				<div class="w-full sm:max-w-[200px] sm:shrink-0">
 					<img
 						src={withBasePath('/static/twitter-card.png')}
 						alt={entry.data.title}
-						class="rounded-xl object-cover"
+						class="h-full w-full rounded-xl object-contain"
 					/>
 				</div>
 			)
