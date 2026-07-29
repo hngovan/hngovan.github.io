@@ -19,7 +19,6 @@ authors: ['keeb-log']
 ---
 
 import DataTable from '@/components/mdx/data-table.astro'
-import MermaidDiagram from '@/components/mdx/mermaid-diagram.astro'
 
 Review code không chỉ là bắt lỗi format hoặc hỏi "sao viết thế này?". Một review tốt nên giúp team giảm bug, giữ code dễ đọc, giảm chi phí vận hành và tránh những lỗi chỉ lộ ra khi production có dữ liệu thật.
 
@@ -27,7 +26,7 @@ Tôi thường tách review thành hai lớp: checklist chung cho mọi PR, rồ
 
 ## Mục lục nhanh
 
-- [Ví dụ thực tế: review tính năng chuyển tiền](#vi-du-thuc-te-review-tinh-nang-chuyen-tien)
+- [Ví dụ thực tế: review tính năng publish bài viết](#vi-du-thuc-te-review-tinh-nang-publish-bai-viet)
 - [Checklist chung cho mọi PR](#checklist-chung-cho-moi-pr)
 - [Review frontend](#review-frontend)
 - [Review backend](#review-backend)
@@ -39,17 +38,17 @@ Tôi thường tách review thành hai lớp: checklist chung cho mọi PR, rồ
 - [Nguồn tham khảo](#nguon-tham-khao)
 
 <a
-	id="vi-du-thuc-te-review-tinh-nang-chuyen-tien"
+	id="vi-du-thuc-te-review-tinh-nang-publish-bai-viet"
 	class="block scroll-mt-31"
 ></a>
 
-## Ví dụ thực tế: review tính năng chuyển tiền
+## Ví dụ thực tế: review tính năng publish bài viết
 
-Giả sử PR thêm màn chuyển tiền trong app ngân hàng:
+Giả sử PR thêm màn publish bài viết trong CMS:
 
-- FE có form nhập tài khoản nhận, số tiền, nội dung chuyển khoản.
-- BE có endpoint `POST /transfers`.
-- Database cập nhật số dư hai tài khoản và ghi lịch sử giao dịch.
+- FE có form nhập tiêu đề, slug, nội dung, tag và trạng thái publish.
+- BE có endpoint `POST /posts`.
+- Database ghi `posts`, `post_tags` và `audit_logs`.
 
 Một diff nhìn qua có thể "chạy được", nhưng reviewer cần đi theo luồng thật của người dùng:
 
@@ -58,28 +57,28 @@ Một diff nhìn qua có thể "chạy được", nhưng reviewer cần đi theo
 	rows={[
 		[
 			'1',
-			'User nhập số tiền <code>0</code>, số âm, hoặc vượt số dư',
+			'User để trống title, nhập slug trùng, hoặc chọn tag không tồn tại',
 			'FE chỉ disable button hay BE cũng validate? Error message trả về có rõ không?'
 		],
 		[
 			'2',
-			'User bấm chuyển tiền hai lần do mạng chậm',
-			'Endpoint có idempotency key hoặc guard duplicate request không?'
+			'User bấm publish hai lần do mạng chậm',
+			'Endpoint có guard duplicate slug hoặc unique constraint phù hợp không?'
 		],
 		[
 			'3',
-			'BE trừ tiền tài khoản A rồi cộng tiền tài khoản B',
-			'Hai update có nằm trong cùng transaction không? Nếu câu thứ hai fail thì rollback thế nào?'
+			'BE tạo post rồi gắn tag và ghi audit log',
+			'Các thay đổi có nằm trong cùng transaction DB không? Nếu ghi tag fail thì rollback thế nào?'
 		],
 		[
 			'4',
-			'FE gọi API xong refetch lịch sử giao dịch',
+			'FE gọi API xong refetch danh sách bài viết',
 			'Có tạo N+1 query hoặc refetch quá nhiều endpoint không? Loading/error state có đúng không?'
 		],
 		[
 			'5',
 			'Hệ thống ghi log lỗi',
-			'Log có lộ số tài khoản đầy đủ, token, hoặc thông tin nhạy cảm không?'
+			'Log có lộ token, nội dung nháp nhạy cảm, hoặc thông tin không nên ghi không?'
 		]
 	]}
 />
@@ -87,57 +86,26 @@ Một diff nhìn qua có thể "chạy được", nhưng reviewer cần đi theo
 Ví dụ review comment có bằng chứng:
 
 ```txt
-Endpoint POST /transfers đang nhận request retry mà không có idempotency key.
-Nếu mobile timeout sau khi BE đã commit, user bấm lại có thể tạo 2 giao dịch.
-Đề xuất thêm idempotency_key từ client và unique constraint ở DB.
+Endpoint POST /posts đang cho phép tạo trùng slug nếu user bấm publish hai lần rất nhanh.
+Nên thêm unique constraint cho slug active và xử lý lỗi duplicate thành message rõ cho FE.
 ```
 
 Ví dụ review FE:
 
 ```txt
-Form đang dùng if (amount) để validate nên amount = 0 bị xử lý giống empty.
-Nên tách rõ "chưa nhập" và "nhập 0", vì backend cũng cần trả lỗi nghiệp vụ khác nhau.
+Form đang dùng if (title) nhưng không trim trước khi submit.
+Title toàn khoảng trắng vẫn qua được UI, sau đó BE mới trả lỗi.
+Nên normalize input ở FE để feedback nhanh hơn, nhưng BE vẫn phải validate lại.
 ```
 
 Ví dụ review query:
 
 ```txt
-Màn lịch sử giao dịch gọi /transactions rồi mỗi item gọi /accounts/:id để lấy tên tài khoản.
-Với 50 giao dịch sẽ thành 51 request/query. Nên trả đủ account summary từ API list hoặc batch theo account_ids.
+Màn danh sách bài viết gọi /posts rồi mỗi item gọi /authors/:id và /tags?post_id=...
+Với 50 bài sẽ thành hơn 100 request/query. Nên trả đủ author/tag summary từ API list hoặc batch theo ids.
 ```
 
 Các comment kiểu này dễ xử lý hơn nhiều so với "đoạn này có vẻ không ổn", vì nó chỉ ra kịch bản lỗi, tác động và hướng sửa.
-
-<MermaidDiagram
-	title="Luồng review một PR full-stack từ UI tới database"
-	chart={`
-architecture-beta
-	group pr(cloud)[Pull Request]
-	group client(cloud)[Frontend] in pr
-	group server(cloud)[Backend] in pr
-	group data(cloud)[Data Layer] in pr
-	group evidence(cloud)[Review Evidence] in pr
-
-    service ui(internet)[UI State] in client
-    service contract(server)[API Contract] in client
-    service api(server)[Endpoint] in server
-    service auth(lock)[Auth Validation] in server
-    service tx(server)[Transaction] in server
-    service db(database)[Database Query] in data
-    service logs(disk)[Logs Metrics] in evidence
-    service tests(server)[Tests Benchmark] in evidence
-
-    ui:R -- L:contract
-    contract:R -- L:api
-    api:B -- T:auth
-    api:R -- L:tx
-    tx:R -- L:db
-    db:B -- T:tests
-    api:B -- T:logs
-    tests:R -- L:logs
-
-`}
-/>
 
 <a id="checklist-chung-cho-moi-pr" class="block scroll-mt-31"></a>
 

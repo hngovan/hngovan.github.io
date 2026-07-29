@@ -19,11 +19,10 @@ authors: ['keeb-log']
 ---
 
 import DataTable from '@/components/mdx/data-table.astro'
-import MermaidDiagram from '@/components/mdx/mermaid-diagram.astro'
 
 Khi chọn database cho một service mới, câu hỏi hay gặp không phải là "PostgreSQL mạnh hơn hay MySQL nhanh hơn?", mà là: dữ liệu của mình đọc nhiều hay ghi nhiều, query đơn giản hay phức tạp, team quen vận hành hệ nào, sau này có cần report, JSON, search, geospatial, partitioning hay migration phức tạp không?
 
-PostgreSQL và MySQL đều là RDBMS phổ biến, đều dùng SQL, đều đủ tốt cho rất nhiều web app. Nhưng cách mỗi hệ ưu tiên thiết kế khác nhau. Bài Viblo so sánh 8 điểm giữa MySQL và PostgreSQL nhấn mạnh MySQL hợp với service web đơn giản, lấy một lượng dữ liệu nhất định để hiển thị, còn PostgreSQL nổi bật khi cần nhiều tính năng, phân tích và query phức tạp. AWS cũng đưa ra hướng chọn tương tự: PostgreSQL hợp hơn với ứng dụng enterprise có thao tác ghi thường xuyên và query phức tạp; MySQL phù hợp khi prototype, app nội bộ ít người dùng, hoặc kho thông tin đọc nhiều và cập nhật không thường xuyên.
+PostgreSQL và MySQL đều là RDBMS phổ biến, đều dùng SQL, đều đủ tốt cho rất nhiều web app. Nhưng cách mỗi hệ ưu tiên thiết kế khác nhau. MySQL thường hợp với service web đơn giản, lấy một lượng dữ liệu nhất định để hiển thị, còn PostgreSQL nổi bật khi cần nhiều tính năng, phân tích và query phức tạp. AWS cũng đưa ra hướng chọn tương tự: PostgreSQL hợp hơn với ứng dụng enterprise có thao tác ghi thường xuyên và query phức tạp; MySQL phù hợp khi prototype, app nội bộ ít người dùng, hoặc kho thông tin đọc nhiều và cập nhật không thường xuyên.
 
 Bài này viết lại theo hướng thực dụng hơn: nhìn vào từng loại service, từng loại query và từng rủi ro vận hành để quyết định.
 
@@ -78,26 +77,6 @@ Bài này viết lại theo hướng thực dụng hơn: nhìn vào từng loạ
 
 Nếu phải nói ngắn gọn: MySQL rất hợp cho nhiều web service đọc nhiều, đơn giản, cần đi nhanh và team đã quen tooling. PostgreSQL hợp hơn khi database không chỉ là nơi lưu bảng, mà còn là nơi cần biểu diễn quan hệ dữ liệu phức tạp, kiểm tra tính đúng, phân tích, report và mở rộng bằng extension.
 
-<MermaidDiagram
-	title="Block view: chọn database theo tính chất service"
-	chart={`
-block-beta
-columns 3
-Start["Can chon DB"] Workload["Doc/ghi + query"] Team["Kinh nghiem team"]
-MySQL["MySQL: read-heavy, CRUD, top N"] Benchmark["Benchmark data gan production"] Postgres["PostgreSQL: query phuc tap, report, extension"]
-Ops["Backup, replica, migration"] Plan["EXPLAIN, lock, memory"] Decision["Quyet dinh theo service"]
-Start --> Workload
-Workload --> MySQL
-Workload --> Postgres
-MySQL --> Benchmark
-Postgres --> Benchmark
-Team --> Ops
-Benchmark --> Plan
-Ops --> Decision
-Plan --> Decision
-`}
-/>
-
 <a
 	id="1-chon-theo-workload-truoc-dung-chon-theo-cam-tinh"
 	class="block scroll-mt-31"
@@ -131,7 +110,7 @@ AWS viết rằng PostgreSQL phù hợp hơn cho ứng dụng cấp doanh nghi�
 
 ## 2. Query đơn giản và query phức tạp
 
-Bài Viblo có một ý rất đáng nhớ: SELECT đơn giản thì MySQL và PostgreSQL thường không khác biệt nhiều. Khác biệt rõ hơn khi query phải sort lượng dữ liệu lớn, JOIN nhiều hoặc cần thuật toán query phức tạp.
+Một điểm rất đáng nhớ: SELECT đơn giản thì MySQL và PostgreSQL thường không khác biệt nhiều. Khác biệt rõ hơn khi query phải sort lượng dữ liệu lớn, JOIN nhiều hoặc cần thuật toán query phức tạp.
 
 Ví dụ service timeline:
 
@@ -228,51 +207,11 @@ Index này nói rõ business rule: email active không được trùng, nhưng u
 
 MySQL vẫn có thể giải quyết nhiều bài toán tương tự bằng generated column, composite index, constraint ở application hoặc thiết kế schema khác. Nhưng nếu domain của bạn có nhiều rule dữ liệu đặc thù, PostgreSQL thường giúp biểu diễn rule trực tiếp trong database rõ hơn.
 
-<MermaidDiagram
-	title="ERD ví dụ CMS/catalog cần nhiều rule dữ liệu"
-	chart={`
-erDiagram
-	USERS ||--o{ POSTS : writes
-	POSTS ||--o{ POST_TAGS : has
-	TAGS ||--o{ POST_TAGS : groups
-	POSTS ||--o{ AUDIT_LOGS : changes
-	PRODUCTS ||--o{ PRODUCT_ATTRIBUTES : owns
-	CATEGORIES ||--o{ PRODUCTS : contains
-
-    USERS {
-    	int id PK
-    	string email
-    	timestamp deleted_at
-    }
-    POSTS {
-    	int id PK
-    	int author_id FK
-    	string status
-    	jsonb metadata
-    }
-    TAGS {
-    	int id PK
-    	string slug
-    }
-    PRODUCTS {
-    	int id PK
-    	int category_id FK
-    	jsonb attributes
-    }
-    AUDIT_LOGS {
-    	int id PK
-    	int post_id FK
-    	string action
-    }
-
-`}
-/>
-
 <a id="4-transaction-mvcc-va-du-lieu-nhin-thay" class="block scroll-mt-31"></a>
 
 ## 4. Transaction, MVCC và dữ liệu nhìn thấy
 
-Không cần ví dụ ngân hàng để hiểu transaction. Hãy dùng ví dụ gần web app hơn: một admin tạo bài viết mới trong CMS.
+Hãy dùng ví dụ gần web app: một admin tạo bài viết mới trong CMS.
 
 Ban đầu bảng `posts` có id `1`, `2`.
 
@@ -326,31 +265,7 @@ Session B chạy query mới thì mới thấy id `3`.
 	]}
 />
 
-Bài Viblo nhắc một khác biệt quan trọng: MySQL mặc định `REPEATABLE READ` và dùng next-key locking để tránh phantom read trong một số trường hợp; PostgreSQL mặc định `READ COMMITTED`, còn khi lên `REPEATABLE READ` thì cơ chế tránh phantom không giống MySQL. Khi debug bug "sao trong transaction không thấy row mới", đừng chỉ nhìn SQL text. Hãy nhìn isolation level và transaction boundary.
-
-<MermaidDiagram
-	title="Visibility khi insert post trong transaction"
-	chart={`
-flowchart LR
-	subgraph Tx["Session A trong transaction"]
-		Begin[BEGIN]
-		Insert[INSERT post id 3]
-		ReadA[SELECT posts: 1, 2, 3]
-		Commit[COMMIT]
-		Begin --> Insert --> ReadA --> Commit
-	end
-
-    subgraph Outside["Session B ben ngoai transaction"]
-    	ReadBefore[SELECT truoc COMMIT: 1, 2]
-    	ReadAfter[SELECT sau COMMIT: 1, 2, 3]
-    	ReadBefore --> ReadAfter
-    end
-
-    Insert -. uncommitted, chua visible .-> ReadBefore
-    Commit -. committed, query moi thay .-> ReadAfter
-
-`}
-/>
+Một khác biệt quan trọng: MySQL mặc định `REPEATABLE READ` và dùng next-key locking để tránh phantom read trong một số trường hợp; PostgreSQL mặc định `READ COMMITTED`, còn khi lên `REPEATABLE READ` thì cơ chế tránh phantom không giống MySQL. Khi debug bug "sao trong transaction không thấy row mới", đừng chỉ nhìn SQL text. Hãy nhìn isolation level và transaction boundary.
 
 <a id="5-update-delete-vacuum-va-purge" class="block scroll-mt-31"></a>
 
@@ -388,7 +303,7 @@ Trong MySQL InnoDB, tài liệu InnoDB multi-versioning nói record đã delete-
 	]}
 />
 
-Ví dụ thực tế hơn ngân hàng: hệ thống audit log hoặc notification.
+Ví dụ thực tế: hệ thống audit log hoặc notification.
 
 Nếu mỗi ngày insert 10 triệu notification, sau 30 ngày chạy job xóa notification cũ:
 
@@ -409,7 +324,7 @@ Trong case kiểu này, giải pháp tốt hơn thường là partition theo ng�
 
 ## 6. DDL, migration và vận hành production
 
-Bài Viblo bắt đầu bằng DDL vì đây là nỗi đau rất thật khi database đã chạy production. Thêm cột, đổi type, thêm index, đổi constraint, rename column: ở local thì nhanh, lên bảng vài trăm triệu row thì có thể lock hoặc làm chậm service.
+DDL là nỗi đau rất thật khi database đã chạy production. Thêm cột, đổi type, thêm index, đổi constraint, rename column: ở local thì nhanh, lên bảng vài trăm triệu row thì có thể lock hoặc làm chậm service.
 
 MySQL, đặc biệt các phiên bản mới với InnoDB, có nhiều cải thiện cho online DDL. Một số thao tác có thể chạy ít block hơn, nhưng không phải mọi migration đều an toàn. PostgreSQL cũng có nhiều thao tác DDL nhanh, nhưng vẫn có thao tác cần lock mạnh hoặc rewrite table tùy loại thay đổi.
 

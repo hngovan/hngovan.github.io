@@ -17,7 +17,6 @@ authors: ['keeb-log']
 ---
 
 import DataTable from '@/components/mdx/data-table.astro'
-import MermaidDiagram from '@/components/mdx/mermaid-diagram.astro'
 
 Phân trang nghe giống một bài toán giao diện: trang 1, trang 2, mỗi trang 20 dòng. Nhưng khi dữ liệu lớn dần, cách viết query quyết định rất nhiều tới tốc độ, độ ổn định kết quả và cả cách thiết kế API.
 
@@ -25,7 +24,7 @@ Bài này là ghi chú lại ba hướng phổ biến khi phân trang trong SQL:
 
 ## Mục lục nhanh
 
-- [Ví dụ thực tế: lịch sử giao dịch ngân hàng](#vi-du-thuc-te-lich-su-giao-dich-ngan-hang)
+- [Ví dụ thực tế: danh sách bài viết mới](#vi-du-thuc-te-danh-sach-bai-viet-moi)
 - [OFFSET/LIMIT: cách dễ hiểu nhất](#offsetlimit-cach-de-hieu-nhat)
 - [Vấn đề của OFFSET ở trang sâu](#van-de-cua-offset-o-trang-sau)
 - [Keyset pagination: đi tiếp từ bản ghi cuối](#keyset-pagination-di-tiep-tu-ban-ghi-cuoi)
@@ -35,27 +34,24 @@ Bài này là ghi chú lại ba hướng phổ biến khi phân trang trong SQL:
 - [Nên chọn cách nào?](#nen-chon-cach-nao)
 - [Checklist khi triển khai](#checklist-khi-trien-khai)
 
-<a
-	id="vi-du-thuc-te-lich-su-giao-dich-ngan-hang"
-	class="block scroll-mt-31"
-></a>
+<a id="vi-du-thuc-te-danh-sach-bai-viet-moi" class="block scroll-mt-31"></a>
 
-## Ví dụ thực tế: lịch sử giao dịch ngân hàng
+## Ví dụ thực tế: danh sách bài viết mới
 
-Hãy tưởng tượng màn "Lịch sử giao dịch" trong app ngân hàng. Người dùng mở danh sách giao dịch mới nhất, mỗi lần lấy 5 dòng:
+Hãy tưởng tượng màn danh sách bài viết trong CMS. Người dùng mở danh sách bài mới nhất, mỗi lần lấy 5 dòng:
 
 <DataTable
-	headers={['Thứ tự hiển thị', 'transaction_id', 'created_at', 'Nội dung']}
+	headers={['Thứ tự hiển thị', 'post_id', 'created_at', 'Tiêu đề']}
 	rows={[
-		['1', '105', '10:05:00', 'Nhận lương'],
-		['2', '104', '10:04:00', 'Chuyển khoản tiền nhà'],
-		['3', '103', '10:03:00', 'Thanh toán điện'],
-		['4', '102', '10:02:00', 'Rút ATM'],
-		['5', '101', '10:01:00', 'Nạp điện thoại']
+		['1', '105', '10:05:00', 'PostgreSQL vs MySQL'],
+		['2', '104', '10:04:00', 'Tối ưu API list'],
+		['3', '103', '10:03:00', 'Review code backend'],
+		['4', '102', '10:02:00', 'Thiết kế cursor pagination'],
+		['5', '101', '10:01:00', 'Đọc EXPLAIN ANALYZE']
 	]}
 />
 
-Nếu dùng `OFFSET/LIMIT`, trang 2 sẽ là "bỏ qua 5 dòng đầu, lấy 5 dòng tiếp theo". Vấn đề xảy ra khi giữa lúc người dùng đang đọc trang 1, có một giao dịch mới `106` chen lên đầu danh sách. Khi người dùng bấm sang trang 2, database lại bỏ qua 5 dòng đầu của danh sách mới, nên giao dịch `101` có thể bị lặp hoặc một giao dịch cũ bị bỏ qua tùy dữ liệu thay đổi.
+Nếu dùng `OFFSET/LIMIT`, trang 2 sẽ là "bỏ qua 5 dòng đầu, lấy 5 dòng tiếp theo". Vấn đề xảy ra khi giữa lúc người dùng đang đọc trang 1, editor publish một bài mới `106` chen lên đầu danh sách. Khi người dùng bấm sang trang 2, database lại bỏ qua 5 dòng đầu của danh sách mới, nên bài `101` có thể bị lặp hoặc một bài cũ bị bỏ qua tùy dữ liệu thay đổi.
 
 Minh họa timeline:
 
@@ -68,7 +64,7 @@ Minh họa timeline:
 			'Trang 1 hiển thị 105 đến 101'
 		],
 		[
-			'T2: có giao dịch mới',
+			'T2: có bài mới',
 			'106, 105, 104, 103, 102, 101',
 			'Người dùng chưa biết có 106'
 		],
@@ -80,51 +76,17 @@ Minh họa timeline:
 	]}
 />
 
-Với keyset pagination, trang tiếp theo không nói "bỏ qua 5 dòng" nữa, mà nói "lấy các giao dịch cũ hơn giao dịch cuối tôi đã thấy", ví dụ cursor là `(created_at = 10:01:00, transaction_id = 101)`. Khi đó giao dịch mới `106` chen lên đầu không làm trang tiếp theo bị lệch.
-
-<MermaidDiagram
-	title="Luồng xử lý pagination khi dữ liệu mới chen vào đầu danh sách"
-	chart={`
-flowchart LR
-	subgraph Page1["Request 1: trang dau"]
-		User[User mo lich su giao dich]
-		Query1[ORDER BY created_at DESC LIMIT 5]
-		Rows1[105, 104, 103, 102, 101]
-		User --> Query1 --> Rows1
-	end
-
-    NewRow[Transaction 106 chen len dau]
-
-    subgraph OffsetFlow["Request 2 neu dung OFFSET"]
-    	Offset[OFFSET 5]
-    	Skipped[Bo qua 106, 105, 104, 103, 102]
-    	Duplicate[Tra ve 101 bi lap]
-    	Offset --> Skipped --> Duplicate
-    end
-
-    subgraph KeysetFlow["Request 2 neu dung Keyset"]
-    	Cursor[Cursor: last_seen = 101]
-    	Seek[WHERE row cu hon 101]
-    	Stable[Trang tiep theo on dinh]
-    	Cursor --> Seek --> Stable
-    end
-
-    Rows1 --> NewRow
-    NewRow --> Offset
-    Rows1 --> Cursor
-
-`}
-/>
+Với keyset pagination, trang tiếp theo không nói "bỏ qua 5 dòng" nữa, mà nói "lấy các bài cũ hơn bài cuối tôi đã thấy", ví dụ cursor là `(created_at = 10:01:00, post_id = 101)`. Khi đó bài mới `106` chen lên đầu không làm trang tiếp theo bị lệch.
 
 ```sql
-SELECT transaction_id, amount, created_at, description
-FROM bank_transactions
-WHERE (created_at, transaction_id) < ('2026-07-29 10:01:00', 101)
-ORDER BY created_at DESC, transaction_id DESC
+SELECT post_id, title, created_at, author_id
+FROM posts
+WHERE (created_at, post_id) < ('2026-07-29 10:01:00', 101)
+ORDER BY created_at DESC, post_id DESC
 LIMIT 5;
 ```
 
-Đây là lý do các màn dạng feed, inbox, audit log, lịch sử giao dịch, lịch sử đơn hàng thường hợp với cursor/keyset hơn page number truyền thống.
+Đây là lý do các màn dạng feed, inbox, audit log, danh sách bài viết hoặc lịch sử đơn hàng thường hợp với cursor/keyset hơn page number truyền thống.
 
 <a id="offsetlimit-cach-de-hieu-nhat" class="block scroll-mt-31"></a>
 
