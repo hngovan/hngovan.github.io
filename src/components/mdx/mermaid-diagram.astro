@@ -115,14 +115,162 @@ const encodedChart = encodeURIComponent(chart.trim())
 			.join('')}</div>`
 	}
 
-	const renderFallbackDiagram = (diagram: HTMLElement, source: string) => {
-		const visual = source.trim().startsWith('sequenceDiagram')
-			? renderSequenceFallback(source)
-			: renderFlowFallback(source)
+	const renderBlockFallback = (source: string) => {
+		const labels = new Map<string, string>()
 
-		diagram.innerHTML =
-			visual ||
-			`<pre class="bg-muted text-foreground overflow-x-auto rounded-md p-4 text-xs leading-relaxed">${escapeHtml(source)}</pre>`
+		for (const match of source.matchAll(/([A-Za-z0-9_]+)\["([^"]+)"\]/g)) {
+			labels.set(match[1], match[2])
+		}
+
+		const edges = source
+			.split('\n')
+			.map(line => line.trim())
+			.map(line => {
+				const match = line.match(/^([A-Za-z0-9_]+)\s+-->\s+([A-Za-z0-9_]+)$/)
+				if (!match) return null
+
+				return {
+					from: labels.get(match[1]) ?? match[1],
+					to: labels.get(match[2]) ?? match[2]
+				}
+			})
+			.filter((edge): edge is { from: string; to: string } => edge !== null)
+
+		const cards = [...labels.values()]
+		if (cards.length === 0 && edges.length === 0) return ''
+
+		return `<div class="min-w-[720px] space-y-4">
+			<div class="grid grid-cols-3 gap-3">${cards
+				.map(
+					label =>
+						`<div class="rounded-md border bg-blue-50 px-3 py-3 text-center text-sm font-medium text-slate-900 dark:bg-slate-800 dark:text-slate-50">${escapeHtml(label)}</div>`
+				)
+				.join('')}</div>
+			${edges
+				.map(
+					edge => `<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+						<div class="rounded-md border bg-background px-3 py-2 text-center text-sm text-slate-800 dark:text-slate-100">${escapeHtml(edge.from)}</div>
+						<div class="text-xs font-semibold text-slate-500 dark:text-slate-400">--></div>
+						<div class="rounded-md border bg-cyan-50 px-3 py-2 text-center text-sm text-slate-800 dark:bg-cyan-950 dark:text-slate-100">${escapeHtml(edge.to)}</div>
+					</div>`
+				)
+				.join('')}
+		</div>`
+	}
+
+	const renderArchitectureFallback = (source: string) => {
+		const services = new Map<string, string>()
+
+		for (const match of source.matchAll(
+			/service\s+([A-Za-z0-9_]+)\([^)]*\)\[([^\]]+)\]/g
+		)) {
+			services.set(match[1], match[2])
+		}
+
+		const edges = source
+			.split('\n')
+			.map(line => line.trim())
+			.map(line => {
+				const match = line.match(
+					/^([A-Za-z0-9_]+):[A-Z]\s+--\s+[A-Z]:([A-Za-z0-9_]+)$/
+				)
+				if (!match) return null
+
+				return {
+					from: services.get(match[1]) ?? match[1],
+					to: services.get(match[2]) ?? match[2]
+				}
+			})
+			.filter((edge): edge is { from: string; to: string } => edge !== null)
+
+		if (services.size === 0 && edges.length === 0) return ''
+
+		return `<div class="min-w-[760px] space-y-4">
+			<div class="grid grid-cols-4 gap-3">${[...services.values()]
+				.map(
+					service =>
+						`<div class="rounded-md border bg-slate-50 px-3 py-3 text-center text-sm font-semibold text-slate-900 dark:bg-slate-800 dark:text-slate-50">${escapeHtml(service)}</div>`
+				)
+				.join('')}</div>
+			<div class="space-y-2">${edges
+				.map(
+					(
+						edge,
+						index
+					) => `<div class="grid grid-cols-[auto_1fr_auto_1fr] items-center gap-3 rounded-md border bg-muted/40 px-3 py-2">
+						<div class="text-xs font-semibold text-slate-500 dark:text-slate-400">${index + 1}</div>
+						<div class="rounded bg-background px-3 py-2 text-sm font-medium text-slate-900 dark:text-slate-50">${escapeHtml(edge.from)}</div>
+						<div class="text-xs font-semibold text-slate-500 dark:text-slate-400">--></div>
+						<div class="rounded bg-background px-3 py-2 text-sm font-medium text-slate-900 dark:text-slate-50">${escapeHtml(edge.to)}</div>
+					</div>`
+				)
+				.join('')}</div>
+		</div>`
+	}
+
+	const renderErFallback = (source: string) => {
+		const entities = new Set<string>()
+		const relationships = source
+			.split('\n')
+			.map(line => line.trim())
+			.map(line => {
+				const match = line.match(
+					/^([A-Z0-9_]+)\s+.+--.+\s+([A-Z0-9_]+)\s*:\s*(.+)$/
+				)
+				if (!match) return null
+
+				entities.add(match[1])
+				entities.add(match[2])
+				return {
+					from: match[1],
+					to: match[2],
+					label: match[3]
+				}
+			})
+			.filter(
+				(
+					relationship
+				): relationship is { from: string; to: string; label: string } =>
+					relationship !== null
+			)
+
+		if (entities.size === 0 && relationships.length === 0) return ''
+
+		return `<div class="min-w-[760px] space-y-4">
+			<div class="grid grid-cols-3 gap-3">${[...entities]
+				.map(
+					entity =>
+						`<div class="rounded-md border bg-blue-50 px-3 py-3 text-center text-sm font-semibold text-slate-900 dark:bg-slate-800 dark:text-slate-50">${escapeHtml(entity)}</div>`
+				)
+				.join('')}</div>
+			<div class="space-y-2">${relationships
+				.map(
+					relationship => `<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+						<div class="rounded-md border bg-background px-3 py-2 text-center text-sm text-slate-800 dark:text-slate-100">${escapeHtml(relationship.from)}</div>
+						<div class="text-center text-xs font-semibold text-slate-500 dark:text-slate-400">${escapeHtml(relationship.label)}</div>
+						<div class="rounded-md border bg-cyan-50 px-3 py-2 text-center text-sm text-slate-800 dark:bg-cyan-950 dark:text-slate-100">${escapeHtml(relationship.to)}</div>
+					</div>`
+				)
+				.join('')}</div>
+		</div>`
+	}
+
+	const renderGenericFallback = () =>
+		`<div class="rounded-md border bg-muted/40 px-4 py-3 text-sm text-slate-700 dark:text-slate-200">So do nay dang dung cu phap Mermaid ma browser hien tai khong render duoc.</div>`
+
+	const renderFallbackDiagram = (diagram: HTMLElement, source: string) => {
+		const trimmed = source.trim()
+		const visual = trimmed.startsWith('sequenceDiagram')
+			? renderSequenceFallback(source)
+			: trimmed.startsWith('block-beta')
+				? renderBlockFallback(source)
+				: trimmed.startsWith('architecture-beta')
+					? renderArchitectureFallback(source)
+					: trimmed.startsWith('erDiagram')
+						? renderErFallback(source)
+						: renderFlowFallback(source)
+
+		diagram.innerHTML = visual || renderGenericFallback()
 	}
 
 	const renderMermaidDiagrams = async () => {
