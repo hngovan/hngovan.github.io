@@ -24,6 +24,7 @@ Bài này là ghi chú lại ba hướng phổ biến khi phân trang trong SQL:
 
 ## Mục lục nhanh
 
+- [Ví dụ thực tế: lịch sử giao dịch ngân hàng](#vi-du-thuc-te-lich-su-giao-dich-ngan-hang)
 - [OFFSET/LIMIT: cách dễ hiểu nhất](#offsetlimit-cach-de-hieu-nhat)
 - [Vấn đề của OFFSET ở trang sâu](#van-de-cua-offset-o-trang-sau)
 - [Keyset pagination: đi tiếp từ bản ghi cuối](#keyset-pagination-di-tiep-tu-ban-ghi-cuoi)
@@ -32,6 +33,63 @@ Bài này là ghi chú lại ba hướng phổ biến khi phân trang trong SQL:
 - [COUNT(\*) cũng là một điểm nghẽn](#count-cung-la-mot-diem-nghen)
 - [Nên chọn cách nào?](#nen-chon-cach-nao)
 - [Checklist khi triển khai](#checklist-khi-trien-khai)
+
+<a
+	id="vi-du-thuc-te-lich-su-giao-dich-ngan-hang"
+	class="block scroll-mt-31"
+></a>
+
+## Ví dụ thực tế: lịch sử giao dịch ngân hàng
+
+Hãy tưởng tượng màn "Lịch sử giao dịch" trong app ngân hàng. Người dùng mở danh sách giao dịch mới nhất, mỗi lần lấy 5 dòng:
+
+<DataTable
+	headers={['Thứ tự hiển thị', 'transaction_id', 'created_at', 'Nội dung']}
+	rows={[
+		['1', '105', '10:05:00', 'Nhận lương'],
+		['2', '104', '10:04:00', 'Chuyển khoản tiền nhà'],
+		['3', '103', '10:03:00', 'Thanh toán điện'],
+		['4', '102', '10:02:00', 'Rút ATM'],
+		['5', '101', '10:01:00', 'Nạp điện thoại']
+	]}
+/>
+
+Nếu dùng `OFFSET/LIMIT`, trang 2 sẽ là "bỏ qua 5 dòng đầu, lấy 5 dòng tiếp theo". Vấn đề xảy ra khi giữa lúc người dùng đang đọc trang 1, có một giao dịch mới `106` chen lên đầu danh sách. Khi người dùng bấm sang trang 2, database lại bỏ qua 5 dòng đầu của danh sách mới, nên giao dịch `101` có thể bị lặp hoặc một giao dịch cũ bị bỏ qua tùy dữ liệu thay đổi.
+
+Minh họa timeline:
+
+<DataTable
+	headers={['Thời điểm', 'Dữ liệu đầu danh sách', 'Người dùng thấy gì']}
+	rows={[
+		[
+			'T1: mở trang 1',
+			'105, 104, 103, 102, 101',
+			'Trang 1 hiển thị 105 đến 101'
+		],
+		[
+			'T2: có giao dịch mới',
+			'106, 105, 104, 103, 102, 101',
+			'Người dùng chưa biết có 106'
+		],
+		[
+			'T3: bấm trang 2 với <code>OFFSET 5</code>',
+			'Bỏ qua 106, 105, 104, 103, 102',
+			'Trang 2 bắt đầu từ 101, bị lặp với trang 1'
+		]
+	]}
+/>
+
+Với keyset pagination, trang tiếp theo không nói "bỏ qua 5 dòng" nữa, mà nói "lấy các giao dịch cũ hơn giao dịch cuối tôi đã thấy", ví dụ cursor là `(created_at = 10:01:00, transaction_id = 101)`. Khi đó giao dịch mới `106` chen lên đầu không làm trang tiếp theo bị lệch.
+
+```sql
+SELECT transaction_id, amount, created_at, description
+FROM bank_transactions
+WHERE (created_at, transaction_id) < ('2026-07-29 10:01:00', 101)
+ORDER BY created_at DESC, transaction_id DESC
+LIMIT 5;
+```
+
+Đây là lý do các màn dạng feed, inbox, audit log, lịch sử giao dịch, lịch sử đơn hàng thường hợp với cursor/keyset hơn page number truyền thống.
 
 <a id="offsetlimit-cach-de-hieu-nhat" class="block scroll-mt-31"></a>
 

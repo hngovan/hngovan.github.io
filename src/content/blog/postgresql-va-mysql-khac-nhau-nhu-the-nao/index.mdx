@@ -26,6 +26,7 @@ Bài này dùng `PostgreSQL` để chỉ PostgreSQL hiện đại, và `MySQL` c
 ## Mục lục nhanh
 
 - [Tóm tắt nhanh](#tom-tat-nhanh)
+- [Ví dụ thực tế: chuyển tiền giữa hai tài khoản](#vi-du-thuc-te-chuyen-tien-giua-hai-tai-khoan)
 - [MVCC và dữ liệu nhìn thấy trong transaction](#mvcc-va-du-lieu-nhin-thay-trong-transaction)
 - [DELETE, VACUUM và purge khác nhau ở đâu?](#delete-vacuum-va-purge-khac-nhau-o-dau)
 - [Một câu query được thực hiện như thế nào?](#mot-cau-query-duoc-thuc-hien-nhu-the-nao)
@@ -68,6 +69,78 @@ Bài này dùng `PostgreSQL` để chỉ PostgreSQL hiện đại, và `MySQL` c
 		]
 	]}
 />
+
+<a
+	id="vi-du-thuc-te-chuyen-tien-giua-hai-tai-khoan"
+	class="block scroll-mt-31"
+></a>
+
+## Ví dụ thực tế: chuyển tiền giữa hai tài khoản
+
+Ví dụ dễ hình dung nhất là giao dịch chuyển 100.000đ từ tài khoản A sang tài khoản B. Trước giao dịch:
+
+<DataTable
+	headers={['account_id', 'Số dư']}
+	align={['left', 'right']}
+	rows={[
+		['A', '1.000.000đ'],
+		['B', '500.000đ']
+	]}
+/>
+
+Trong backend, ta muốn hai thao tác trừ tiền và cộng tiền đi cùng nhau. Nếu trừ A thành công nhưng cộng B fail, hệ thống không được để tiền "biến mất". Vì vậy flow phải nằm trong transaction:
+
+```sql
+BEGIN;
+
+UPDATE accounts
+SET balance = balance - 100000
+WHERE account_id = 'A';
+
+UPDATE accounts
+SET balance = balance + 100000
+WHERE account_id = 'B';
+
+COMMIT;
+```
+
+Minh họa visibility:
+
+<DataTable
+	headers={['Thời điểm', 'Session đang chuyển tiền', 'Session khác đọc số dư']}
+	rows={[
+		[
+			'Sau câu <code>UPDATE</code> đầu tiên',
+			'A = 900.000đ, B = 500.000đ',
+			'Vẫn thấy A = 1.000.000đ, B = 500.000đ nếu transaction chưa commit'
+		],
+		[
+			'Sau câu <code>UPDATE</code> thứ hai',
+			'A = 900.000đ, B = 600.000đ',
+			'Vẫn chưa thấy kết quả mới'
+		],
+		[
+			'Sau <code>COMMIT</code>',
+			'Transaction kết thúc',
+			'Query mới thấy A = 900.000đ, B = 600.000đ'
+		]
+	]}
+/>
+
+Nếu giữa chừng có lỗi và chạy `ROLLBACK`, cả hai update đều bị hủy. Đây là điểm quan trọng khi so PostgreSQL/MySQL: concept transaction giống nhau, nhưng chi tiết MVCC, isolation mặc định, cách lưu version cũ và cách dọn rác sau update/delete khác nhau.
+
+```sql
+BEGIN;
+
+UPDATE accounts
+SET balance = balance - 100000
+WHERE account_id = 'A';
+
+-- Giả sử bước cộng tiền cho B fail
+ROLLBACK;
+```
+
+Sau rollback, cả bên trong lẫn bên ngoài transaction đều không nên thấy trạng thái A bị trừ tiền nhưng B chưa nhận tiền. Khi review code backend, đây là loại ví dụ nên dùng để kiểm tra transaction scope, idempotency và side effect.
 
 <a
 	id="mvcc-va-du-lieu-nhin-thay-trong-transaction"

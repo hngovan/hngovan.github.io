@@ -25,6 +25,7 @@ Tôi thường tách review thành hai lớp: checklist chung cho mọi PR, rồ
 
 ## Mục lục nhanh
 
+- [Ví dụ thực tế: review tính năng chuyển tiền](#vi-du-thuc-te-review-tinh-nang-chuyen-tien)
 - [Checklist chung cho mọi PR](#checklist-chung-cho-moi-pr)
 - [Review frontend](#review-frontend)
 - [Review backend](#review-backend)
@@ -34,6 +35,76 @@ Tôi thường tách review thành hai lớp: checklist chung cho mọi PR, rồ
 - [Review security](#review-security)
 - [Câu hỏi nên để lại khi review](#cau-hoi-nen-de-lai-khi-review)
 - [Nguồn tham khảo](#nguon-tham-khao)
+
+<a
+	id="vi-du-thuc-te-review-tinh-nang-chuyen-tien"
+	class="block scroll-mt-31"
+></a>
+
+## Ví dụ thực tế: review tính năng chuyển tiền
+
+Giả sử PR thêm màn chuyển tiền trong app ngân hàng:
+
+- FE có form nhập tài khoản nhận, số tiền, nội dung chuyển khoản.
+- BE có endpoint `POST /transfers`.
+- Database cập nhật số dư hai tài khoản và ghi lịch sử giao dịch.
+
+Một diff nhìn qua có thể "chạy được", nhưng reviewer cần đi theo luồng thật của người dùng:
+
+<DataTable
+	headers={['Bước', 'Người dùng/app làm gì', 'Reviewer nên hỏi gì']}
+	rows={[
+		[
+			'1',
+			'User nhập số tiền <code>0</code>, số âm, hoặc vượt số dư',
+			'FE chỉ disable button hay BE cũng validate? Error message trả về có rõ không?'
+		],
+		[
+			'2',
+			'User bấm chuyển tiền hai lần do mạng chậm',
+			'Endpoint có idempotency key hoặc guard duplicate request không?'
+		],
+		[
+			'3',
+			'BE trừ tiền tài khoản A rồi cộng tiền tài khoản B',
+			'Hai update có nằm trong cùng transaction không? Nếu câu thứ hai fail thì rollback thế nào?'
+		],
+		[
+			'4',
+			'FE gọi API xong refetch lịch sử giao dịch',
+			'Có tạo N+1 query hoặc refetch quá nhiều endpoint không? Loading/error state có đúng không?'
+		],
+		[
+			'5',
+			'Hệ thống ghi log lỗi',
+			'Log có lộ số tài khoản đầy đủ, token, hoặc thông tin nhạy cảm không?'
+		]
+	]}
+/>
+
+Ví dụ review comment có bằng chứng:
+
+```txt
+Endpoint POST /transfers đang nhận request retry mà không có idempotency key.
+Nếu mobile timeout sau khi BE đã commit, user bấm lại có thể tạo 2 giao dịch.
+Đề xuất thêm idempotency_key từ client và unique constraint ở DB.
+```
+
+Ví dụ review FE:
+
+```txt
+Form đang dùng if (amount) để validate nên amount = 0 bị xử lý giống empty.
+Nên tách rõ "chưa nhập" và "nhập 0", vì backend cũng cần trả lỗi nghiệp vụ khác nhau.
+```
+
+Ví dụ review query:
+
+```txt
+Màn lịch sử giao dịch gọi /transactions rồi mỗi item gọi /accounts/:id để lấy tên tài khoản.
+Với 50 giao dịch sẽ thành 51 request/query. Nên trả đủ account summary từ API list hoặc batch theo account_ids.
+```
+
+Các comment kiểu này dễ xử lý hơn nhiều so với "đoạn này có vẻ không ổn", vì nó chỉ ra kịch bản lỗi, tác động và hướng sửa.
 
 <a id="checklist-chung-cho-moi-pr" class="block scroll-mt-31"></a>
 
