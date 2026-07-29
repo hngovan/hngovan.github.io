@@ -11,28 +11,41 @@ const encodedChart = encodeURIComponent(chart.trim())
 <figure class="not-prose bg-background my-6 rounded-lg border p-4">
 	{title && <figcaption class="mb-3 text-sm font-medium">{title}</figcaption>}
 	<div
-		class="mermaid-diagram overflow-x-auto"
+		class="mermaid-diagram text-muted-foreground min-h-40 overflow-x-auto text-sm"
 		data-chart={encodedChart}
 		aria-label={title ?? 'Mermaid diagram'}
 	>
+		Đang tải sơ đồ...
 	</div>
 </figure>
 
 <script>
+	const escapeHtml = (value: string) =>
+		value
+			.replaceAll('&', '&amp;')
+			.replaceAll('<', '&lt;')
+			.replaceAll('>', '&gt;')
+			.replaceAll('"', '&quot;')
+			.replaceAll("'", '&#039;')
+
 	const renderMermaidDiagrams = async () => {
 		const { default: mermaid } = await import('mermaid')
-		const theme =
-			document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
+		const isDark = document.documentElement.dataset.theme === 'dark'
+		const theme = isDark ? 'dark' : 'default'
 
 		mermaid.initialize({
 			startOnLoad: false,
 			securityLevel: 'strict',
 			theme,
 			themeVariables: {
-				fontFamily: 'var(--font-sans)',
-				primaryColor: 'color-mix(in oklab, var(--primary) 12%, white)',
-				primaryTextColor: 'var(--foreground)',
-				lineColor: 'var(--muted-foreground)'
+				fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+				primaryColor: isDark ? '#1f2937' : '#eff6ff',
+				primaryTextColor: isDark ? '#f9fafb' : '#111827',
+				lineColor: isDark ? '#9ca3af' : '#475569',
+				background: isDark ? '#0f172a' : '#ffffff',
+				mainBkg: isDark ? '#1f2937' : '#ffffff',
+				secondaryColor: isDark ? '#164e63' : '#ecfeff',
+				tertiaryColor: isDark ? '#3f3f46' : '#f8fafc'
 			}
 		})
 
@@ -48,13 +61,21 @@ const encodedChart = encodeURIComponent(chart.trim())
 			if (diagram.dataset.renderKey === renderKey) continue
 
 			const id = `mermaid-${index}-${Math.random().toString(36).slice(2)}`
-			const { svg } = await mermaid.render(id, source)
-			diagram.innerHTML = svg
-			diagram.dataset.renderKey = renderKey
+			try {
+				const { svg } = await mermaid.render(id, source)
+				diagram.innerHTML = svg
+				diagram.dataset.renderKey = renderKey
+			} catch (error) {
+				console.error('Failed to render Mermaid diagram', error)
+				diagram.innerHTML = `<pre class="bg-muted text-foreground overflow-x-auto rounded-md p-4 text-xs leading-relaxed">${escapeHtml(source)}</pre>`
+				diagram.dataset.renderKey = renderKey
+			}
 		}
 	}
 
 	document.addEventListener('astro:page-load', renderMermaidDiagrams)
 	document.addEventListener('astro:after-swap', renderMermaidDiagrams)
 	document.addEventListener('theme-change', renderMermaidDiagrams)
+
+	void renderMermaidDiagrams()
 </script>
