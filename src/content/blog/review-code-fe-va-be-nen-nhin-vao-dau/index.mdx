@@ -111,25 +111,31 @@ Các comment kiểu này dễ xử lý hơn nhiều so với "đoạn này có v
 <MermaidDiagram
 	title="Luồng review một PR full-stack từ UI tới database"
 	chart={`
-flowchart TD
-	PR[Pull request] --> FE[Frontend review]
-	PR --> BE[Backend review]
-	FE --> UX[State, loading, error, accessibility]
-	FE --> Contract[API contract: null, 0, false, empty array]
-	BE --> Validation[Validation and authorization]
-	BE --> Tx[Transaction and idempotency]
-	BE --> Query[EXPLAIN ANALYZE, N+1, duplicated query]
-	Query --> Memory[Memory and streaming]
-	Tx --> Risk{Co side effect trong transaction?}
-	Risk -->|Yes| Fix[Can outbox, retry, idempotency]
-	Risk -->|No| MergeReady[Review tiep security/perf]
-	UX --> MergeReady
-	Contract --> MergeReady
-	Validation --> MergeReady
-	Memory --> MergeReady
-	MergeReady --> Decision{Du bang chung?}
-	Decision -->|No| Ask[Hoi them benchmark/test/screenshot]
-	Decision -->|Yes| Approve[Approve hoac request change ro rang]
+architecture-beta
+	group pr(cloud)[Pull Request]
+	group client(cloud)[Frontend] in pr
+	group server(cloud)[Backend] in pr
+	group data(cloud)[Data Layer] in pr
+	group evidence(cloud)[Review Evidence] in pr
+
+    service ui(internet)[UI State] in client
+    service contract(server)[API Contract] in client
+    service api(server)[Endpoint] in server
+    service auth(lock)[Auth Validation] in server
+    service tx(server)[Transaction] in server
+    service db(database)[Database Query] in data
+    service logs(disk)[Logs Metrics] in evidence
+    service tests(server)[Tests Benchmark] in evidence
+
+    ui:R -- L:contract
+    contract:R -- L:api
+    api:B -- T:auth
+    api:R -- L:tx
+    tx:R -- L:db
+    db:B -- T:tests
+    api:B -- T:logs
+    tests:R -- L:logs
+
 `}
 />
 

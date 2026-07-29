@@ -79,19 +79,22 @@ Bài này viết lại theo hướng thực dụng hơn: nhìn vào từng loạ
 Nếu phải nói ngắn gọn: MySQL rất hợp cho nhiều web service đọc nhiều, đơn giản, cần đi nhanh và team đã quen tooling. PostgreSQL hợp hơn khi database không chỉ là nơi lưu bảng, mà còn là nơi cần biểu diễn quan hệ dữ liệu phức tạp, kiểm tra tính đúng, phân tích, report và mở rộng bằng extension.
 
 <MermaidDiagram
-	title="Luồng chọn database theo tính chất service"
+	title="Block view: chọn database theo tính chất service"
 	chart={`
-flowchart TD
-Start[Can chon database cho service] --> ReadHeavy{Doc nhieu va query don gian?}
-ReadHeavy -->|Yes| MySQL[Can nhac MySQL]
-ReadHeavy -->|No| Complex{Query phuc tap hoac report nhieu?}
-Complex -->|Yes| Postgres[Can nhac PostgreSQL]
-Complex -->|No| Team{Team van hanh quen he nao?}
-Team -->|Quen MySQL| MySQL
-Team -->|Quen PostgreSQL| Postgres
-Postgres --> Benchmark[Benchmark voi data gan production]
+block-beta
+columns 3
+Start["Can chon DB"] Workload["Doc/ghi + query"] Team["Kinh nghiem team"]
+MySQL["MySQL: read-heavy, CRUD, top N"] Benchmark["Benchmark data gan production"] Postgres["PostgreSQL: query phuc tap, report, extension"]
+Ops["Backup, replica, migration"] Plan["EXPLAIN, lock, memory"] Decision["Quyet dinh theo service"]
+Start --> Workload
+Workload --> MySQL
+Workload --> Postgres
 MySQL --> Benchmark
-Benchmark --> Decision[Chon dua tren plan query, lock, backup, migration]
+Postgres --> Benchmark
+Team --> Ops
+Benchmark --> Plan
+Ops --> Decision
+Plan --> Decision
 `}
 />
 
@@ -225,6 +228,46 @@ Index này nói rõ business rule: email active không được trùng, nhưng u
 
 MySQL vẫn có thể giải quyết nhiều bài toán tương tự bằng generated column, composite index, constraint ở application hoặc thiết kế schema khác. Nhưng nếu domain của bạn có nhiều rule dữ liệu đặc thù, PostgreSQL thường giúp biểu diễn rule trực tiếp trong database rõ hơn.
 
+<MermaidDiagram
+	title="ERD ví dụ CMS/catalog cần nhiều rule dữ liệu"
+	chart={`
+erDiagram
+	USERS ||--o{ POSTS : writes
+	POSTS ||--o{ POST_TAGS : has
+	TAGS ||--o{ POST_TAGS : groups
+	POSTS ||--o{ AUDIT_LOGS : changes
+	PRODUCTS ||--o{ PRODUCT_ATTRIBUTES : owns
+	CATEGORIES ||--o{ PRODUCTS : contains
+
+    USERS {
+    	int id PK
+    	string email
+    	timestamp deleted_at
+    }
+    POSTS {
+    	int id PK
+    	int author_id FK
+    	string status
+    	jsonb metadata
+    }
+    TAGS {
+    	int id PK
+    	string slug
+    }
+    PRODUCTS {
+    	int id PK
+    	int category_id FK
+    	jsonb attributes
+    }
+    AUDIT_LOGS {
+    	int id PK
+    	int post_id FK
+    	string action
+    }
+
+`}
+/>
+
 <a id="4-transaction-mvcc-va-du-lieu-nhin-thay" class="block scroll-mt-31"></a>
 
 ## 4. Transaction, MVCC và dữ liệu nhìn thấy
@@ -288,19 +331,24 @@ Bài Viblo nhắc một khác biệt quan trọng: MySQL mặc định `REPEATAB
 <MermaidDiagram
 	title="Visibility khi insert post trong transaction"
 	chart={`
-sequenceDiagram
-participant A as Session A
-participant DB as Database
-participant B as Session B
-A->>DB: BEGIN
-A->>DB: INSERT post id 3
-A->>DB: SELECT posts
-DB-->>A: 1, 2, 3
-B->>DB: SELECT posts
-DB-->>B: 1, 2
-A->>DB: COMMIT
-B->>DB: SELECT posts again
-DB-->>B: 1, 2, 3
+flowchart LR
+	subgraph Tx["Session A trong transaction"]
+		Begin[BEGIN]
+		Insert[INSERT post id 3]
+		ReadA[SELECT posts: 1, 2, 3]
+		Commit[COMMIT]
+		Begin --> Insert --> ReadA --> Commit
+	end
+
+    subgraph Outside["Session B ben ngoai transaction"]
+    	ReadBefore[SELECT truoc COMMIT: 1, 2]
+    	ReadAfter[SELECT sau COMMIT: 1, 2, 3]
+    	ReadBefore --> ReadAfter
+    end
+
+    Insert -. uncommitted, chua visible .-> ReadBefore
+    Commit -. committed, query moi thay .-> ReadAfter
+
 `}
 />
 

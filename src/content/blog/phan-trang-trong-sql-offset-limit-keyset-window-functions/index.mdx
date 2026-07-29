@@ -86,13 +86,33 @@ Với keyset pagination, trang tiếp theo không nói "bỏ qua 5 dòng" nữa,
 	title="Luồng xử lý pagination khi dữ liệu mới chen vào đầu danh sách"
 	chart={`
 flowchart LR
-	User[User xem trang 1] --> Page1[Rows 105..101]
-	Page1 --> NewRow[Transaction 106 moi xuat hien]
-	NewRow --> Offset[OFFSET 5 bo qua 106..102]
-	Offset --> Duplicate[Trang 2 bi lap row 101]
-	Page1 --> Cursor[Cursor luu last_seen = 101]
-	NewRow --> Keyset[WHERE row cu hon cursor 101]
-	Keyset --> Stable[Trang 2 on dinh, khong bi lech]
+	subgraph Page1["Request 1: trang dau"]
+		User[User mo lich su giao dich]
+		Query1[ORDER BY created_at DESC LIMIT 5]
+		Rows1[105, 104, 103, 102, 101]
+		User --> Query1 --> Rows1
+	end
+
+    NewRow[Transaction 106 chen len dau]
+
+    subgraph OffsetFlow["Request 2 neu dung OFFSET"]
+    	Offset[OFFSET 5]
+    	Skipped[Bo qua 106, 105, 104, 103, 102]
+    	Duplicate[Tra ve 101 bi lap]
+    	Offset --> Skipped --> Duplicate
+    end
+
+    subgraph KeysetFlow["Request 2 neu dung Keyset"]
+    	Cursor[Cursor: last_seen = 101]
+    	Seek[WHERE row cu hon 101]
+    	Stable[Trang tiep theo on dinh]
+    	Cursor --> Seek --> Stable
+    end
+
+    Rows1 --> NewRow
+    NewRow --> Offset
+    Rows1 --> Cursor
+
 `}
 />
 
