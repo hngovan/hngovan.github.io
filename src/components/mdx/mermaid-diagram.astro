@@ -15,7 +15,7 @@ const encodedChart = encodeURIComponent(chart.trim())
 		data-chart={encodedChart}
 		aria-label={title ?? 'Mermaid diagram'}
 	>
-		Đang tải sơ đồ...
+		Dang tai so do...
 	</div>
 </figure>
 
@@ -28,28 +28,134 @@ const encodedChart = encodeURIComponent(chart.trim())
 			.replaceAll('"', '&quot;')
 			.replaceAll("'", '&#039;')
 
+	const getNodeLabel = (node: string, knownLabels: Map<string, string>) => {
+		const trimmed = node.trim()
+		const match = trimmed.match(
+			/^([A-Za-z0-9_]+)(?:\[([^\]]+)\]|\{([^}]+)\})?$/
+		)
+		if (!match) return trimmed
+
+		const [, id, boxLabel, diamondLabel] = match
+		const label = boxLabel ?? diamondLabel
+		if (label) knownLabels.set(id, label)
+
+		return label ?? knownLabels.get(id) ?? id
+	}
+
+	const renderFlowFallback = (source: string) => {
+		const labels = new Map<string, string>()
+		const edges = source
+			.split('\n')
+			.map(line => line.trim())
+			.filter(line => line.includes('-->'))
+			.map(line => {
+				const match = line.match(/^(.*?)-->(?:\|([^|]+)\|)?(.*)$/)
+				if (!match) return null
+
+				const [, from, edgeLabel, to] = match
+				return {
+					from: getNodeLabel(from, labels),
+					label: edgeLabel?.trim() ?? '',
+					to: getNodeLabel(to, labels)
+				}
+			})
+			.filter(
+				(edge): edge is { from: string; label: string; to: string } =>
+					edge !== null
+			)
+
+		if (edges.length === 0) return ''
+
+		return `<div class="space-y-3">${edges
+			.map(
+				edge => `<div class="grid min-w-[680px] grid-cols-[1fr_auto_1fr] items-center gap-3">
+					<div class="rounded-md border bg-blue-50 px-3 py-2 text-center text-sm font-medium text-slate-900 dark:bg-slate-800 dark:text-slate-50">${escapeHtml(edge.from)}</div>
+					<div class="text-center text-xs font-semibold text-slate-500 dark:text-slate-400">${escapeHtml(edge.label ? `-- ${edge.label} -->` : '-->')}</div>
+					<div class="rounded-md border bg-cyan-50 px-3 py-2 text-center text-sm font-medium text-slate-900 dark:bg-cyan-950 dark:text-slate-50">${escapeHtml(edge.to)}</div>
+				</div>`
+			)
+			.join('')}</div>`
+	}
+
+	const renderSequenceFallback = (source: string) => {
+		const participants = new Map<string, string>()
+		const messages = []
+
+		for (const line of source.split('\n').map(item => item.trim())) {
+			const participant = line.match(/^participant\s+(\w+)\s+as\s+(.+)$/)
+			if (participant) {
+				participants.set(participant[1], participant[2])
+				continue
+			}
+
+			const message = line.match(/^(\w+)-+>>(\w+):\s*(.+)$/)
+			if (message) {
+				messages.push({
+					from: participants.get(message[1]) ?? message[1],
+					to: participants.get(message[2]) ?? message[2],
+					text: message[3]
+				})
+			}
+		}
+
+		if (messages.length === 0) return ''
+
+		return `<div class="min-w-[680px] space-y-2">${messages
+			.map(
+				(
+					message,
+					index
+				) => `<div class="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-md border bg-muted/40 px-3 py-2">
+					<div class="text-sm font-medium text-slate-900 dark:text-slate-50">${escapeHtml(message.from)}</div>
+					<div class="text-center text-xs font-semibold text-slate-500 dark:text-slate-400">step ${index + 1}</div>
+					<div class="text-right text-sm font-medium text-slate-900 dark:text-slate-50">${escapeHtml(message.to)}</div>
+					<div class="col-span-3 rounded bg-background px-3 py-2 text-sm text-slate-700 dark:text-slate-200">${escapeHtml(message.text)}</div>
+				</div>`
+			)
+			.join('')}</div>`
+	}
+
+	const renderFallbackDiagram = (diagram: HTMLElement, source: string) => {
+		const visual = source.trim().startsWith('sequenceDiagram')
+			? renderSequenceFallback(source)
+			: renderFlowFallback(source)
+
+		diagram.innerHTML =
+			visual ||
+			`<pre class="bg-muted text-foreground overflow-x-auto rounded-md p-4 text-xs leading-relaxed">${escapeHtml(source)}</pre>`
+	}
+
 	const renderMermaidDiagrams = async () => {
-		const { default: mermaid } = await import('mermaid')
+		const diagrams = document.querySelectorAll<HTMLElement>('.mermaid-diagram')
 		const isDark = document.documentElement.dataset.theme === 'dark'
 		const theme = isDark ? 'dark' : 'default'
+		let mermaid
 
-		mermaid.initialize({
-			startOnLoad: false,
-			securityLevel: 'strict',
-			theme,
-			themeVariables: {
-				fontFamily: 'ui-sans-serif, system-ui, sans-serif',
-				primaryColor: isDark ? '#1f2937' : '#eff6ff',
-				primaryTextColor: isDark ? '#f9fafb' : '#111827',
-				lineColor: isDark ? '#9ca3af' : '#475569',
-				background: isDark ? '#0f172a' : '#ffffff',
-				mainBkg: isDark ? '#1f2937' : '#ffffff',
-				secondaryColor: isDark ? '#164e63' : '#ecfeff',
-				tertiaryColor: isDark ? '#3f3f46' : '#f8fafc'
+		try {
+			mermaid = (await import('mermaid')).default
+			mermaid.initialize({
+				startOnLoad: false,
+				securityLevel: 'strict',
+				theme,
+				themeVariables: {
+					fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+					primaryColor: isDark ? '#1f2937' : '#eff6ff',
+					primaryTextColor: isDark ? '#f9fafb' : '#111827',
+					lineColor: isDark ? '#9ca3af' : '#475569',
+					background: isDark ? '#0f172a' : '#ffffff',
+					mainBkg: isDark ? '#1f2937' : '#ffffff',
+					secondaryColor: isDark ? '#164e63' : '#ecfeff',
+					tertiaryColor: isDark ? '#3f3f46' : '#f8fafc'
+				}
+			})
+		} catch (error) {
+			console.error('Failed to load Mermaid', error)
+			for (const diagram of diagrams) {
+				const chart = diagram.dataset.chart
+				if (chart) renderFallbackDiagram(diagram, decodeURIComponent(chart))
 			}
-		})
-
-		const diagrams = document.querySelectorAll<HTMLElement>('.mermaid-diagram')
+			return
+		}
 
 		for (const [index, diagram] of diagrams.entries()) {
 			const chart = diagram.dataset.chart
@@ -67,7 +173,7 @@ const encodedChart = encodeURIComponent(chart.trim())
 				diagram.dataset.renderKey = renderKey
 			} catch (error) {
 				console.error('Failed to render Mermaid diagram', error)
-				diagram.innerHTML = `<pre class="bg-muted text-foreground overflow-x-auto rounded-md p-4 text-xs leading-relaxed">${escapeHtml(source)}</pre>`
+				renderFallbackDiagram(diagram, source)
 				diagram.dataset.renderKey = renderKey
 			}
 		}
