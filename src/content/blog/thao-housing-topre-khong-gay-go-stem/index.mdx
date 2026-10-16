@@ -1,0 +1,129 @@
+---
+title: 'Tháo housing Topre mà không gãy gờ stem'
+description: 'Mẹo gá nhíp đúng chỗ để tháo housing slider đen và slider tím trên Realforce mà không làm gãy gờ stem, kèm video và kinh nghiệm từ cộng đồng.'
+date: '2026-10-16'
+image: '/static/thao-housing-topre/mat-duoi-slider-den-va-slider-tim.webp'
+routeSlug: 'thao-housing-topre-khong-gay-go-stem'
+tags: ['realforce', 'topre', 'disassembly', 'tips']
+keywords:
+  [
+    'tháo housing topre',
+    'tháo slider realforce',
+    'gãy gờ stem topre',
+    'remove topre housing',
+    'realforce disassembly'
+  ]
+authors: ['keeb-log']
+---
+
+import Callout from '@/components/callout.astro'
+import ContentFigure from '@/components/mdx/content-figure.astro'
+
+Khi rã Realforce để vệ sinh hoặc thay ring giảm âm, chỗ dễ hỏng nhất là các **gờ nhỏ trên stem** (slider). Bẩy sai chỗ là gờ gãy ngay. Bài này ghi lại cách mình gá dụng cụ để tháo housing của cả slider đen lẫn slider tím mà không làm gãy gờ.
+
+Mình làm trên con Realforce 87UB silent (SE170S). Chi tiết về hai loại slider này nằm trong bài [Realforce SE170S silent: ring của stem đen nhỏ hơn stem tím](/blog/realforce-se170s-silent-ring-stem-den-va-stem-tim).
+
+## Gờ stem dễ gãy đến mức nào?
+
+Đây là chuyện nhiều người gặp. Trong [thread "Removing Topre plungers" trên Geekhack](https://geekhack.org/index.php?topic=64974.0), thành viên spiceBar kể rằng khi rã Realforce hoặc Leopold FC660C thì gần như gãy gần hết các móc nhỏ trên đầu slider. Người này cho rằng việc gãy móc không ảnh hưởng nhiều, vì móc chủ yếu giữ slider đứng yên lúc úp plate xuống PCB. Họ cũng khuyên làm trên một tờ giấy để hứng mảnh nhựa vụn, và kiểm tra không còn mảnh nào trước khi lắp lại.
+
+Một [thread hỏi đáp về Topre trên Lemmy](https://lemmy.nekusoul.de/post/920717) cũng nói tương tự: tháo slider ra thì có thể gãy vài tab nhựa, và đó là chuyện bình thường.
+
+Dù vậy, giữ được gờ nguyên vẹn vẫn tốt hơn. Lúc lắp lại, slider đứng yên trong housing và đỡ bị lệch khi úp plate. Bạn cũng không phải lo mảnh nhựa vụn rơi vào dome.
+
+## Nguyên tắc chung: nhìn vành trước khi gá
+
+Mình dùng đầu một cây nhíp nhổ lông nách vì đầu nhíp mỏng, dẹt và đủ cứng.
+
+Trước khi gá, nhìn kỹ vành quanh stem:
+
+- **Phần bo tròn liền mạch**: không có gờ stem bên dưới. Gá dụng cụ vào đây an toàn.
+- **Phần bị lõm vào**: là chỗ có gờ stem. Bẩy vào đây rất dễ gãy gờ.
+
+Housing slider đen và housing slider tím có vành khác nhau, nên chỗ gá cũng khác.
+
+### Nhận diện qua mặt dưới slider
+
+Lật slider lên xem mặt dưới là thấy rõ hai loại khác nhau. Slider đen (standard) có mặt đáy phẳng, các phần lõm vào nằm ở vành. Slider tím (silent) có thêm một vành tròn nổi lên ở giữa để ôm ring giảm âm.
+
+<ContentFigure
+	src="/static/thao-housing-topre/mat-duoi-slider-den-va-slider-tim.webp"
+	alt="Mặt dưới slider đen standard và slider tím silent của Realforce đặt cạnh nhau"
+	caption="Mặt dưới slider đen standard (trái) và slider tím silent (phải). Nguồn: Imgur (oSnKkFu)."
+/>
+
+Slider của HHKB bản Type-S cũng là loại silent. Bên trong slider Type-S có phần lõm để gắn được ring giảm âm. Tuy vậy, nhìn tổng thể thì các phần lõm ở vành của nó vẫn giống slider đen standard. Vì thế, với slider Type-S, bạn gá nhíp giống như slider đen.
+
+<ContentFigure
+	src="/static/thao-housing-topre/hhkb-slider-standard-va-type-s.webp"
+	alt="Slider HHKB standard và Type-S nhìn từ dưới và nhìn ngang"
+	caption="Slider HHKB standard (trái) và Type-S (phải). Nguồn: Deskthority, topre slider / silencing research."
+	class="mx-auto max-w-sm"
+/>
+
+## Housing slider đen
+
+Vành có một phần bo tròn liền mạch, phần đó không có gờ stem. Gá đầu nhíp vào phần liền mạch, **chếch qua một bên**, rồi bẩy. Housing ra dễ mà không làm gãy gờ.
+
+<figure>
+	<video
+		controls
+		playsinline
+		preload="metadata"
+		class="mx-auto rounded-lg border"
+	>
+		<source
+			src={`${import.meta.env.BASE_URL}static/thao-housing-topre/thao-housing-slider-den.mp4`}
+			type="video/mp4"
+		/>
+		Trình duyệt của bạn không hỗ trợ video HTML5.
+	</video>
+	<figcaption>
+		Housing slider đen: gá nhíp vào phần bo tròn liền mạch, chếch qua một bên.
+	</figcaption>
+</figure>
+
+## Housing slider tím
+
+Vành của housing slider tím có **hai phần lõm vào, một to và một nhỏ**. Gá đầu nhíp vào **phần lõm nhỏ hơn** như trong video, sau đó bẩy nhẹ ra là được.
+
+<figure>
+	<video
+		controls
+		playsinline
+		preload="metadata"
+		class="mx-auto rounded-lg border"
+	>
+		<source
+			src={`${import.meta.env.BASE_URL}static/thao-housing-topre/thao-housing-slider-tim.mp4`}
+			type="video/mp4"
+		/>
+		Trình duyệt của bạn không hỗ trợ video HTML5.
+	</video>
+	<figcaption>
+		Housing slider tím: gá nhíp vào phần lõm nhỏ hơn rồi bẩy nhẹ.
+	</figcaption>
+</figure>
+
+<Callout variant="warning" title="Bẩy nhẹ tay">
+	Gờ stem Topre rất mỏng. Nếu housing không ra ngay thì đổi góc gá nhíp, đừng
+	dùng thêm lực.
+</Callout>
+
+## Cộng đồng làm thế nào?
+
+Mình không tìm thấy bài nào hướng dẫn đúng cách gá theo hình dạng vành như trên. Tuy vậy, có vài hướng dẫn gần giống, đáng tham khảo:
+
+- **Góc dụng cụ quan trọng hơn lực.** Trong [thread thay plate Realforce trên Geekhack](https://geekhack.org/index.php?topic=97096.0), thành viên dallman5 (8/2018) kể rằng đẩy tab bên hông bằng tua vít dẹt ở góc gần như vuông góc với plate thì ít nứt hơn. Lần làm vỡ housing là lúc họ đưa tua vít vào gần như song song với plate. Họ còn dùng ngón cái ấn từ phía trên housing để đỡ, nên housing nhả ra mà không cần nhiều lực.
+- **Tháo slider trước, housing sau.** [Hướng dẫn mod Topre của Unreal Keyboards](https://unrealkeyboards.com/pages/topre-modification-guide) dùng bút chì chưa gọt để đẩy slider ra khỏi housing trước, rồi mới dùng jimmy (que nạy) chèn vào giữa tab và plate để tháo housing, lần lượt từng tab. Hướng dẫn cũng nhắc đeo kính bảo hộ.
+- **Hướng đẩy slider.** Trên [Geekhack](https://geekhack.org/index.php?topic=64974.0), người dùng exitfire401 hướng dẫn đẩy slider về phía PCB (không phải phía keycap), slider sẽ bật ra với một lực nhỏ.
+
+Điểm chung của các hướng dẫn trên là chọn đúng chỗ và đúng góc rồi đẩy nhẹ, thay vì dùng lực. Cách gá nhíp theo vành ở trên cũng dựa trên ý đó.
+
+## Nguồn tham khảo
+
+- [Geekhack: Removing Topre plungers](https://geekhack.org/index.php?topic=64974.0)
+- [Geekhack: Topre Realforce keyboards replacing rusted plate by stainless steel](https://geekhack.org/index.php?topic=97096.0)
+- [Unreal Keyboards: Topre Modification Guide](https://unrealkeyboards.com/pages/topre-modification-guide)
+- [Unreal Keyboards: Harvesting and Disassembling Topre and EC Keyboard Parts](https://unrealkeyboards.com/blogs/topre-mods/harvesting-and-disassembling-topre-and-ec-keyboard-parts-a-diy-guide-video)
+- [Lemmy: thảo luận về lube Topre](https://lemmy.nekusoul.de/post/920717)
