@@ -1,0 +1,145 @@
+---
+title: 'Realforce SE170S silent: ring của stem đen nhỏ hơn stem tím'
+description: 'Ghi chú khi assem Realforce 87UB silent (SE170S): slider đen ở vị trí Scroll Lock dùng ring giảm âm nhỏ hơn slider tím, kèm ảnh so sánh và tổng hợp thông tin từ cộng đồng.'
+date: '2026-10-16'
+image: '/static/realforce-se170s-silent-ring/so-sanh-ring-stem-den-va-tim.webp'
+routeSlug: 'realforce-se170s-silent-ring-stem-den-va-stem-tim'
+tags: ['realforce', 'topre', 'silent', 'se170s', 'silencing-ring']
+keywords:
+  [
+    'realforce se170s',
+    'realforce 87ub silent',
+    'realforce silent ring',
+    'topre silencing ring',
+    'slider tím realforce',
+    'ring giảm âm topre'
+  ]
+authors: ['keeb-log']
+---
+
+import Callout from '@/components/callout.astro'
+import ContentFigure from '@/components/mdx/content-figure.astro'
+import DataTable from '@/components/mdx/data-table.astro'
+
+Trong lúc tháo ra vệ sinh rồi assem lại con Realforce silent, mình để ý thấy ring giảm âm ở một vị trí nhỏ hơn hẳn các vị trí còn lại. Bài này ghi lại những gì mình thấy, kèm ảnh so sánh và một số thông tin tìm được từ cộng đồng.
+
+## Con phím: Realforce 87UB silent, mã SE170S
+
+<ContentFigure
+	src="/static/realforce-se170s-silent-ring/realforce-se170s-ban-dau.webp"
+	alt="Realforce 87UB silent màu đen trước khi tháo"
+	caption="Tình trạng ban đầu: keycap đen, dùng khá lâu, bám bẩn nhiều."
+/>
+
+Nhãn mặt sau ghi model **87USB**, S/N bắt đầu bằng **SE170S**, bản Leopold phân phối, Made in Japan. Tem dán bên cạnh có ngày 2018-07-09.
+
+<ContentFigure
+	src="/static/realforce-se170s-silent-ring/nhan-mat-sau-se170s.webp"
+	alt="Nhãn mặt sau Realforce ghi Leopold Realforce 87USB, SE170S, Made in Japan"
+	caption="Nhãn mặt sau: Leopold Realforce 87USB, mã SE170S."
+/>
+
+Theo [thông cáo báo chí năm 2010](https://www.gdm.or.jp/archive/pressrelease/201007/07_01.html), SE170S là bản **静音 (silent)** của Realforce 87UB. Đây là layout TKL tiếng Anh, ra mắt ngày 8/7/2010 với giá khoảng ¥26,800. Đây là đời R1, trước dòng R2 và R3.
+
+## Silent Realforce khác bản thường ở đâu?
+
+Bản silent của Realforce giảm âm bằng hai thứ:
+
+- **Ring giảm âm**: một vòng mỏng màu đen đặt ở chân slider, chặn tiếng "clack" khi phím nảy lên chạm housing.
+- **Slider tím**: slider được làm lại để bù cho độ dày của ring. Theo [bài nghiên cứu trên Deskthority](https://deskthority.net/viewtopic.php?p=371607), đáy slider tím có phần lõm khoảng 1mm, và đế slider mỏng hơn slider thường một chút. Nhờ vậy hành trình phím gần như không đổi dù có thêm ring.
+
+Về vật liệu, XMIT trên Deskthority đã [tháo Realforce R2 silent](https://deskthority.net/viewtopic.php?t=23130) và đo được ring là foam urethane Poron dày 0.5mm, có một lớp nhựa trong ở mặt sau. Ở bản đó, nhà máy lắp ring với mặt nhựa hướng lên trên.
+
+Vì thế, nếu tự gắn ring aftermarket vào slider thường (không có phần lõm này), hành trình sẽ bị ngắn lại. Người dùng trên Deskthority cũng [cảnh báo](https://deskthority.net/viewtopic.php?p=257041) rằng dùng ring trên HHKB không silent sẽ ép dome sẵn, làm mất bớt độ tactile và có thể hại dome về lâu dài.
+
+## Phát hiện lúc assem
+
+Sau khi gỡ keycap, gần như toàn bộ slider là màu tím. Riêng các phím có stabilizer (Backspace, Enter, Shift), Left Ctrl và **Scroll Lock** (ô khoanh đỏ) là slider đen.
+
+<ContentFigure
+	src="/static/realforce-se170s-silent-ring/vi-tri-stem-den-scroll-lock.webp"
+	alt="Realforce SE170S đã tháo keycap, ô khoanh đỏ ở vị trí Scroll Lock có slider đen"
+	caption="Ô khoanh đỏ là vị trí Scroll Lock, nơi mình lấy slider đen ra để so với slider tím."
+/>
+
+Mình lấy housing ở vị trí Scroll Lock ra so với một housing slider tím bình thường. Housing ở Scroll Lock có thêm một lỗ tròn ở góc. Đây là chỗ cho đèn LED báo Scroll Lock chiếu lên.
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/realforce-se170s-silent-ring/housing-tim-va-housing-led.webp',
+			alt: 'Housing slider tím và housing có lỗ LED nhìn từ trên xuống'
+		},
+		{
+			src: '/static/realforce-se170s-silent-ring/mat-duoi-housing.webp',
+			alt: 'Mặt dưới housing: bên trái có lỗ LED và slider đen, bên phải slider tím'
+		}
+	]}
+	caption="Trái: nhìn từ trên (trên là housing tím, dưới là housing LED). Phải: nhìn từ dưới, housing LED có lỗ tròn ở góc."
+/>
+
+<ContentFigure
+	src="/static/realforce-se170s-silent-ring/so-sanh-housing-nhin-ngang.webp"
+	alt="Hai housing Topre nhìn ngang, bên phải có thêm phần nhô cho LED"
+	caption="Nhìn ngang: housing bên phải có thêm phần nhô ra ở góc cho LED."
+/>
+
+Đặt hai slider cạnh nhau thì thấy rõ cả hai đều có ring ở chân. Tuy vậy, phần đế của slider đen khác slider tím: tai móc và vành đế có hình dạng khác.
+
+<ContentFigure
+	src="/static/realforce-se170s-silent-ring/stem-den-va-stem-tim.webp"
+	alt="Slider đen và slider tím đặt cạnh nhau, cả hai đều có ring đen ở chân"
+	caption="Slider đen (trái) và slider tím (phải). Cả hai đều có ring giảm âm ở chân."
+/>
+
+Khi tháo ring ra đặt cạnh nhau, **ring của slider đen nhỏ hơn ring của slider tím** thấy rõ bằng mắt thường. Mặt đáy hai slider cũng khác nhau: slider tím có vành tròn nổi lên, còn slider đen thì không.
+
+<ContentFigure
+	src="/static/realforce-se170s-silent-ring/so-sanh-ring-stem-den-va-tim.webp"
+	alt="Mặt đáy slider đen và slider tím, bên dưới là hai ring giảm âm, ring bên trái nhỏ hơn"
+	caption="Ring bên trái (của slider đen) nhỏ hơn ring bên phải (của slider tím)."
+/>
+
+<Callout variant="note" title="Mình chưa đo bằng thước">
+	Kết luận "nhỏ hơn" ở đây là so bằng mắt và qua ảnh. Mình chưa đo đường kính
+	trong, đường kính ngoài hay độ dày bằng thước kẹp. Nếu bạn có số đo, hãy để
+	lại comment.
+</Callout>
+
+## Tại sao lại như vậy?
+
+Mình không tìm được tài liệu chính thức của Topre nói về chuyện này. Các ý dưới đây là suy luận từ ảnh và từ thông tin cộng đồng:
+
+- **Đế slider đen nhỏ hơn**, nên ring phải nhỏ hơn mới ôm khít được. Một [bài trên Deskthority](https://deskthority.net/viewtopic.php?p=252188) về ring aftermarket cho Realforce 87U ghi rằng phím Left Ctrl của RF87U được thiết kế khác các phím còn lại. Đế slider của phím này quá nhỏ để giữ ring cỡ chuẩn, ring dễ bị lệch và cản hành trình nảy lên. Trên con SE170S của mình, Left Ctrl cũng là slider đen, khớp với ghi chú đó. Trong [thread riêng về Left Ctrl](https://deskthority.net/viewtopic.php?t=11513), chính người bán ring aftermarket (Hypersphere) cho biết phím này được thiết kế khác để chứa LED. Họ cũng thấy lạ vì Caps Lock và Num Lock có LED nhưng vẫn dùng switch bình thường.
+- **Housing có LED cần chừa chỗ** cho đèn chiếu lên, nên có thể Topre dùng slider dạng khác ở những vị trí này. Ở bản silent, Topre gắn kèm ring cỡ nhỏ tương ứng thay vì bỏ ring đi.
+
+<DataTable
+	headers={['', 'Slider tím', 'Slider đen (Scroll Lock)']}
+	rows={[
+		[
+			'Vị trí',
+			'Hầu hết các phím',
+			'Scroll Lock, Left Ctrl, phím có stabilizer'
+		],
+		['Housing', 'Housing thường', 'Housing có lỗ LED (ở Scroll Lock)'],
+		['Mặt đáy slider', 'Có vành tròn nổi', 'Phẳng, không có vành'],
+		['Ring giảm âm', 'Cỡ lớn hơn', 'Cỡ nhỏ hơn rõ rệt']
+	]}
+/>
+
+## Lưu ý khi tháo lắp
+
+- **Giữ ring đi theo đúng slider của nó.** Đừng tháo hết ring ra một chỗ rồi lắp lại ngẫu nhiên. Ring nhỏ lắp vào slider tím sẽ không vừa, còn ring lớn lắp vào slider đen sẽ lỏng và dễ lệch.
+- **Mua ring thay thế** thì kiểm tra xem bộ ring có cỡ riêng cho các vị trí đặc biệt không. Nếu không có, đừng cố lắp ring cỡ chuẩn vào slider đen nhỏ.
+- **Tháo housing để lấy slider** thì xem bài [tháo housing Topre không gãy gờ stem](/blog/thao-housing-topre-khong-gay-go-stem). Housing slider đen và housing slider tím cần gá dụng cụ ở hai chỗ khác nhau.
+- **Đừng gắn ring vào slider thường** (không phải slider tím hoặc slider Type-S) nếu bạn không muốn hành trình bị ngắn và dome bị ép sẵn.
+
+## Nguồn tham khảo
+
+- [GDM: thông cáo báo chí Realforce 87UB silent SE170S (2010)](https://www.gdm.or.jp/archive/pressrelease/201007/07_01.html)
+- [Deskthority: topre slider / silencing research](https://deskthority.net/viewtopic.php?p=371607)
+- [Deskthority: ghi chú về ring giảm âm và phím Left Ctrl của RF87U](https://deskthority.net/viewtopic.php?p=252188)
+- [Deskthority: Silencing Rings for Topre RF or HHKB](https://deskthority.net/viewtopic.php?p=257041)
+- [Deskthority: Left Control Key of RF87U Will Not Work Properly with a Silencing Ring](https://deskthority.net/viewtopic.php?t=11513)
+- [Deskthority: XMIT Reviews Topre Realforce R2 (ring Poron 0.5mm)](https://deskthority.net/viewtopic.php?t=23130)
+- [Deskthority wiki: Topre Realforce 87U](https://deskthority.net/wiki/Topre_Realforce_87U)
