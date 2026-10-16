@@ -1,0 +1,449 @@
+---
+name: 'NCR80 Topre Build'
+description: 'Build NCR80 Topre từ một bo mạch capsense giá rẻ trên Goofish: săn file VIA và plate từ maker, nối daughterboard bằng JST 5 pin, hàn LED báo trạng thái, gắn module solenoid và lắp bộ lòng Realforce R1.'
+image: '/static/ncr80-topre-build/ncr80-hoan-thien.webp'
+routeSlug: 'ncr80-topre-build'
+tags: ['build-log', 'ncr80', 'topre', 'capsense', 'solenoid', 'realforce']
+keywords:
+  [
+    'ncr80 topre',
+    'ncr80 capsense pcb',
+    'build ncr80 topre',
+    'ncr80 solenoid',
+    'sunxkui ncr80 pcb',
+    'ncr80 via json',
+    'realforce r1 ncr80 swap'
+  ]
+startDate: '2026-09-21'
+status: 'In Progress'
+sections:
+  - title: 'Linh kiện'
+    type: 'list'
+    items:
+      - 'PCB capsense S80-87key (NCR80) REV-A của maker sunxkui, kèm daughterboard USB-C'
+      - 'Case NCR80, tặng kèm 3 bóng LED báo trạng thái'
+      - 'Plate cắt laser theo file CAD của maker, taro ren bằng tay'
+      - 'Bộ lòng (housing, slider, dome, lò xo) bóc từ Realforce R1 fullsize'
+      - 'Stab 6u cho phím space'
+      - 'Dây JST 4 pin tận dụng từ project Realforce R1 USB-C'
+      - 'Module solenoid + buzzer của sunxkui, cuộn solenoid'
+      - 'Đầu nối PH2.0 5 pin cho PCB và module solenoid'
+      - 'Mỏ hàn, thiếc, kìm cắt chân linh kiện, khoan/đục lỗ PCB'
+  - title: 'Mục tiêu'
+    type: 'list'
+    items:
+      - 'Dựng một con NCR80 Topre từ bo mạch giá rẻ'
+      - 'Tìm đủ firmware, file VIA và file plate cho bo mạch'
+      - 'Dùng lại dây JST 4 pin có sẵn để nối PCB với daughterboard'
+      - 'Bật đèn báo trạng thái và thêm solenoid cho vui tai'
+      - 'Tận dụng bộ lòng Realforce R1 có sẵn'
+  - title: 'Liên kết'
+    type: 'links'
+    items:
+      - name: 'Bo mạch trên Goofish'
+        url: 'https://www.goofish.com/item?id=1082805433551'
+      - name: 'Maker trên zFrontier'
+        url: 'https://www.zfrontier.com/app/user/1plNJ79YqYqJo'
+      - name: 'PCB NCR80 của YMDK (tham khảo lỗ vít)'
+        url: 'https://item.taobao.com/item.htm?id=712413565689'
+      - name: 'Project Realforce R1 USB-C'
+        url: 'https://hngovan.github.io/project/realforce-r1-usb-c-conversion/'
+---
+
+import Callout from '@/components/callout.astro'
+import ContentFigure from '@/components/mdx/content-figure.astro'
+import DataTable from '@/components/mdx/data-table.astro'
+
+Project này bắt đầu khá tình cờ: tôi lướt [Goofish](https://www.goofish.com/item?id=1082805433551) (chợ cá) và thấy một bo mạch capsense làm cho case **NCR80** với giá rẻ. Mua về thì mới biết cái khó không nằm ở bo mạch, mà nằm ở chỗ không có file nào đi kèm cả.
+
+<ContentFigure
+	src="/static/ncr80-topre-build/ncr80-hoan-thien.webp"
+	alt="NCR80 Topre sau khi lắp keycap hoàn chỉnh"
+	caption="Kết quả cuối cùng: NCR80 Topre với bộ lòng Realforce R1."
+/>
+
+## 1. Săn file VIA và plate cho bo mạch
+
+### 1.1. Bo mạch không có file đi kèm
+
+Mua bo mạch xong, tôi không tìm thấy file JSON cho VIA cũng như file plate ở đâu. Không có file plate thì không cắt được plate. Không có JSON thì không remap được phím.
+
+Thông tin duy nhất là phần chữ in trên PCB:
+
+<DataTable
+	headers={['Thông số', 'Giá trị in trên PCB']}
+	rows={[
+		['Kích thước', '335.4mm × 147mm'],
+		['Loại', 'Capsense'],
+		['Tên bo', 'S80-87key Keyboard'],
+		['Ngày / phiên bản', '2022-03-04, REV-A'],
+		['Maker', 'sunxkui']
+	]}
+/>
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/pcb-thong-so-silkscreen.webp',
+			alt: 'Dòng thông số in trên PCB: size, type capsense, S80-87key, ngày 2022-03-04 REV-A'
+		},
+		{
+			src: '/static/ncr80-topre-build/pcb-chu-ky-sunxkui.webp',
+			alt: 'Chữ ký sunxkui in trên mặt PCB'
+		}
+	]}
+	caption="Thông số và chữ ký maker sunxkui in trên PCB."
+/>
+
+### 1.2. Lần theo maker
+
+Lần theo cái tên trên PCB, tôi tình cờ tìm được [trang của maker trên zFrontier](https://www.zfrontier.com/app/user/1plNJ79YqYqJo). Sau một hồi lặn lội qua Discord của maker **sensy**, tôi vô tình biết maker làm bo mạch này lại quen người đó. Maker sensy đã tag người làm bo vào, và tôi nhận được một folder gồm:
+
+- `固件及via/ncr80.hex`: firmware.
+- `固件及via/realforce_87key_ncr80.json`: file định nghĩa cho VIA (ma trận 6 hàng × 16 cột, vendor ID `0x0481`, product ID `0x0002`).
+- `cad/`: hai bản vẽ plate (`.dwg`), một bản cho phím to nguyên bản và một bản thường.
+
+<Callout variant="warning" title="Plate chỉ hỗ trợ Caps Lock dạng stepped">
+	Ghi chú đi kèm file CAD nói rõ: plate chỉ hỗ trợ keycap Caps Lock dạng
+	**stepped**, không hỗ trợ Caps Lock kiểu OEM. Muốn dùng Caps Lock OEM thì phải
+	sửa bản vẽ.
+</Callout>
+
+Các file này maker gửi riêng cho tôi nên tôi không đăng lại ở đây. Nếu bạn cũng mua bo mạch này, hãy liên hệ maker qua zFrontier.
+
+## 2. Tổng quan bo mạch
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/pcb-mat-truoc.webp',
+			alt: 'Mặt trước PCB NCR80 capsense màu cam'
+		},
+		{
+			src: '/static/ncr80-topre-build/pcb-mat-sau.webp',
+			alt: 'Mặt sau PCB NCR80 đặt cạnh case NCR80'
+		}
+	]}
+	caption="Mặt trước (trái) và mặt sau (phải) của PCB."
+/>
+
+Daughterboard (DTB) là một bo nhỏ có cổng USB-C, nối với PCB chính qua dây.
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/dtb-mat-truoc.webp',
+			alt: 'Mặt trước daughterboard có cổng USB-C và cổng JST 5 pin'
+		},
+		{
+			src: '/static/ncr80-topre-build/dtb-mat-sau.webp',
+			alt: 'Mặt sau daughterboard'
+		}
+	]}
+	caption="Daughterboard: mặt trước (trái) và mặt sau (phải)."
+/>
+
+Cổng kết nối giữa PCB và DTB là cổng **5 pin**, đánh dấu `V-D-C-G-S` trên cả hai bo. Realforce R1 dùng cổng 4 pin, còn bo này có thêm chân **S** (shield). Bên cạnh cổng 5 pin còn có header **SOLENOID** (`VCC`, `ENABLE`, `TRG`, `GND`). Tôi sẽ nói về nó ở phần 5.
+
+<ContentFigure
+	src="/static/ncr80-topre-build/pcb-cong-5pin-va-header-solenoid.webp"
+	alt="Cổng 5 pin V-D-C-G-S và header SOLENOID gồm VCC, ENABLE, TRG, GND trên PCB"
+	caption="Cổng 5 pin V-D-C-G-S và header SOLENOID trên PCB."
+/>
+
+## 3. Nối PCB với daughterboard bằng dây JST 4 pin
+
+Tôi tận dụng lại đầu JST 4 pin đã mua từ project [Realforce R1 USB-C](/project/realforce-r1-usb-c-conversion). Ướm thử thì đầu 4 pin cắm vừa vào cổng 5 pin, chừa trống chân **S**.
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/uom-jst-4pin-tren-pcb.webp',
+			alt: 'Đầu JST 4 pin cắm vào cổng 5 pin trên PCB, chừa trống chân S'
+		},
+		{
+			src: '/static/ncr80-topre-build/uom-jst-4pin-tren-dtb.webp',
+			alt: 'Daughterboard với cổng JST 5 pin'
+		}
+	]}
+	caption="Ướm thử đầu JST 4 pin trên PCB (trái) và DTB (phải)."
+/>
+
+Nhìn hơi OCD vì thừa một chân, nhưng thực tế chỉ cần đấu 4 chân V, D, C, G. Chân S nối vỏ có thể bỏ qua.
+
+<ContentFigure
+	src="/static/ncr80-topre-build/day-jst-noi-pcb-va-dtb.webp"
+	alt="Dây JST nối PCB với daughterboard"
+	caption="Dây JST sau khi cắm vào PCB và DTB."
+/>
+
+## 4. Hàn 3 LED báo trạng thái
+
+Case NCR80 được tặng kèm 3 bóng LED cho đèn báo trạng thái (Num Lock, Caps Lock, Scroll Lock).
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/bong-led.webp',
+			alt: 'Một bóng LED đi kèm case NCR80'
+		},
+		{
+			src: '/static/ncr80-topre-build/led-sau-khi-han.webp',
+			alt: 'LED đã hàn lên PCB, chân còn dài'
+		}
+	]}
+	caption="Bóng LED (trái) và sau khi hàn lên PCB, chân còn dài (phải)."
+/>
+
+Hàn xong thì dùng kìm cắt chân thừa ở mặt sau cho gọn.
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/kim-cat-chan-led.webp',
+			alt: 'Kìm cắt chân linh kiện'
+		},
+		{
+			src: '/static/ncr80-topre-build/led-sau-khi-cat-chan.webp',
+			alt: 'Mặt sau PCB sau khi cắt chân LED'
+		}
+	]}
+	caption="Kìm cắt chân linh kiện (trái) và kết quả sau khi cắt (phải)."
+/>
+
+<ContentFigure
+	src="/static/ncr80-topre-build/led-mat-tren.webp"
+	alt="Ba LED báo trạng thái nhìn từ mặt trên PCB"
+	caption="Ba LED nhìn từ mặt trên PCB."
+/>
+
+Cắm thử vào máy để kiểm tra đèn có sáng không:
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/test-led-1.webp',
+			alt: 'Test LED báo trạng thái sáng khi cắm PCB vào máy'
+		},
+		{
+			src: '/static/ncr80-topre-build/test-led-2.webp',
+			alt: 'Toàn bộ PCB đặt trong case khi test LED'
+		}
+	]}
+	caption="Test LED: đèn sáng bình thường."
+/>
+
+## 5. Thêm solenoid
+
+### 5.1. Module solenoid + buzzer
+
+Như đã nhắc ở phần 2, PCB có sẵn header **SOLENOID**. Tôi hỏi maker và được chỉ link mua module trên chợ cá. Module này cũng do sunxkui làm.
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/module-solenoid-nguyen-tui.webp',
+			alt: 'Module solenoid còn nguyên túi'
+		},
+		{
+			src: '/static/ncr80-topre-build/module-solenoid-mat-truoc.webp',
+			alt: 'Mặt trước module có buzzer, tụ và IC'
+		}
+	]}
+	caption="Module solenoid + buzzer: còn nguyên túi (trái) và mặt trước (phải)."
+/>
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/module-solenoid-pinout.webp',
+			alt: 'Mặt sau module với các chân ENAB, TRG, GND, TRIG, EN, +5V'
+		},
+		{
+			src: '/static/ncr80-topre-build/module-solenoid-mat-sau.webp',
+			alt: 'Mặt sau module dán băng keo đỏ'
+		}
+	]}
+	caption="Mặt sau module và các chân ENAB, TRG, GND, TRIG, EN, +5V."
+/>
+
+<Callout variant="note" title="Chỉ chọn được buzzer hoặc solenoid">
+	Module chỉ chạy một trong hai chế độ: **buzzer** hoặc **solenoid**. Muốn dùng
+	cả hai thì phải thêm một công tắc 4 chân để chuyển qua lại. Tôi lười nên chỉ
+	dùng solenoid.
+</Callout>
+
+Test sơ module với cuộn solenoid trước khi cắt dây:
+
+<ContentFigure
+	src="/static/ncr80-topre-build/module-solenoid-va-cuon-solenoid.webp"
+	alt="Module solenoid nối với cuộn solenoid đặt trên bàn phím"
+	caption="Module nối với cuộn solenoid để test."
+/>
+
+<figure>
+	<video
+		controls
+		playsinline
+		preload="metadata"
+		class="mx-auto rounded-lg border"
+	>
+		<source
+			src={`${import.meta.env.BASE_URL}static/ncr80-topre-build/test-solenoid.mp4`}
+			type="video/mp4"
+		/>
+		Trình duyệt của bạn không hỗ trợ video HTML5.
+	</video>
+	<figcaption>Test solenoid trước khi cắt dây và hàn cổng cắm.</figcaption>
+</figure>
+
+### 5.2. Đổi đầu nối
+
+Module dùng đầu **JST 1.25mm 6 pin**, quá nhỏ so với header trên PCB. Muốn cắm vào PCB thì cần đầu PH2.0 hoặc to hơn.
+
+<ContentFigure
+	src="/static/ncr80-topre-build/dau-jst-125-6pin.webp"
+	alt="Đầu JST 1.25mm 6 pin của module solenoid"
+	caption="Đầu JST 1.25mm 6 pin nguyên bản của module."
+/>
+
+Tôi cắt bỏ đầu nối cũ và đấu sang đầu **PH2.0 5 pin** có sẵn. Thực tế chỉ cần 4 chân, nhưng có gì dùng nấy. Phía PCB, tôi hàn cổng PH2.0 vào vị trí header SOLENOID.
+
+<ContentFigure
+	src="/static/ncr80-topre-build/pcb-han-cong-ph20-5pin.webp"
+	alt="PCB sau khi hàn thêm cổng PH2.0 5 pin cho solenoid"
+	caption="PCB sau khi hàn cổng PH2.0 5 pin."
+/>
+
+### 5.3. Sơ đồ đấu dây
+
+Dùng solenoid hay buzzer thì đấu giống nhau:
+
+<DataTable
+	headers={['Header SOLENOID trên PCB', 'Chân trên module']}
+	rows={[
+		['VCC', '+5V'],
+		['ENABLE', 'EN'],
+		['TRG', 'TRIG'],
+		['GND', 'GND']
+	]}
+/>
+
+<ContentFigure
+	src="/static/ncr80-topre-build/so-do-dau-module-solenoid.webp"
+	alt="Sơ đồ nối header SOLENOID trên PCB với các chân của module"
+	caption="Sơ đồ đấu từ header SOLENOID trên PCB sang module."
+/>
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/dau-noi-moi-cho-module-1.webp',
+			alt: 'Đầu nối PH2.0 mới trên dây module'
+		},
+		{
+			src: '/static/ncr80-topre-build/dau-noi-moi-cho-module-2.webp',
+			alt: 'Cắm đầu nối mới của module'
+		}
+	]}
+	caption="Đầu nối mới cho module sau khi đấu."
+/>
+
+<ContentFigure
+	src="/static/ncr80-topre-build/dau-noi-moi-cho-module-3.webp"
+	alt="Module solenoid và dây đặt trong case"
+	caption="Module và dây sau khi đặt vào case."
+/>
+
+<ContentFigure
+	src="/static/ncr80-topre-build/tong-quan-day-trong-case.webp"
+	alt="Tổng quan dây nối trong case NCR80 sau khi gắn module"
+	caption="Tổng quan sơ đồ dây khi đã gắn module vào case."
+/>
+
+## 6. Đục thêm lỗ vít trên PCB
+
+Trước khi lắp, tôi đục thêm 3 lỗ vít trên PCB để bắt chắc hơn. Vị trí lỗ tôi tham chiếu theo [PCB NCR80 gốc của YMDK](https://item.taobao.com/item.htm?id=712413565689).
+
+<ContentFigure
+	src="/static/ncr80-topre-build/pcb-ymdk-ncr80-tham-khao.webp"
+	alt="PCB NCR80 capsense màu xanh của YMDK"
+	caption="PCB NCR80 của YMDK dùng để tham chiếu vị trí lỗ. Nguồn: Taobao YMDK."
+/>
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/danh-dau-truoc-khi-duc.webp',
+			alt: 'Làm dấu vị trí lỗ trên PCB trước khi đục'
+		},
+		{
+			src: '/static/ncr80-topre-build/sau-khi-duc-lo-1.webp',
+			alt: 'Lỗ vít mới sau khi đục'
+		},
+		{
+			src: '/static/ncr80-topre-build/sau-khi-duc-lo-2.webp',
+			alt: 'Các lỗ vít mới ở hàng phím dưới'
+		}
+	]}
+	columns={3}
+	caption="Làm dấu trước khi đục và các lỗ sau khi đục."
+/>
+
+Một lỗ nằm ngay dưới phím **Shift trái**, nên housing của phím này phải cắt bớt để chừa chỗ cho ốc tray mount.
+
+<ContentFigure
+	src="/static/ncr80-topre-build/cat-housing-shift-trai.webp"
+	alt="Housing phím bị cắt bớt để chừa chỗ cho lỗ vít"
+	caption="Housing cắt bớt để chừa lỗ vít (ảnh minh họa, tôi quên chụp housing của build này)."
+/>
+
+## 7. Lắp ráp
+
+### 7.1. Bộ lòng từ Realforce R1 fullsize
+
+Bộ lòng (housing, slider, dome, lò xo) được bóc từ một con Realforce R1 fullsize. Con này dùng space 7u, còn build NCR80 dùng **stab 6u**.
+
+<ContentFigure
+	src="/static/ncr80-topre-build/realforce-fullsize-r1-donor.webp"
+	alt="Realforce R1 fullsize màu đen dùng để bóc bộ lòng"
+	caption="Realforce R1 fullsize, nguồn bộ lòng cho build."
+/>
+
+### 7.2. Plate và housing
+
+Plate tôi cắt laser theo file CAD của maker, sau đó taro ren bằng tay cho tiết kiệm. Housing, slider, dome và lò xo lần lượt được lắp lên plate.
+
+<ContentFigure
+	src="/static/ncr80-topre-build/assem-housing-len-plate.webp"
+	alt="Housing Topre lắp lên plate cắt laser"
+	caption="Lắp housing lên plate."
+/>
+
+### 7.3. Bắt vào case
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/bat-oc-traymount.webp',
+			alt: 'Bắt ốc tray mount plate vào case NCR80'
+		},
+		{
+			src: '/static/ncr80-topre-build/lap-top-case.webp',
+			alt: 'Lắp top case NCR80'
+		}
+	]}
+	caption="Bắt ốc tray mount (trái) và lắp top case (phải)."
+/>
+
+Cuối cùng là lắp keycap:
+
+<ContentFigure
+	src="/static/ncr80-topre-build/ncr80-hoan-thien.webp"
+	alt="NCR80 Topre hoàn thiện với keycap"
+	caption="NCR80 Topre sau khi lắp keycap."
+/>
+
+## 8. Sound test
+
+Phần sound test tôi sẽ cập nhật vào cuối tuần.
