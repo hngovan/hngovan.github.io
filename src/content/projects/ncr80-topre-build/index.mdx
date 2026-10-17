@@ -283,7 +283,7 @@ Test sơ module với cuộn solenoid trước khi cắt dây:
 		class="mx-auto rounded-lg border"
 	>
 		<source
-			src={`${import.meta.env.BASE_URL}static/ncr80-topre-build/solenoid.mp4`}
+			src={`${import.meta.env.BASE_URL}static/ncr80-topre-build/test-solenoid.mp4`}
 			type="video/mp4"
 		/>
 		Trình duyệt của bạn không hỗ trợ video HTML5.
@@ -357,7 +357,11 @@ Dùng solenoid hay buzzer thì đấu giống nhau:
 
 ## 6. Đục thêm lỗ vít trên PCB
 
-Trước khi lắp, tôi đục thêm 3 lỗ vít trên PCB để bắt chắc hơn. Vị trí lỗ tôi tham chiếu theo [PCB NCR80 gốc của YMDK](https://item.taobao.com/item.htm?id=712413565689).
+Trước khi lắp, tôi đục thêm 3 lỗ vít trên PCB để bắt chắc hơn. Nếu không bắt thêm vít, PCB không được giữ chặt và sẽ phát ra tiếng kêu khó chịu khi gõ. Vị trí lỗ tôi tham chiếu theo [PCB NCR80 gốc của YMDK](https://item.taobao.com/item.htm?id=712413565689).
+
+<Callout variant="tip" title="Nên ưu tiên lỗ nào">
+	Lỗ ở hàng F bắt buộc phải đục. Hai lỗ gần stab có thể bỏ qua nếu ngại đục.
+</Callout>
 
 <ContentFigure
 	src="/static/ncr80-topre-build/ban-ve-vi-tri-ba-lo-vit-pcb.webp"
@@ -409,6 +413,12 @@ Một lỗ nằm ngay dưới phím **Shift trái**, nên housing của phím n�
 	]}
 	columns={3}
 	caption="Housing Shift trái sau khi cắt để chừa chỗ cho ốc tray mount."
+/>
+
+<ContentFigure
+	src="/static/ncr80-topre-build/cat-housing-shift-trai.webp"
+	alt="Housing phím bị cắt bớt để chừa chỗ cho lỗ vít"
+	caption="Housing cắt bớt để chừa lỗ vít (ảnh minh họa)."
 />
 
 ## 7. Lắp ráp
