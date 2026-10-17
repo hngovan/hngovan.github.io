@@ -23,7 +23,7 @@ sections:
       - 'PCB capsense S80-87key (NCR80) REV-A của maker sunxkui, kèm daughterboard USB-C'
       - 'Case NCR80, tặng kèm 3 bóng LED báo trạng thái'
       - 'Plate cắt laser theo file CAD của maker, taro ren bằng tay'
-      - 'Bộ lòng (housing, slider, dome, lò xo) bóc từ Realforce R1 fullsize'
+      - 'Housing, slider và lò xo bóc từ Realforce R1 fullsize; dome Metakeebs 45g'
       - 'Stab 6u cho phím space'
       - 'Dây JST 4 pin tận dụng từ project Realforce R1 USB-C'
       - 'Module solenoid + buzzer của sunxkui, cuộn solenoid'
@@ -275,12 +275,6 @@ Như đã nhắc ở phần 2, PCB có sẵn header **SOLENOID**. Tôi hỏi mak
 
 Test sơ module với cuộn solenoid trước khi cắt dây:
 
-<ContentFigure
-	src="/static/ncr80-topre-build/module-solenoid-va-cuon-solenoid.webp"
-	alt="Module solenoid nối với cuộn solenoid đặt trên bàn phím"
-	caption="Module nối với cuộn solenoid để test."
-/>
-
 <figure>
 	<video
 		controls
@@ -289,7 +283,7 @@ Test sơ module với cuộn solenoid trước khi cắt dây:
 		class="mx-auto rounded-lg border"
 	>
 		<source
-			src={`${import.meta.env.BASE_URL}static/ncr80-topre-build/test-solenoid.mp4`}
+			src={`${import.meta.env.BASE_URL}static/ncr80-topre-build/solenoid.mp4`}
 			type="video/mp4"
 		/>
 		Trình duyệt của bạn không hỗ trợ video HTML5.
@@ -366,6 +360,12 @@ Dùng solenoid hay buzzer thì đấu giống nhau:
 Trước khi lắp, tôi đục thêm 3 lỗ vít trên PCB để bắt chắc hơn. Vị trí lỗ tôi tham chiếu theo [PCB NCR80 gốc của YMDK](https://item.taobao.com/item.htm?id=712413565689).
 
 <ContentFigure
+	src="/static/ncr80-topre-build/ban-ve-vi-tri-ba-lo-vit-pcb.webp"
+	alt="Bản vẽ plate NCR80 đánh dấu ba vị trí lỗ vít cần đục thêm trên PCB"
+	caption="Ba vị trí lỗ vít được đánh dấu trên bản vẽ trước khi đục PCB."
+/>
+
+<ContentFigure
 	src="/static/ncr80-topre-build/pcb-ymdk-ncr80-tham-khao.webp"
 	alt="PCB NCR80 capsense màu xanh của YMDK"
 	caption="PCB NCR80 của YMDK dùng để tham chiếu vị trí lỗ. Nguồn: Taobao YMDK."
@@ -393,16 +393,29 @@ Trước khi lắp, tôi đục thêm 3 lỗ vít trên PCB để bắt chắc h
 Một lỗ nằm ngay dưới phím **Shift trái**, nên housing của phím này phải cắt bớt để chừa chỗ cho ốc tray mount.
 
 <ContentFigure
-	src="/static/ncr80-topre-build/cat-housing-shift-trai.webp"
-	alt="Housing phím bị cắt bớt để chừa chỗ cho lỗ vít"
-	caption="Housing cắt bớt để chừa lỗ vít (ảnh minh họa, tôi quên chụp housing của build này)."
+	images={[
+		{
+			src: '/static/ncr80-topre-build/housing-shift-trai-cat-canh-ben.webp',
+			alt: 'Cạnh housing Shift trái được cắt bớt'
+		},
+		{
+			src: '/static/ncr80-topre-build/housing-shift-trai-cat-mat-trong.webp',
+			alt: 'Mặt trong housing Shift trái sau khi cắt'
+		},
+		{
+			src: '/static/ncr80-topre-build/housing-shift-trai-cat-vi-tri-oc.webp',
+			alt: 'Vị trí lỗ ốc trên housing Shift trái đã cắt'
+		}
+	]}
+	columns={3}
+	caption="Housing Shift trái sau khi cắt để chừa chỗ cho ốc tray mount."
 />
 
 ## 7. Lắp ráp
 
 ### 7.1. Bộ lòng từ Realforce R1 fullsize
 
-Bộ lòng (housing, slider, dome, lò xo) được bóc từ một con Realforce R1 fullsize. Con này dùng space 7u, còn build NCR80 dùng **stab 6u**.
+Housing, slider và lò xo được bóc từ một con Realforce R1 fullsize; dome dùng loại Metakeebs 45g. Con này dùng space 7u, còn build NCR80 dùng **stab 6u**.
 
 <ContentFigure
 	src="/static/ncr80-topre-build/realforce-fullsize-r1-donor.webp"
@@ -412,12 +425,26 @@ Bộ lòng (housing, slider, dome, lò xo) được bóc từ một con Realforc
 
 ### 7.2. Plate và housing
 
-Plate tôi cắt laser theo file CAD của maker, sau đó taro ren bằng tay cho tiết kiệm. Housing, slider, dome và lò xo lần lượt được lắp lên plate.
+Plate tôi cắt laser theo file CAD của maker, sau đó taro ren bằng tay cho tiết kiệm. Housing, slider, dome Metakeebs 45g và lò xo lần lượt được lắp lên plate.
 
 <ContentFigure
 	src="/static/ncr80-topre-build/assem-housing-len-plate.webp"
 	alt="Housing Topre lắp lên plate cắt laser"
 	caption="Lắp housing lên plate."
+/>
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/lap-dome-metakeebs-45g-va-lo-xo-1.webp',
+			alt: 'Cụm dome Metakeebs 45g và lò xo lắp trên plate, góc chụp thứ nhất'
+		},
+		{
+			src: '/static/ncr80-topre-build/lap-dome-metakeebs-45g-va-lo-xo-2.webp',
+			alt: 'Cụm dome Metakeebs 45g và lò xo lắp trên plate, góc chụp thứ hai'
+		}
+	]}
+	caption="Dome Metakeebs 45g và lò xo sau khi lắp lên plate."
 />
 
 ### 7.3. Bắt vào case
@@ -444,6 +471,116 @@ Cuối cùng là lắp keycap:
 	caption="NCR80 Topre sau khi lắp keycap."
 />
 
+### 7.4. Một số góc chụp sau khi hoàn thiện
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/case-hoan-thien-nhin-tu-tren.webp',
+			alt: 'Toàn cảnh NCR80 Topre sau khi lắp keycap, nhìn từ trên'
+		},
+		{
+			src: '/static/ncr80-topre-build/case-hoan-thien-goc-tren-trai.webp',
+			alt: 'Góc trên bên trái của NCR80 Topre đã hoàn thiện'
+		},
+		{
+			src: '/static/ncr80-topre-build/case-hoan-thien-cum-phim-ben-phai.webp',
+			alt: 'Cụm phím bên phải và đèn báo của NCR80 Topre'
+		}
+	]}
+	caption="Tổng thể bàn phím và các chi tiết ở mặt trên."
+/>
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/case-hoan-thien-canh-ben.webp',
+			alt: 'Độ dày case NCR80 Topre nhìn từ cạnh bên'
+		},
+		{
+			src: '/static/ncr80-topre-build/case-hoan-thien-canh-sau.webp',
+			alt: 'Cạnh sau của case NCR80 Topre'
+		},
+		{
+			src: '/static/ncr80-topre-build/case-hoan-thien-cong-usb-c.webp',
+			alt: 'Cổng USB-C trên cạnh case NCR80 Topre'
+		},
+		{
+			src: '/static/ncr80-topre-build/case-hoan-thien-mat-duoi.webp',
+			alt: 'Mặt dưới case NCR80 Topre với tem và chân đế'
+		}
+	]}
+	caption="Các cạnh, cổng USB-C và mặt dưới của case."
+/>
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/case-hoan-thien-goc-cheo-trai.webp',
+			alt: 'NCR80 Topre nhìn chéo từ bên trái'
+		},
+		{
+			src: '/static/ncr80-topre-build/case-hoan-thien-goc-cheo-phai.webp',
+			alt: 'NCR80 Topre nhìn chéo từ bên phải'
+		},
+		{
+			src: '/static/ncr80-topre-build/case-hoan-thien-goc-thap-ben-phai.webp',
+			alt: 'Góc thấp bên phải của NCR80 Topre'
+		},
+		{
+			src: '/static/ncr80-topre-build/case-hoan-thien-goc-thap-ben-trai.webp',
+			alt: 'Góc thấp bên trái của NCR80 Topre'
+		}
+	]}
+	caption="Các góc nhìn nghiêng của bàn phím đã hoàn thiện."
+/>
+
 ## 8. Sound test
 
-Phần sound test tôi sẽ cập nhật vào cuối tuần.
+<figure>
+	<video
+		controls
+		playsinline
+		preload="metadata"
+		class="mx-auto rounded-lg border"
+	>
+		<source
+			src={`${import.meta.env.BASE_URL}static/ncr80-topre-build/soundtest.mp4`}
+			type="video/mp4"
+		/>
+		Trình duyệt của bạn không hỗ trợ video HTML5.
+	</video>
+	<figcaption>Sound test NCR80 Topre sau khi hoàn thiện.</figcaption>
+</figure>
+
+<figure>
+	<video
+		controls
+		playsinline
+		preload="metadata"
+		class="mx-auto rounded-lg border"
+	>
+		<source
+			src={`${import.meta.env.BASE_URL}static/ncr80-topre-build/buzzer-2.mp4`}
+			type="video/mp4"
+		/>
+		Trình duyệt của bạn không hỗ trợ video HTML5.
+	</video>
+	<figcaption>Thử âm thanh buzzer.</figcaption>
+</figure>
+
+<figure>
+	<video
+		controls
+		playsinline
+		preload="metadata"
+		class="mx-auto rounded-lg border"
+	>
+		<source
+			src={`${import.meta.env.BASE_URL}static/ncr80-topre-build/solenoid.mp4`}
+			type="video/mp4"
+		/>
+		Trình duyệt của bạn không hỗ trợ video HTML5.
+	</video>
+	<figcaption>Thử âm thanh solenoid.</figcaption>
+</figure>
