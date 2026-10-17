@@ -23,7 +23,7 @@ sections:
       - 'PCB capsense S80-87key (NCR80) REV-A của maker sunxkui, kèm daughterboard USB-C'
       - 'Case NCR80, tặng kèm 3 bóng LED báo trạng thái'
       - 'Plate cắt laser theo file CAD của maker, taro ren bằng tay'
-      - 'Housing, slider và lò xo bóc từ Realforce R1 fullsize; dome Metakeebs 45g'
+      - 'Housing, slider và lò xo bóc từ Realforce R1 fullsize (SE02B0); dome Metakeebs 45g'
       - 'Stab 6u cho phím space'
       - 'Dây JST 4 pin tận dụng từ project Realforce R1 USB-C'
       - 'Module solenoid + buzzer của sunxkui, cuộn solenoid'
@@ -109,7 +109,22 @@ Lần theo cái tên trên PCB, tôi tình cờ tìm được [trang của maker
 	sửa bản vẽ.
 </Callout>
 
-Các file này maker gửi riêng cho tôi nên tôi không đăng lại ở đây. Nếu bạn cũng mua bo mạch này, hãy liên hệ maker qua zFrontier.
+### 1.3. Tải file
+
+- Folder gốc maker gửi, gồm firmware, file JSON cho VIA và bản vẽ plate `.dwg`:
+  <a
+  	href={`${import.meta.env.BASE_URL}static/ncr80-topre-build/ncr80-firmware-via-cad.zip`}
+  	download
+  >
+  	ncr80-firmware-via-cad.zip
+  </a>
+- File plate `.dxf` dày 1.2mm tôi dùng để cắt laser. Bản này đã chỉnh lỗ để taro ren và dùng **stab 6u** (không phải 7u):
+  <a
+  	href={`${import.meta.env.BASE_URL}static/ncr80-topre-build/ncr80-topre-plate-1.2mm.dxf`}
+  	download
+  >
+  	ncr80-topre-plate-1.2mm.dxf
+  </a>
 
 ## 2. Tổng quan bo mạch
 
@@ -360,13 +375,15 @@ Dùng solenoid hay buzzer thì đấu giống nhau:
 Trước khi lắp, tôi đục thêm 3 lỗ vít trên PCB để bắt chắc hơn. Nếu không bắt thêm vít, PCB không được giữ chặt và sẽ phát ra tiếng kêu khó chịu khi gõ. Vị trí lỗ tôi tham chiếu theo [PCB NCR80 gốc của YMDK](https://item.taobao.com/item.htm?id=712413565689).
 
 <Callout variant="tip" title="Nên ưu tiên lỗ nào">
-	Lỗ ở hàng F bắt buộc phải đục. Hai lỗ gần stab có thể bỏ qua nếu ngại đục.
+	Trong bản vẽ bên dưới, các vị trí khoanh đỏ được đánh số từ 1 đến 4. Nên khoét
+	thêm lỗ **số 1** (hàng F) và **số 2**. Lỗ số 3 và 4 nằm gần stab, có thể bỏ
+	qua.
 </Callout>
 
 <ContentFigure
-	src="/static/ncr80-topre-build/ban-ve-vi-tri-ba-lo-vit-pcb.webp"
-	alt="Bản vẽ plate NCR80 đánh dấu ba vị trí lỗ vít cần đục thêm trên PCB"
-	caption="Ba vị trí lỗ vít được đánh dấu trên bản vẽ trước khi đục PCB."
+	src="/static/ncr80-topre-build/ban-ve-vi-tri-lo-vit-pcb.webp"
+	alt="Bản vẽ plate NCR80 khoanh đỏ và đánh số 1 đến 4 các vị trí lỗ vít cần đục thêm trên PCB"
+	caption="Các vị trí lỗ vít khoanh đỏ trên bản vẽ. Nên khoét lỗ số 1 và 2, lỗ số 3 và 4 có thể bỏ qua."
 />
 
 <ContentFigure
@@ -383,15 +400,19 @@ Trước khi lắp, tôi đục thêm 3 lỗ vít trên PCB để bắt chắc h
 		},
 		{
 			src: '/static/ncr80-topre-build/sau-khi-duc-lo-1.webp',
-			alt: 'Lỗ vít mới sau khi đục'
+			alt: 'Lỗ vít mới đục ở giữa phím F8 và F9'
 		},
 		{
 			src: '/static/ncr80-topre-build/sau-khi-duc-lo-2.webp',
-			alt: 'Các lỗ vít mới ở hàng phím dưới'
+			alt: 'Lỗ vít mới đục dưới phím Shift trái'
+		},
+		{
+			src: '/static/ncr80-topre-build/sau-khi-duc-lo-backspace.webp',
+			alt: 'Lỗ vít mới đục cạnh stab phím Backspace'
 		}
 	]}
-	columns={3}
-	caption="Làm dấu trước khi đục và các lỗ sau khi đục."
+	columns={2}
+	caption="Làm dấu trước khi đục, sau đó là các lỗ đã đục: giữa F8 và F9, dưới Shift trái và cạnh stab Backspace."
 />
 
 Một lỗ nằm ngay dưới phím **Shift trái**, nên housing của phím này phải cắt bớt để chừa chỗ cho ốc tray mount.
@@ -418,19 +439,49 @@ Một lỗ nằm ngay dưới phím **Shift trái**, nên housing của phím n�
 <ContentFigure
 	src="/static/ncr80-topre-build/cat-housing-shift-trai.webp"
 	alt="Housing phím bị cắt bớt để chừa chỗ cho lỗ vít"
-	caption="Housing cắt bớt để chừa lỗ vít (ảnh minh họa)."
+	caption="Housing cắt bớt để chừa lỗ vít."
 />
 
 ## 7. Lắp ráp
 
 ### 7.1. Bộ lòng từ Realforce R1 fullsize
 
-Housing, slider và lò xo được bóc từ một con Realforce R1 fullsize; dome dùng loại Metakeebs 45g. Con này dùng space 7u, còn build NCR80 dùng **stab 6u**.
+Housing, slider và lò xo được bóc từ một con Realforce R1 fullsize mã **SE02B0**; dome dùng loại Metakeebs 45g. Con này dùng space 7u nhưng stab vẫn là loại **6u**, giống các dòng Realforce 87U R1 thông thường khác.
 
 <ContentFigure
 	src="/static/ncr80-topre-build/realforce-fullsize-r1-donor.webp"
 	alt="Realforce R1 fullsize màu đen dùng để bóc bộ lòng"
 	caption="Realforce R1 fullsize, nguồn bộ lòng cho build."
+/>
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/realforce-r1-nhin-tu-tren.webp',
+			alt: 'Realforce R1 fullsize nhìn từ trên xuống'
+		},
+		{
+			src: '/static/ncr80-topre-build/realforce-r1-mat-duoi-tem-model.webp',
+			alt: 'Mặt dưới Realforce R1 với tem model SE02B0'
+		}
+	]}
+	columns={2}
+	caption="Toàn cảnh mặt trên (trái) và tem model SE02B0 ở mặt dưới (phải)."
+/>
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/ncr80-topre-build/realforce-r1-cum-numpad-va-logo.webp',
+			alt: 'Cụm numpad và tấm logo Topre Realforce'
+		},
+		{
+			src: '/static/ncr80-topre-build/realforce-r1-goc-nghieng-ben-trai.webp',
+			alt: 'Realforce R1 chụp nghiêng dọc theo các hàng phím'
+		}
+	]}
+	columns={2}
+	caption="Cụm numpad với logo Realforce (trái) và góc nghiêng dọc thân phím (phải)."
 />
 
 ### 7.2. Plate và housing
@@ -586,3 +637,39 @@ Cuối cùng là lắp keycap:
 	</video>
 	<figcaption>Thử âm thanh solenoid.</figcaption>
 </figure>
+
+## 9. Tổng chi phí
+
+<DataTable
+	headers={['Hạng mục', 'Giá', 'Ghi chú']}
+	rows={[
+		['Case NCR80', '950.000đ', ''],
+		['PCB + daughterboard', '350.000đ', 'Mua trên chợ cá'],
+		['Plate thép (SS)', '200.000đ', 'Cắt laser theo file CAD'],
+		['Module solenoid', '200.000đ', ''],
+		['Dây điện, cổng cắm, ốc vít', '~40.000đ', 'Linh tinh'],
+		[
+			'Realforce 103U (lấy housing, slider, lò xo)',
+			'2.600.000đ',
+			'Giá thị trường 2,6 – 4 triệu tùy tình trạng'
+		],
+		[
+			'Dome Metakeebs 45g (90 cái)',
+			'450.000đ',
+			'Mua trên chợ cá, thường 400 – 600k tùy tình trạng hoặc mua mới'
+		],
+		['<strong>Tổng</strong>', '<strong>~4.790.000đ</strong>', '']
+	]}
+	align={['left', 'right', 'left']}
+/>
+
+Chi phí lớn nhất là bộ lòng. Con Realforce 103U của tôi bị xước và gãy bóng vài nút nên mua được giá 2,6 triệu. Nếu mua con đẹp thì giá có thể lên tới 4 triệu.
+
+Bộ lòng cũng không nhất thiết phải bóc từ Realforce. Bạn có thể dùng của NIZ, Metakeebs, Dyncaps hoặc hàng OEM tùy ngân sách. Tính theo khoảng giá ở trên, tổng chi phí rơi vào khoảng **4,7 – 6,3 triệu** nếu lấy lòng từ Realforce.
+
+<Callout variant="tip" title="Muốn build rẻ hơn">
+	Dùng housing và slider của **NIZ** thì chỉ tốn khoảng **500k**, rẻ hơn nhiều
+	so với bóc từ Realforce. Dome có thể tận dụng dome variable bóc từ phím OEM
+	giá rẻ, khoảng **100 – 200k**. Chịu khó đi xin thì có khi người ta còn cho
+	luôn.
+</Callout>
