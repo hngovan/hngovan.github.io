@@ -1,6 +1,6 @@
 ---
 name: 'GAYDOLCH TKL EC'
-description: 'Case TKL in 3D cho PCB Sensy Seal80 Topre EC: render case, plate cắt laser, tạ trong 3mm và tự hàn daughterboard USB-C vì PCB mua extra không kèm DTB và dây JST.'
+description: 'Case TKL in 3D cho PCB Sensy Seal80 Topre EC: render case, plate cắt laser, tạ trong 3mm, mua thêm daughterboard USB-C và dây JST vì PCB mua extra không kèm theo.'
 image: '/static/gaydolch-tkl-3d/render-goc-nghieng.webp'
 routeSlug: 'gaydolch-tkl-3d'
 tags: ['build-log', 'topre', 'ec', 'seal80', 'print-3d', 'tkl']
@@ -10,7 +10,7 @@ keywords:
     'seal80 topre ec pcb',
     'sensy seal80 ec',
     'case tkl in 3d topre',
-    'daughterboard usb c tự hàn',
+    'daughterboard usb c seal80',
     'seal80 dolch'
   ]
 startDate: '2026-10-23'
@@ -21,7 +21,7 @@ sections:
     items:
       - 'PCB Sensy Seal80 Topre EC (mua extra, không kèm DTB và dây JST)'
       - 'Bo chuyển USB Type-C cái ra chân cắm (dùng làm DTB)'
-      - 'Dây 4 lõi cho VBUS, GND, D+, D-'
+      - 'Dây JST PH 1.0 4 pin (VBUS, GND, D+, D-)'
       - 'Bộ lòng Topre bóc từ Realforce R2 beige (space 6.25u)'
       - 'Plate cắt laser (có file DXF trong bài)'
       - 'Tạ trong dày 3mm'
@@ -30,7 +30,7 @@ sections:
     type: 'list'
     items:
       - 'Làm case TKL in 3D cho PCB Seal80 Topre EC'
-      - 'Tự làm DTB USB-C thay cho DTB không có sẵn'
+      - 'Mua thêm DTB USB-C và dây JST để dùng với PCB'
       - 'Thêm tạ trong cho case nặng tay hơn'
   - title: 'Liên kết'
     type: 'links'
@@ -68,18 +68,13 @@ PCB Topre EC là một trong các bản PCB của kit Seal80 (Sensy), bán qua [
 	rows={[
 		['Switch', 'Topre EC'],
 		['Kết nối', 'Có dây (single-mode), qua daughterboard'],
-		['Firmware', 'VIAL (theo trang bán)'],
+		['Firmware', 'VIAL (tôi đã flash và test)'],
 		[
 			'Plate',
 			'Không bán plate cho bản EC, Sensy cung cấp file <code>.dwg</code> để tự cắt'
 		]
 	]}
 />
-
-<Callout variant="warning" title="Chưa chắc bản EC hỗ trợ VIAL">
-	Các trang bán ghi hỗ trợ VIAL ở phần thông số chung của kit, không ghi riêng
-	cho PCB Topre EC. Tôi sẽ cập nhật khi flash và test VIAL trên PCB thật.
-</Callout>
 
 ### 1.1. Layout PCB Topre EC hỗ trợ
 
@@ -144,7 +139,7 @@ Lần này tôi bóc bộ lòng từ một con **Realforce R2 màu beige** (mode
 
 ### 1.4. PCB tôi có
 
-PCB tôi có là bản **mua extra**, tức mua lẻ PCB mà không mua cả kit. Trang bán phụ kiện chỉ ghi "Includes: 1 Sensy Seal80 Accessory", và thực tế bản extra **không kèm daughterboard (DTB) và dây JST**. Nên tôi phải tự làm phần kết nối USB.
+PCB tôi có là bản **mua extra**, tức mua lẻ PCB mà không mua cả kit. Trang bán phụ kiện chỉ ghi "Includes: 1 Sensy Seal80 Accessory", và thực tế bản extra **không kèm daughterboard (DTB) và dây JST**. Nên tôi phải mua thêm DTB và dây JST PH 1.0 4 pin riêng.
 
 <ContentFigure
 	images={[
@@ -164,15 +159,15 @@ Sau khi đấu dây JST và hàn vào DTB, tôi cắm thử:
 
 <ContentFigure
 	src="/static/gaydolch-tkl-3d/pcb-seal80-ec-test-dtb.webp"
-	alt="PCB Sensy Seal80 Topre EC màu nâu cắm thử với DTB tự hàn"
+	alt="PCB Sensy Seal80 Topre EC màu nâu cắm thử với DTB mua thêm"
 	caption="PCB Seal80 Topre EC cắm thử sau khi đấu JST và hàn DTB."
 />
 
-## 2. Tự làm DTB USB-C
+## 2. Mua thêm DTB USB-C và dây JST
 
-### 2.1. Bo chuyển USB Type-C
+### 2.1. DTB: bo chuyển USB Type-C
 
-Tôi dùng một bo chuyển USB Type-C cái ra chân cắm, [mua trên Shopee](https://shopee.vn/B%E1%BB%99-Chuy%E1%BB%83n-%C4%90%E1%BB%95i-Pin-Type-c-USB-%C4%90%E1%BA%A7u-C%C3%A1i-Sang-%C4%90%E1%BA%A7u-C%C3%A1i-Type-c-i.1038058840.22374551297). Bo này đưa ra các chân CC1, CC2, SBU1, SBU2, D+, D-, VBUS và GND. Trên bo có sẵn hai điện trở ghi `512` (5.1kΩ) ở chân CC, nên cắm được cả dây C-to-C.
+DTB tôi mua là một bo chuyển USB Type-C cái ra chân cắm, [mua trên Shopee](https://shopee.vn/B%E1%BB%99-Chuy%E1%BB%83n-%C4%90%E1%BB%95i-Pin-Type-c-USB-%C4%90%E1%BA%A7u-C%C3%A1i-Sang-%C4%90%E1%BA%A7u-C%C3%A1i-Type-c-i.1038058840.22374551297). Bo này đưa ra các chân CC1, CC2, SBU1, SBU2, D+, D-, VBUS và GND. Trên bo có sẵn hai điện trở ghi `512` (5.1kΩ) ở chân CC, nên cắm được cả dây C-to-C.
 
 <ContentFigure
 	src="/static/gaydolch-tkl-3d/dtb-usb-c-breakout.webp"
@@ -180,9 +175,9 @@ Tôi dùng một bo chuyển USB Type-C cái ra chân cắm, [mua trên Shopee](
 	caption="Bo chuyển USB Type-C dùng làm DTB. Nguồn: ảnh sản phẩm trên Shopee."
 />
 
-### 2.2. Hàn dây
+### 2.2. Đấu dây JST vào DTB
 
-Chỉ cần 4 chân: **VBUS**, **GND**, **D+** và **D-**. Các chân CC và SBU để trống.
+Dây JST tôi dùng là loại **JST PH 1.0 4 pin**: đầu JST cắm vào PCB, đầu kia hàn thẳng vào chân của bo chuyển vì bo này không có cổng JST. Chỉ cần 4 chân: **VBUS**, **GND**, **D+** và **D-**. Các chân CC và SBU để trống.
 
 <ContentFigure
 	src="/static/gaydolch-tkl-3d/dtb-usb-c-han-day.webp"
@@ -268,7 +263,6 @@ Case vẽ dạng TKL, màu nâu.
 ## 5. Việc còn lại
 
 - Vệ sinh con Realforce R2 beige.
-- Nhận case in 3D và thử fit PCB, plate, tạ.
+- Nhận case in 3D, cấy ốc và thử fit PCB, plate, tạ.
 - Lắp bộ lòng Topre.
-- Flash firmware, test VIAL.
 - Sound test.
