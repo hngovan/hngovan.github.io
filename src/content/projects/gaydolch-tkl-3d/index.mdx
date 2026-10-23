@@ -23,7 +23,7 @@ sections:
       - 'Bo chuyển USB Type-C cái ra chân cắm (dùng làm DTB)'
       - 'Dây 4 lõi cho VBUS, GND, D+, D-'
       - 'Bộ lòng Topre bóc từ Realforce R2 beige (space 6.25u)'
-      - 'Plate cắt laser'
+      - 'Plate cắt laser (có file DXF trong bài)'
       - 'Tạ trong dày 3mm'
       - 'Case in 3D (đang chờ in)'
   - title: 'Mục tiêu'
@@ -61,28 +61,24 @@ Project này là một case TKL in 3D cho PCB **Sensy Seal80 Topre EC**. Hiện 
 
 ## 1. PCB Sensy Seal80 Topre EC
 
-Seal80 là kit TKL của Sensy, bán qua [Divinikey](https://divinikey.com/products/sensy-seal-tkl-keyboard) và [Unikeyboards](https://unikeyboards.com/products/sensy-seal80-keyboard-kit-group-buy). Thông tin tôi tìm được từ các trang bán:
+PCB Topre EC là một trong các bản PCB của kit Seal80 (Sensy), bán qua [Divinikey](https://divinikey.com/products/sensy-seal-tkl-keyboard) và [Unikeyboards](https://unikeyboards.com/products/sensy-seal80-keyboard-kit-group-buy). Thông tin về PCB này:
 
 <DataTable
 	headers={['Thông số', 'Giá trị']}
 	rows={[
-		['Layout case', 'TKL chuẩn A87, space 7u, có bản WK và WKL'],
+		['Switch', 'Topre EC'],
+		['Kết nối', 'Có dây (single-mode), qua daughterboard'],
+		['Firmware', 'VIAL (theo trang bán)'],
 		[
-			'Các loại PCB',
-			'MX solder, MX hotswap, Cherry MX + Alps SKCM/SKCL + SMK, Alps SKCP + Omron B3G + NMB Hi-Tek 725, Topre EC'
-		],
-		['Firmware', 'Single-mode (có dây), hỗ trợ VIAL'],
-		['Tương thích', 'Chuẩn A87, thay được PCB bên thứ ba như Hiney80'],
-		['Mount', 'Top mount + buffer + blocker'],
-		['Plate (cho MX)', 'Nhôm 1.5mm, PEI 4mm, ABS 4mm']
+			'Plate',
+			'Không bán plate cho bản EC, Sensy cung cấp file <code>.dwg</code> để tự cắt'
+		]
 	]}
 />
 
 <Callout variant="warning" title="Chưa chắc bản EC hỗ trợ VIAL">
 	Các trang bán ghi hỗ trợ VIAL ở phần thông số chung của kit, không ghi riêng
-	cho PCB Topre EC. Plate bán kèm cũng chỉ có bản cho MX, với các loại switch
-	khác Sensy cung cấp file `.dwg` để tự cắt. Tôi sẽ cập nhật khi flash và test
-	VIAL trên PCB thật.
+	cho PCB Topre EC. Tôi sẽ cập nhật khi flash và test VIAL trên PCB thật.
 </Callout>
 
 ### 1.1. Layout PCB Topre EC hỗ trợ
@@ -120,19 +116,13 @@ Nói theo các con Realforce có sẵn cho dễ hình dung, PCB này lắp đư�
 	headers={['Bàn phím', 'Ghi chú']}
 	rows={[
 		['Realforce R1 87U', 'Space 6u'],
-		['Realforce R1 86U', ''],
+		['Realforce R1 86U', 'Space 7u'],
 		['Realforce JIS 91U', 'Space chia nhỏ kiểu JIS'],
 		['Realforce R2 87', 'Space 6.25u']
 	]}
 />
 
 Danh sách này là theo tôi tìm hiểu, không phải thông số từ Sensy. Sơ đồ của Unikeyboards ở trên không vẽ riêng hàng space 6u của R1, nên khi lắp R1 87U thì cần kiểm tra lại vị trí stab space trên PCB và plate.
-
-<Callout variant="note" title="Plate khác PCB">
-	Unikeyboards ghi plate của kit đã tách bản ANSI và ISO, và kit **không còn hỗ
-	trợ space 6.25u**, dù sơ đồ PCB Topre EC ở trên vẫn có hàng 6.25u. Plate của
-	tôi tự cắt laser, nên layout dùng được là theo file plate.
-</Callout>
 
 ### 1.3. Bộ lòng cho build này: Realforce R2 beige
 
@@ -230,6 +220,18 @@ Plate đã cắt laser xong. Tạ trong dày 3mm cũng đã cắt xong.
 	]}
 	caption="Plate cắt laser (trái) và tạ trong 3mm (phải)."
 />
+
+File plate tôi dùng để cắt laser:
+
+<div class="not-prose my-6 flex flex-wrap gap-3">
+	<a
+		href={`${import.meta.env.BASE_URL}static/gaydolch-tkl-3d/IDK-EC-TKL-PLATE.dxf`}
+		download
+		class="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-4 py-2 text-sm"
+	>
+		Tải IDK-EC-TKL-PLATE.dxf
+	</a>
+</div>
 
 ## 4. Render case
 
