@@ -1,0 +1,234 @@
+---
+name: 'GAYDOLCH TKL 3D'
+description: 'Case TKL in 3D cho PCB Sensy Seal80 Topre EC: render case, plate cắt laser, tạ trong 3mm và tự hàn daughterboard USB-C vì PCB mua extra không kèm DTB và dây JST.'
+image: '/static/gaydolch-tkl-3d/render-goc-nghieng.webp'
+routeSlug: 'gaydolch-tkl-3d'
+tags: ['build-log', 'topre', 'ec', 'seal80', 'print-3d', 'tkl']
+keywords:
+  [
+    'gaydolch tkl',
+    'seal80 topre ec pcb',
+    'sensy seal80 ec',
+    'case tkl in 3d topre',
+    'daughterboard usb c tự hàn',
+    'seal80 dolch'
+  ]
+startDate: '2026-10-23'
+status: 'In Progress'
+sections:
+  - title: 'Linh kiện'
+    type: 'list'
+    items:
+      - 'PCB Sensy Seal80 Topre EC (mua extra, không kèm DTB và dây JST)'
+      - 'Bo chuyển USB Type-C cái ra chân cắm (dùng làm DTB)'
+      - 'Dây 4 lõi cho VBUS, GND, D+, D-'
+      - 'Plate cắt laser'
+      - 'Tạ trong dày 3mm'
+      - 'Case in 3D (đang chờ in)'
+  - title: 'Mục tiêu'
+    type: 'list'
+    items:
+      - 'Làm case TKL in 3D cho PCB Seal80 Topre EC'
+      - 'Tự làm DTB USB-C thay cho DTB không có sẵn'
+      - 'Thêm tạ trong cho case nặng tay hơn'
+  - title: 'Liên kết'
+    type: 'links'
+    items:
+      - name: 'Sensy Seal80 trên Divinikey'
+        url: 'https://divinikey.com/products/sensy-seal-tkl-keyboard'
+      - name: 'Seal80 extra (PCB, plate, phụ kiện)'
+        url: 'https://divinikey.com/products/sensy-seal-tkl-accessories'
+      - name: 'Bo chuyển USB Type-C trên Shopee'
+        url: 'https://shopee.vn/B%E1%BB%99-Chuy%E1%BB%83n-%C4%90%E1%BB%95i-Pin-Type-c-USB-%C4%90%E1%BA%A7u-C%C3%A1i-Sang-%C4%90%E1%BA%A7u-C%C3%A1i-Type-c-i.1038058840.22374551297'
+---
+
+import Callout from '@/components/callout.astro'
+import ContentFigure from '@/components/mdx/content-figure.astro'
+import DataTable from '@/components/mdx/data-table.astro'
+
+Project này là một case TKL in 3D cho PCB **Sensy Seal80 Topre EC**. Hiện tôi mới xong phần render, plate và tạ. Case đang chờ in 3D.
+
+<ContentFigure
+	src="/static/gaydolch-tkl-3d/render-goc-nghieng.webp"
+	alt="Render case GAYDOLCH TKL màu nâu nhìn nghiêng"
+	caption="Render case GAYDOLCH TKL."
+/>
+
+<Callout variant="note" title="Project đang làm dở">
+	Bài này sẽ được cập nhật khi có case in 3D trên tay và lắp xong.
+</Callout>
+
+## 1. PCB Sensy Seal80 Topre EC
+
+Seal80 là kit TKL của Sensy, bán qua [Divinikey](https://divinikey.com/products/sensy-seal-tkl-keyboard) và [Unikeyboards](https://unikeyboards.com/products/sensy-seal80-keyboard-kit-group-buy). Thông tin tôi tìm được từ các trang bán:
+
+<DataTable
+	headers={['Thông số', 'Giá trị']}
+	rows={[
+		['Layout case', 'TKL chuẩn A87, space 7u, có bản WK và WKL'],
+		[
+			'Các loại PCB',
+			'MX solder, MX hotswap, Cherry MX + Alps SKCM/SKCL + SMK, Alps SKCP + Omron B3G + NMB Hi-Tek 725, Topre EC'
+		],
+		['Firmware', 'Single-mode (có dây), hỗ trợ VIAL'],
+		['Tương thích', 'Chuẩn A87, thay được PCB bên thứ ba như Hiney80'],
+		['Mount', 'Top mount + buffer + blocker'],
+		['Plate (cho MX)', 'Nhôm 1.5mm, PEI 4mm, ABS 4mm']
+	]}
+/>
+
+<Callout variant="warning" title="Chưa chắc bản EC hỗ trợ VIAL">
+	Các trang bán ghi hỗ trợ VIAL ở phần thông số chung của kit, không ghi riêng
+	cho PCB Topre EC. Plate bán kèm cũng chỉ có bản cho MX, với các loại switch
+	khác Sensy cung cấp file `.dwg` để tự cắt. Tôi sẽ cập nhật khi flash và test
+	VIAL trên PCB thật.
+</Callout>
+
+### 1.1. Layout PCB Topre EC hỗ trợ
+
+Sơ đồ layout của PCB Topre EC lấy từ trang bán của Unikeyboards. Các phím tô màu là chỗ có nhiều tùy chọn:
+
+<ContentFigure
+	src="/static/gaydolch-tkl-3d/seal80-topre-ec-layout.webp"
+	alt="Sơ đồ layout PCB Sensy Seal80 Topre EC với các tùy chọn phím tô màu"
+	caption="Layout PCB Seal80 Topre EC. Nguồn: Unikeyboards / Sensy."
+/>
+
+Theo sơ đồ:
+
+<DataTable
+	headers={['Vị trí', 'Tùy chọn']}
+	rows={[
+		['Backspace', '2u, hoặc split thành 2 phím 1u'],
+		['Enter', 'ANSI, hoặc ISO (thêm phím <code>#</code> cạnh Enter)'],
+		['Caps Lock', '2 kiểu Caps Lock'],
+		['Shift trái', '2.25u, hoặc 1.25u + 1u (ISO)'],
+		['Shift phải', '2.75u, hoặc 1u + 1.75u'],
+		[
+			'Hàng dưới',
+			'6.25u với mod 1.25u; 7u với mod 1.5u (WK); hoặc space chia 1.5u + 2.5u + 1.5u + 1.5u'
+		]
+	]}
+/>
+
+### 1.2. Dùng với bộ lòng Realforce nào?
+
+Nói theo các con Realforce có sẵn cho dễ hình dung, PCB này lắp được layout của:
+
+<DataTable
+	headers={['Bàn phím', 'Ghi chú']}
+	rows={[
+		['Realforce R1 87U', 'Space 6u'],
+		['Realforce R1 86U', ''],
+		['Realforce JIS 91U', 'Space chia nhỏ kiểu JIS'],
+		['Realforce R2 87', 'Space 6.25u']
+	]}
+/>
+
+Danh sách này là theo tôi tìm hiểu, không phải thông số từ Sensy. Sơ đồ của Unikeyboards ở trên không vẽ riêng hàng space 6u của R1, nên khi lắp R1 87U thì cần kiểm tra lại vị trí stab space trên PCB và plate.
+
+<Callout variant="note" title="Plate khác PCB">
+	Unikeyboards ghi plate của kit đã tách bản ANSI và ISO, và kit **không còn hỗ
+	trợ space 6.25u**, dù sơ đồ PCB Topre EC ở trên vẫn có hàng 6.25u. Plate của
+	tôi tự cắt laser, nên layout dùng được là theo file plate.
+</Callout>
+
+PCB tôi có là bản **mua extra**, tức mua lẻ PCB mà không mua cả kit. Trang bán phụ kiện chỉ ghi "Includes: 1 Sensy Seal80 Accessory", và thực tế bản extra **không kèm daughterboard (DTB) và dây JST**. Nên tôi phải tự làm phần kết nối USB.
+
+<ContentFigure
+	src="/static/gaydolch-tkl-3d/pcb-seal80-ec-test-dtb.webp"
+	alt="PCB Sensy Seal80 Topre EC màu nâu cắm thử với DTB tự hàn"
+	caption="PCB Seal80 Topre EC cắm thử với DTB tự hàn."
+/>
+
+## 2. Tự làm DTB USB-C
+
+### 2.1. Bo chuyển USB Type-C
+
+Tôi dùng một bo chuyển USB Type-C cái ra chân cắm, [mua trên Shopee](https://shopee.vn/B%E1%BB%99-Chuy%E1%BB%83n-%C4%90%E1%BB%95i-Pin-Type-c-USB-%C4%90%E1%BA%A7u-C%C3%A1i-Sang-%C4%90%E1%BA%A7u-C%C3%A1i-Type-c-i.1038058840.22374551297). Bo này đưa ra các chân CC1, CC2, SBU1, SBU2, D+, D-, VBUS và GND. Trên bo có sẵn hai điện trở ghi `512` (5.1kΩ) ở chân CC, nên cắm được cả dây C-to-C.
+
+<ContentFigure
+	src="/static/gaydolch-tkl-3d/dtb-usb-c-breakout.webp"
+	alt="Bo chuyển USB Type-C cái màu xanh kèm hàng chân cắm"
+	caption="Bo chuyển USB Type-C dùng làm DTB. Nguồn: ảnh sản phẩm trên Shopee."
+/>
+
+### 2.2. Hàn dây
+
+Chỉ cần 4 chân: **VBUS**, **GND**, **D+** và **D-**. Các chân CC và SBU để trống.
+
+<ContentFigure
+	src="/static/gaydolch-tkl-3d/dtb-usb-c-han-day.webp"
+	alt="Bo chuyển USB Type-C đã hàn 4 dây vào D+, D-, VBUS, GND"
+	caption="4 dây hàn vào D+, D-, VBUS và GND."
+/>
+
+Đầu còn lại của dây nối vào cổng DTB trên PCB. Tôi hàn thử như trong ảnh để kiểm tra PCB nhận kết nối.
+
+<ContentFigure
+	src="/static/gaydolch-tkl-3d/pcb-seal80-ec-mat-sau-noi-dtb.webp"
+	alt="Mặt sau PCB Seal80 EC với dây nối sang bo USB-C"
+	caption="Mặt sau PCB, dây nối từ cổng DTB sang bo USB-C."
+/>
+
+<Callout variant="danger" title="Đo lại trước khi cắm">
+	Dây tự đấu thì phải đo lại VBUS và GND bằng đồng hồ trước khi cắm vào máy. Đảo
+	hai chân này là có thể hỏng PCB.
+</Callout>
+
+## 3. Plate và tạ
+
+Plate đã cắt laser xong. Tạ trong dày 3mm cũng đã cắt xong.
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/gaydolch-tkl-3d/plate-cat-laser.webp',
+			alt: 'Plate TKL vừa cắt laser xong'
+		},
+		{
+			src: '/static/gaydolch-tkl-3d/ta-trong-3mm.webp',
+			alt: 'Tạ trong 3mm vừa cắt xong'
+		}
+	]}
+	caption="Plate cắt laser (trái) và tạ trong 3mm (phải)."
+/>
+
+## 4. Render case
+
+Case vẽ dạng TKL, màu nâu.
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/gaydolch-tkl-3d/render-mat-tren.webp',
+			alt: 'Render case nhìn từ trên xuống'
+		},
+		{
+			src: '/static/gaydolch-tkl-3d/render-mat-ben.webp',
+			alt: 'Render case nhìn từ bên hông'
+		}
+	]}
+	caption="Render nhìn từ trên (trái) và từ bên hông (phải)."
+/>
+
+<ContentFigure
+	images={[
+		{
+			src: '/static/gaydolch-tkl-3d/render-mat-day.webp',
+			alt: 'Render mặt đáy case'
+		},
+		{
+			src: '/static/gaydolch-tkl-3d/render-ben-trong-case.webp',
+			alt: 'Render bên trong case với plate'
+		}
+	]}
+	caption="Render mặt đáy (trái) và bên trong case (phải)."
+/>
+
+## 5. Việc còn lại
+
+- Nhận case in 3D và thử fit PCB, plate, tạ.
+- Lắp bộ lòng Topre.
+- Flash firmware, test VIAL.
+- Sound test.
