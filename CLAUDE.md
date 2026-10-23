@@ -20,7 +20,8 @@ bun run format         # Prettier (format:check để chỉ kiểm tra)
 ```
 
 - Project không có test.
-- Husky pre-commit chạy `bun run format:check`, nên commit sẽ bị chặn nếu file chưa chạy Prettier.
+- Husky pre-commit chạy `bun run format:check`, nên commit sẽ bị chặn nếu file chưa chạy Prettier. Trước khi commit, chạy `bun run format` cho cả repo. Chạy Prettier cho một file lẻ có thể ra kết quả khác (ví dụ với thẻ `<video>` trong MDX), làm hook vẫn báo lỗi.
+- `.gitattributes` ép xuống dòng kiểu LF. Nếu thấy mọi file đều báo lỗi Prettier, kiểm tra xem file có bị đổi sang CRLF không.
 - CI (`.github/workflows/deploy.yml`) chạy `format:check`, `lint` và `check`, rồi build và deploy lên GitHub Pages mỗi lần push lên `main`. CI dùng `bun install --frozen-lockfile`, nên nếu thêm hoặc sửa dependency thì phải commit cả `bun.lock`.
 
 ## Kiến trúc
@@ -35,6 +36,22 @@ bun run format         # Prettier (format:check để chỉ kiểm tra)
 - **`functions/api/wakatime.ts`** là Cloudflare Pages Function, proxy WakaTime API (cần env `WAKATIME_API_KEY`). Bento component `WakatimeCalendar.tsx` gọi `/api/wakatime` trước, rồi mới fallback sang JSON share công khai. Trên GitHub Pages function này không chạy.
 
 ## Cách viết bài
+
+### Văn phong
+
+Bài mẫu là `src/content/projects/ncr80-topre-build/index.mdx`. Viết như một người chơi phím kể lại việc mình đã làm, không viết như văn AI.
+
+- Xưng "tôi" trong project (build log). Câu thẳng, ngắn đến vừa: làm gì, vì sao, kết quả ra sao. Ví dụ: "Mua bo mạch xong, tôi không tìm thấy file JSON cho VIA cũng như file plate ở đâu."
+- Được phép có nhận xét thật, xuất phát từ sự việc ("Tôi lười nên chỉ dùng solenoid.", "tôi quên chụp hình"). Không cố pha trò.
+- Viết lại theo đúng lời tác giả kể. Không thêm chi tiết, số liệu hay suy luận mà tác giả không đưa ra. Chỗ nào là suy đoán thì ghi rõ là suy đoán, hoặc hỏi lại tác giả.
+- **Tránh** các kiểu câu sau:
+  - Câu mở màn kiểu "Nghe thì đơn giản… nhưng…", "Nhưng cứ dính tới X thì nó lại thành…".
+  - Cấu trúc "không chỉ… mà còn…", "Có thể nói…", "Nhìn chung…", "Điểm tôi thích nhất là…".
+  - Mục "Đúc kết" hay "Tổng kết" toàn bài học chung chung, hoặc đoạn cuối chỉ tóm tắt lại những gì vừa viết.
+  - In đậm tràn lan. Chỉ in đậm tên linh kiện, số liệu hay cảnh báo quan trọng.
+  - Ngoặc kép bao quanh cụm từ đời thường, gạch ngang (—) dùng để làm màu, chuỗi "Vì vậy… Nhờ đó…".
+  - Gạch đầu dòng lặp lại ý của đoạn văn ngay phía trên.
+- Ảnh được tác giả gửi kèm mô tả. Đối chiếu nội dung ảnh với mô tả, vì nhãn có thể bị lệch một ảnh. Nếu lệch thì xếp theo nội dung ảnh và báo lại cho tác giả.
 
 ### Bài blog
 
