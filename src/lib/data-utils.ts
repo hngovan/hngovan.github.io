@@ -285,7 +285,7 @@ export async function parseAuthors(authorIds: string[] = []) {
 		return {
 			id,
 			name: author?.data?.name || id,
-			avatar: withBasePath(author?.data?.avatar || '/static/logo.png'),
+			avatar: withBasePath(author?.data?.avatar || '/static/logo.webp'),
 			isRegistered: !!author
 		}
 	})
