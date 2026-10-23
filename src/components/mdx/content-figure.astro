@@ -42,7 +42,12 @@ const resolveSrc = (value: string) =>
 <figure class={className}>
 	{
 		items.length === 1 ? (
-			<img src={resolveSrc(items[0].src)} alt={items[0].alt} />
+			<img
+				src={resolveSrc(items[0].src)}
+				alt={items[0].alt}
+				loading="lazy"
+				decoding="async"
+			/>
 		) : (
 			<div
 				class={`grid items-stretch gap-3 ${columnClassMap[columns] ?? columnClassMap[2]}`}
@@ -52,6 +57,8 @@ const resolveSrc = (value: string) =>
 						<img
 							src={resolveSrc(item.src)}
 							alt={item.alt}
+							loading="lazy"
+							decoding="async"
 							class="size-full object-cover"
 						/>
 					</div>
