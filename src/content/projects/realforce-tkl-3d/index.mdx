@@ -1,7 +1,7 @@
 ---
 name: 'Realforce TKL 3D Printed Case'
 description: 'Build log in 3D case Realforce TKL cho Realforce R1/R2: thiết kế vỏ PETG, sửa file plate, fit lòng Topre và chia sẻ file STL tham khảo.'
-image: '/static/realforce-tkl-3d/CAD-v1-1.webp'
+image: '/static/realforce-tkl-3d/ban-ve-cad-v1-1.webp'
 routeSlug: 'realforce-tkl-3d'
 tags:
   [
@@ -54,85 +54,67 @@ sections:
 import Callout from '@/components/callout.astro'
 import ContentFigure from '@/components/mdx/content-figure.astro'
 
-Đây là build log **Realforce TKL 3D printed case**: tôi thử **in 3D case cho Realforce**
-R1/R2 bằng PETG, đưa cổng USB ra daughterboard/Type-C, rồi ghi lại cả phần sai file,
-fit lòng Topre, chi phí và file STL tham khảo.
-
-Ý tưởng ban đầu đến khá đơn giản: tôi mua một chiếc **Realforce R2 màu beige**
-trên chợ cá [Goofish](https://www.goofish.com/). Nhận hàng xong thì phát hiện
-case bị nứt và cấn vài vết. Về mặt thẩm mỹ thì còn nhắm mắt bỏ qua được, nhưng
-khi gõ lại có tiếng vỏ nứt lạo xạo rất khó chịu.
-
-Thế là tôi bắt đầu nghĩ tới chuyện: tại mình lại không thử in hẳn một cái case mới?
+Tôi mua một con **Realforce R2 màu beige** trên chợ cá [Goofish](https://www.goofish.com/). Nhận hàng thì case bị nứt và cấn vài vết. Nhìn thì còn bỏ qua được, nhưng gõ vào có tiếng vỏ nứt lạo xạo rất khó chịu. Nên tôi quyết định in 3D một cái case mới bằng PETG, dùng được cho cả R1 và R2, cổng USB đưa ra daughterboard hoặc Type-C.
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/case-realforce-break-1.jpg',
+			src: '/static/realforce-tkl-3d/case-r2-goc-bi-nut.jpg',
 			alt: 'Vết nứt trên case Realforce R2 beige'
 		},
 		{
-			src: '/static/realforce-tkl-3d/case-realforce-break-2.jpg',
+			src: '/static/realforce-tkl-3d/case-r2-goc-bi-can.jpg',
 			alt: 'Vết cấn trên case Realforce R2 beige'
 		}
 	]}
-	caption="Vỏ zin bị nứt/cấn. Nhìn thì vẫn dùng được, nhưng tiếng nhựa lạo xạo khi gõ thì đúng kiểu “không cứu”."
+	caption="Vỏ zin bị nứt và cấn. Vẫn dùng được, nhưng gõ thì nghe tiếng nhựa lạo xạo."
 />
 
-## 1. Realforce TKL 3D case: bắt đầu từ file plate và một niềm tin hơi mong manh
+## 1. File plate và bản vẽ case
 
 ### 1.1. Tìm file plate Realforce R1/R2 tham khảo
 
-Tôi có tìm được một file plate Realforce trên GitHub:
-[KB-Realforce_R1_plate](https://github.com/jerryxrj/KB-Realforce_R1_plate).
-Ý tưởng lúc đó là: có file plate thì chắc vẽ case được thôi.
+Tôi tìm được một file plate Realforce trên GitHub: [KB-Realforce_R1_plate](https://github.com/jerryxrj/KB-Realforce_R1_plate). Lúc đó tôi nghĩ có file plate thì vẽ được case.
 
-Nghe rất hợp lý cho đến khi thực tế vả một phát khá đau: file plate ban đầu sai
-thông số. Nhưng chuyện đó lúc đầu tôi chưa biết, nên vẫn in thử, và tất nhiên mọi sai lầm đều trả giá bằng tiền.
+Thực tế file plate này sai thông số. Lúc đầu tôi không biết nên vẫn đem in, và cái sai này tốn tiền (xem phần 3).
 
-### 1.2. Nhờ maker vẽ case Realforce TKL in 3D
+### 1.2. Nhờ maker vẽ case
 
-Vì tôi không có chuyên môn CAD/cơ khí, tôi nhờ một maker người Lào vẽ case. Anh
-này làm khá nhanh, tùy độ phức tạp mà khoảng 2 ngày làm việc đã trả file. Nhanh
-hơn kha khá so với vài kèo “shop Jollibee nào đó” 🐧.
+Tôi không biết CAD hay cơ khí, nên nhờ một maker người Lào vẽ case. Anh làm khá nhanh, tùy độ phức tạp thì khoảng 2 ngày làm việc là có file, nhanh hơn kha khá so với vài shop khác.
 
-Bạn có thể liên hệ maker tại đây:
-[Facebook Lê Hạ Thư](https://www.facebook.com/hathu.le.526438/).
+Liên hệ maker: [Facebook Lê Hạ Thư](https://www.facebook.com/hathu.le.526438/).
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/CAD-v1-1.webp',
+			src: '/static/realforce-tkl-3d/ban-ve-cad-v1-1.webp',
 			alt: 'CAD v1 của Realforce TKL 3D printed case góc nhìn thứ nhất'
 		},
 		{
-			src: '/static/realforce-tkl-3d/CAD-v1-2.webp',
+			src: '/static/realforce-tkl-3d/ban-ve-cad-v1-2.webp',
 			alt: 'CAD v1 của Realforce TKL 3D printed case góc nhìn thứ hai'
 		}
 	]}
 />
 
 <ContentFigure
-	src="/static/realforce-tkl-3d/CAD-v1-3.webp"
+	src="/static/realforce-tkl-3d/ban-ve-cad-v1-3.webp"
 	alt="CAD v1 của Realforce TKL 3D printed case góc nhìn thứ ba"
 	caption="Bản dựng đầu tiên."
 />
 
-## 2. Chuẩn bị dây USB và daughterboard cho Realforce TKL
+## 2. Dây USB và daughterboard
 
 ### 2.1. Daughterboard
 
-Trong lúc chờ case in xong, tôi chuẩn bị trước phần kết nối USB. Phương án chính là
-dùng **Ai03 Unified Daughterboard**. Nếu không dùng daughterboard thì có thể đấu
-thẳng ra một cổng Type-C đầu cái, nhưng dùng daughterboard sẽ gọn và dễ tháo lắp
-hơn.
+Trong lúc chờ in case, tôi chuẩn bị phần kết nối USB. Tôi dùng **Ai03 Unified Daughterboard**. Không có daughterboard thì đấu thẳng ra một cổng Type-C đầu cái cũng được, nhưng daughterboard gọn hơn và dễ tháo lắp hơn.
 
 <ContentFigure
-	src="/static/realforce-tkl-3d/dtb-ai03.jpg"
+	src="/static/realforce-tkl-3d/daughterboard-ai03.jpg"
 	alt="Ai03 Unified Daughterboard dùng cho Realforce TKL 3D printed case"
-	caption="Ai03 Unified Daughterboard dùng để đưa cổng USB ra ngoài case."
+	caption="Ai03 Unified Daughterboard để đưa cổng USB ra ngoài case."
 />
 
 ### 2.2. Chuẩn dây của Realforce R1 và R2
@@ -143,9 +125,7 @@ Mỗi đời Realforce có thể dùng chuẩn dây khác nhau. Với mấy con 
 - Realforce R1 dùng **JST EHR 4 pin**.
 - Daughterboard Ai03 thường dùng **JST PH 1.0 4 pin**.
 
-Đoạn này nghe thì đơn giản, nhưng tìm dây JST EHR 4 pin trên Shopee gần như không
-có. Cuối cùng tôi phải lặn lội qua người bạn Tung Của để mua. Hành trình DIY đôi
-khi không phải hàn khó, mà là tìm đúng cái jack bé tí khó hơn cả tìm chân ái.
+Dây JST EHR 4 pin gần như không có trên Shopee. Cuối cùng tôi phải nhờ người bạn Tung Của mua giúp.
 
 Link tham khảo:
 
@@ -156,248 +136,234 @@ Link tham khảo:
 - JST EHR 4 pin:
   https://item.taobao.com/item.htm?id=833285337190&skuId=5748999655170
 
-Nếu cần tham khảo cách tháo vỏ Realforce, có thể xem bài này:
+Cách tháo vỏ Realforce có thể xem ở đây:
 https://www.galaxy-factory.com/goods/goods_view.php?goodsNo=1000000006
 
-<Callout variant="danger" title="🚨 Cảnh báo trước khi đấu dây">
-	Sơ đồ dưới đây chỉ là phần tôi dùng được với các board Realforce tôi đang có.
-	Không áp dụng mù cho mọi phiên bản Realforce. Nếu bạn không chắc VCC, GND, D+
-	và D- nằm ở đâu thì nên dừng lại, hỏi người có kinh nghiệm, hoặc chuẩn bị tinh
-	thần nhìn PCB bay màu IC.
+<Callout variant="danger" title="Cảnh báo trước khi đấu dây">
+	Sơ đồ dưới đây chỉ đúng với các board Realforce tôi đang có, không áp dụng cho
+	mọi phiên bản Realforce. Nếu không chắc VCC, GND, D+ và D- nằm ở đâu thì dừng
+	lại và hỏi người có kinh nghiệm, không thì dễ cháy IC trên PCB.
 </Callout>
 
 ### 2.3. Bỏ dây chống nhiễu SG
 
-Với dây JST, có thể bỏ dây chống nhiễu **SG (Shield Ground / Drain Wire)**. Phần
-này áp dụng được cho cả R1 và R2 trong setup của tôi.
+Với dây JST, có thể bỏ dây chống nhiễu **SG (Shield Ground / Drain Wire)**. Trong setup của tôi, cách này dùng được cho cả R1 và R2.
 
-Ở R1, dây chống nhiễu nằm riêng nên khá dễ nhận biết.
+Ở R1, dây chống nhiễu nằm riêng nên dễ nhận ra.
 
 <ContentFigure
-	src="/static/realforce-tkl-3d/jst-rf-r1.jpg"
+	src="/static/realforce-tkl-3d/day-jst-goc-r1.jpg"
 	alt="Dây JST gốc của Realforce R1"
-	caption="Dây JST của Realforce R1. Dây chống nhiễu nằm riêng nên đỡ lú hơn."
+	caption="Dây JST của Realforce R1. Dây chống nhiễu nằm riêng."
 />
 
-về dây JST EHR 4 pin của R1 thì về hơi muộn, nên trước đó tôi dùng ống co nhiệt để cố định tạm
-😝. Cách này có tham khảo từ tiền bối, cụ thể là anh Công khó tính 🫥.
+Dây JST EHR 4 pin cho R1 về muộn, nên trước đó tôi dùng ống co nhiệt để cố định tạm. Cách này tôi học từ anh Công.
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/jst-rfr1-to-ai03-1.jpg',
+			src: '/static/realforce-tkl-3d/day-r1-noi-ai03-ong-co-nhiet-1.jpg',
 			alt: 'Dây Realforce R1 nối sang Ai03 bằng ống co nhiệt ảnh thứ nhất'
 		},
 		{
-			src: '/static/realforce-tkl-3d/jst-rfr1-to-ai03-2.jpg',
+			src: '/static/realforce-tkl-3d/day-r1-noi-ai03-ong-co-nhiet-2.jpg',
 			alt: 'Dây Realforce R1 nối sang Ai03 bằng ống co nhiệt ảnh thứ hai'
 		}
 	]}
-	caption="Bản cố định bằng ống co nhiệt. Không đẹp lắm, nhưng thôi kệ miễn sao dùng được là được."
+	caption="Bản cố định tạm bằng ống co nhiệt. Không đẹp nhưng dùng được."
 />
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/jst-ehr-4-1.jpg',
+			src: '/static/realforce-tkl-3d/day-jst-ehr-4-pin-1.jpg',
 			alt: 'Dây JST EHR 4 pin cho Realforce R1 ảnh thứ nhất'
 		},
 		{
-			src: '/static/realforce-tkl-3d/jst-ehr-4-2.jpg',
+			src: '/static/realforce-tkl-3d/day-jst-ehr-4-pin-2.jpg',
 			alt: 'Dây JST EHR 4 pin cho Realforce R1 ảnh thứ hai'
 		}
 	]}
-	caption="JST EHR 4 pin sau khi chờ mỏi cả cổ mới về."
+	caption="Dây JST EHR 4 pin khi đã về."
 />
 
-Ở R2, dây chống nhiễu nằm chung trên jack JST, cụ thể là dây màu xanh da trời ở
-ngoài cùng bên phải. bạn có thể bỏ dây đó.
+Ở R2, dây chống nhiễu nằm chung trên jack JST, là dây màu xanh da trời ngoài cùng bên phải. Dây này có thể bỏ.
 
 <ContentFigure
-	src="/static/realforce-tkl-3d/jst-rf-r2-and-jst-new.jpg"
+	src="/static/realforce-tkl-3d/day-jst-r2-va-day-moi.jpg"
 	alt="Dây JST Realforce R2 và dây mới sau khi bỏ dây chống nhiễu"
-	caption="Bên trái là dây mới, bên phải là dây gốc Realforce R2. Dây xanh ngoài cùng là dây chống nhiễu có thể bỏ trong setup của tôi."
+	caption="Bên trái là dây mới, bên phải là dây gốc Realforce R2. Dây xanh ngoài cùng là dây chống nhiễu, trong setup của tôi thì bỏ được."
 />
 
-Nếu không dùng daughterboard, bạn cũng có thể đấu thẳng ra cổng Type-C đầu cái.
-Từ sơ đồ dây Type-C này có thể suy ra cách đấu tương tự cho đầu PH 1.0 4 pin cắm
-vào daughterboard.
+Nếu không dùng daughterboard thì đấu thẳng ra cổng Type-C đầu cái. Từ sơ đồ Type-C này cũng suy ra được cách đấu đầu PH 1.0 4 pin cắm vào daughterboard.
 
 <ContentFigure
-	src="/static/realforce-tkl-3d/ph-4pin-to-type-c.jpg"
+	src="/static/realforce-tkl-3d/so-do-ph-4-pin-sang-type-c.jpg"
 	alt="Sơ đồ đấu dây PH 4 pin sang Type-C đầu cái"
-	caption="Đấu thẳng ra Type-C đầu cái cũng được, miễn là không đảo dây data."
+	caption="Sơ đồ đấu thẳng ra Type-C đầu cái. Chú ý không đảo dây data."
 />
 
-## 3. Bản in 3D case Realforce TKL đầu tiên
+## 3. Bản in đầu tiên
 
-Sau khoảng 3 ngày thì case in 3D về. Bản đầu tiên dùng PETG, vỏ khá dày, tiền
-nhựa in rơi vào khoảng **600k**. Cầm lên khá đầm.
+Khoảng 3 ngày sau thì case về. Bản đầu in bằng PETG, vỏ khá dày, tiền nhựa in khoảng **600k**. Cầm lên khá đầm.
 
-Và vấn đề đã xuất hiện thông số file plate tham khảo bị sai khiến lòng case hẹp hơn bình thường. Tôi còn rất tự tin cấy ren và assemble daughterboard vào trước khi thử ướm bộ lòng Realforce. Đây là cái ngu lớn nhất của cả dự án 🫠.
+Vấn đề là file plate tham khảo sai thông số, nên lòng case hẹp hơn bình thường. Tệ hơn, tôi đã cấy ren và lắp daughterboard trước khi ướm thử bộ lòng Realforce. Đây là lỗi lớn nhất của cả project.
 
 <ContentFigure
-	src="/static/realforce-tkl-3d/rippuwallettu-pepe-wallet.gif"
+	src="/static/realforce-tkl-3d/pepe-xe-vi.gif"
 	alt="Pepe xé ví sau khi nhận ra file plate sai thông số"
-	caption="Khoảnh khắc nhận ra file plate sai thông số và ví bắt đầu bay màu."
+	caption="Lúc nhận ra file plate sai thông số."
 />
 
 <ContentFigure
-	src="/static/realforce-tkl-3d/full-3d-v1.jpg"
+	src="/static/realforce-tkl-3d/case-v1-ban-in-dau-tien.jpg"
 	alt="Case Realforce TKL in 3D bản đầu tiên trên tay"
-	caption="Case in 3D bản đầu tiên"
+	caption="Case in 3D bản đầu tiên."
 />
 <ContentFigure
-	src="/static/realforce-tkl-3d/body-realfroce-r2.jpg"
+	src="/static/realforce-tkl-3d/bo-long-realforce-r2.jpg"
 	alt="Bộ lòng Realforce R2 dùng để ướm vào case"
 	caption="Bộ lòng Realforce R2."
 />
 
-### 3.1. Cấy ren trước khi thử fit: đừng như tôi
+### 3.1. Đừng cấy ren trước khi thử fit
 
-Cách cấy ren khá đơn giản: dùng mỏ hàn đầu tròn, chỉnh khoảng **350-400°C**, đặt
-đai ốc vào lỗ rồi dí mỏ hàn xuống từ từ cho nhựa chảy ôm ren.
+Cấy ren thì đơn giản: dùng mỏ hàn đầu tròn, chỉnh khoảng **350-400°C**, đặt đai ốc vào lỗ rồi dí mỏ hàn xuống từ từ cho nhựa chảy ôm ren.
 
-Nghe thì ổn, nhưng thứ tự thao tác của tôi không ổn: tôi cấy ren và lắp
-daughterboard trước, sau đó mới thử đặt bộ lòng vào. Kết quả là bộ lòng không
-lọt. Không có phép màu nào ở đây cả 🥲.
+Cái sai của tôi là thứ tự. Tôi cấy ren và lắp daughterboard trước, rồi mới đặt bộ lòng vào, và bộ lòng không lọt.
 
-<Callout variant="warning" title="💡 Kinh nghiệm rút ra">
-	In case xong hãy thử fit bộ lòng trước. Khi mọi thứ lọt, thẳng, không cấn thì
-	mới cấy ren, bắt ốc, gá daughterboard. Làm ngược lại thì case chưa chắc thành
-	bàn phím, nhưng chắc chắn thành bài học.
+<Callout variant="warning" title="Thử fit trước">
+	In case xong thì ướm bộ lòng trước. Khi bộ lòng lọt, nằm thẳng, không cấn thì
+	mới cấy ren, bắt ốc và gá daughterboard.
 </Callout>
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/case-3d-v1.jpg',
+			src: '/static/realforce-tkl-3d/bottom-case-v1.jpg',
 			alt: 'Bottom case Realforce TKL in 3D bản v1'
 		},
 		{
-			src: '/static/realforce-tkl-3d/case-3d-v1-6.jpg',
+			src: '/static/realforce-tkl-3d/long-case-v1.jpg',
 			alt: 'Lòng case Realforce TKL in 3D bản v1'
 		}
 	]}
-	caption="Bề mặt bot case và lòng case."
+	caption="Bề mặt bottom case và lòng case."
 />
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/case-3d-v1-5.jpg',
+			src: '/static/realforce-tkl-3d/top-case-v1.jpg',
 			alt: 'Top case Realforce TKL in 3D bản v1'
 		},
 		{
-			src: '/static/realforce-tkl-3d/case-3d-v1-2.jpg',
+			src: '/static/realforce-tkl-3d/long-case-v1-lap-daughterboard.jpg',
 			alt: 'Lòng case bản v1 sau khi đã assemble daughterboard'
 		}
 	]}
-	caption="Bề mặt top và lòng case sau khi assemble daughterboard."
+	caption="Bề mặt top case và lòng case sau khi lắp daughterboard."
 />
 
 <ContentFigure
-	src="/static/realforce-tkl-3d/case-3d-v1-1.jpg"
+	src="/static/realforce-tkl-3d/case-v1-long-r2-bi-can.jpg"
 	alt="Bộ lòng Realforce R2 đặt vào case v1 nhưng bị cấn"
-	caption="Bản v1 bị hẹp lòng. Ướm thử bộ lòng Realforce R2 vào nhưng không lọt."
+	caption="Bản v1 bị hẹp lòng, ướm bộ lòng Realforce R2 vào không lọt."
 />
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/case-3d-v1-7.jpg',
+			src: '/static/realforce-tkl-3d/case-v1-thu-fit-mat-tren.jpg',
 			alt: 'Mặt trên case v1 khi phải nghiêng bộ lòng để thử fit'
 		},
 		{
-			src: '/static/realforce-tkl-3d/case-3d-v1-4.jpg',
+			src: '/static/realforce-tkl-3d/case-v1-long-r2-bi-nghieng.jpg',
 			alt: 'Bộ lòng Realforce R2 bị nghiêng khi ướm vào case v1'
 		}
 	]}
-	caption="Bản v1 bị hẹp lòng. Hình ảnh mặt top và lòng case sau khi ướm thử mà không vừa"
+	caption="Mặt top và lòng case v1 khi ướm thử không vừa."
 />
 
 <ContentFigure
-	src="/static/realforce-tkl-3d/case-3d-v1-3.jpg"
+	src="/static/realforce-tkl-3d/top-case-v1-qua-cao.jpg"
 	alt="Bề dày top case v1 khiến chân keycap không lộ nhiều"
-	caption="Bản v1 bị hẹp lòng. top case hơi cao, làm chân keycap không lộ nhiều. Phần này tùy gu, nhưng với tôi thì cần chỉnh lại."
+	caption="Ngoài hẹp lòng, top case bản v1 hơi cao nên chân keycap không lộ nhiều. Cái này tùy gu, nhưng tôi muốn chỉnh lại."
 />
 
-## 4. Sửa file plate và in lại Realforce 3D printed case lần hai
+## 4. Sửa file plate và in lần hai
 
-Sau vài ngày dò nguyên nhân, maker [Facebook Lê Hạ Thư](https://www.facebook.com/hathu.le.526438/). tìm được file Realforce R1 của maker **Sho**: [86u/87u 2023 Sho DWG](https://github.com/4xgk3/Keyboard-plate-files/blob/main/86u7u_2023_sho.dwg).
-Từ đó mới phát hiện file plate ban đầu sai thông số. Case được chỉnh lại và đem in lần hai.
+Sau vài ngày dò nguyên nhân, maker [Lê Hạ Thư](https://www.facebook.com/hathu.le.526438/) tìm được file Realforce R1 của maker **Sho**: [86u/87u 2023 Sho DWG](https://github.com/4xgk3/Keyboard-plate-files/blob/main/86u7u_2023_sho.dwg). Đối chiếu với file này mới biết file plate ban đầu sai thông số. Case được sửa lại và in lần hai.
 
-Lần này bộ lòng đã vào được. Cảm giác lúc đó giống kiểu “Mọi cố gắng cuối cùng cũng được
-đền đáp! 🤭”.
+Lần này bộ lòng vào được.
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/assem-with-rf-r1.jpg',
+			src: '/static/realforce-tkl-3d/case-sua-lap-long-r1.jpg',
 			alt: 'Case in 3D assemble với bộ lòng Realforce R1'
 		},
 		{
-			src: '/static/realforce-tkl-3d/assem-with-rf-r2.jpg',
+			src: '/static/realforce-tkl-3d/case-sua-lap-long-r2.jpg',
 			alt: 'Case in 3D assemble với bộ lòng Realforce R2'
 		}
 	]}
-	caption="Bên trái là bộ lòng Realforce R1 còn bên phải là bộ lòng Realforce R2"
+	caption="Bộ lòng Realforce R1 (trái) và Realforce R2 (phải) trong case bản sửa."
 />
 
-Bản sau khi sửa đã fit được cả Realforce R1 và R2, nhưng R2 vẫn có vài điểm
-cần xử lý thêm.
+Bản sửa fit được cả R1 và R2, nhưng R2 còn vài chỗ phải xử lý thêm.
 
 ### 4.1. Khác biệt giữa plate R1 và R2
 
 Plate R1 và R2 không giống nhau hoàn toàn:
 
 - R2 dài hơn R1 khoảng **1 mm ~ 2mm**, chia đều cho hai bên.
-- Lỗ bắt ốc phía trên thì ổn vì vị trí giống nhau.
-- Lỗ bắt ốc cạnh dưới của R1 khớp hơn.
-- Với R2 thì bị lệch một chút vì file tham chiếu chính là plate R1 nhưng có thể chêm bu lông để khắc phục điều này.
+- Lỗ bắt ốc phía trên giống vị trí nhau nên không có vấn đề.
+- Lỗ bắt ốc cạnh dưới khớp với R1 hơn.
+- Với R2 thì lệch một chút, vì file tham chiếu là plate R1. Có thể chêm bu lông để khắc phục.
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/screw-bot-r2-left.jpg',
+			src: '/static/realforce-tkl-3d/lo-vit-duoi-trai-r2.jpg',
 			alt: 'Lỗ bắt vít phía dưới bên trái sau khi cấy ren và ướm với Realforce R2'
 		},
 		{
-			src: '/static/realforce-tkl-3d/screw-bot-r2-right.jpg',
+			src: '/static/realforce-tkl-3d/lo-vit-duoi-phai-r2.jpg',
 			alt: 'Lỗ bắt vít phía dưới bên phải sau khi cấy ren và ướm với Realforce R2'
 		},
 		{
-			src: '/static/realforce-tkl-3d/screw-top-r2-left.jpg',
+			src: '/static/realforce-tkl-3d/lo-vit-tren-trai-r2.jpg',
 			alt: 'Lỗ bắt vít phía trên khi ướm với Realforce R2'
 		},
 		{
-			src: '/static/realforce-tkl-3d/screwled-bot-r2-left.jpg',
+			src: '/static/realforce-tkl-3d/lo-vit-duoi-trai-r2-da-bat-vit.jpg',
 			alt: 'Lỗ bắt vít Realforce R2 sau khi đã bắt vít'
 		}
 	]}
-	caption="Các vị trí bắt vít khi ướm với Realforce R2. Fit được, nhưng không phải kiểu “thả vào là khớp như Lego”."
+	caption="Các vị trí bắt vít khi ướm với Realforce R2. Fit được, nhưng không khớp ngay."
 />
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/screw-bot-r1-right.jpg',
+			src: '/static/realforce-tkl-3d/lo-vit-duoi-phai-r1.jpg',
 			alt: 'Lỗ bắt vít phía dưới khi ướm với Realforce R1'
 		},
 		{
-			src: '/static/realforce-tkl-3d/screwled-bot-r1-right.jpg',
+			src: '/static/realforce-tkl-3d/lo-vit-duoi-phai-r1-da-bat-vit.jpg',
 			alt: 'Lỗ bắt vít Realforce R1 sau khi đã bắt vít'
 		}
 	]}
-	caption="Với Realforce R1 thì mọi thứ chuẩn chỉnh hơn vì file tham chiếu cuối cùng cũng đi theo R1."
+	caption="Với Realforce R1 thì lỗ vít khớp hơn, vì file tham chiếu là plate R1."
 />
 
 ### 4.2. Riêng R2 cần khoét thêm
@@ -407,104 +373,99 @@ R1 và R2 còn khác nhau ở hướng gập của plate:
 - R1: cạnh dưới gập xuống, cạnh trên gập lên.
 - R2: cạnh dưới gập lên, cạnh trên gập xuống.
 
-Vì vậy nếu chơi R1 thì có thể bỏ qua bước khoét. Còn với R2, phần cạnh gập bị
-cấn nên tôi phải dùng dao và mỏ hàn để khoét thêm. Đây là lúc dự án chuyển từ
-“thiết kế case” sang “điêu khắc nhựa thủ công phiên bản hơi run tay”.
+Dùng R1 thì bỏ qua bước này. Với R2, cạnh gập bị cấn nên tôi phải dùng dao và mỏ hàn khoét thêm.
 
 <ContentFigure
-	src="/static/realforce-tkl-3d/plate-r1-r2.webp"
+	src="/static/realforce-tkl-3d/plate-r1-chong-plate-r2.webp"
 	alt="So sánh plate Realforce R1 và R2 khi chồng lên nhau"
-	caption="So sánh plate R1 và R2 khi chồng lên nhau. Ở trên là R1, ở dưới là R2."
+	caption="Plate R1 (trên) và R2 (dưới) chồng lên nhau."
 />
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/before-hollow-for-r2.jpg',
+			src: '/static/realforce-tkl-3d/case-truoc-khi-khoet-cho-r2.jpg',
 			alt: 'Vị trí case bị cấn trước khi khoét cho Realforce R2'
 		},
 		{
-			src: '/static/realforce-tkl-3d/after-hollow-for-r2.webp',
+			src: '/static/realforce-tkl-3d/case-sau-khi-khoet-cho-r2.webp',
 			alt: 'Vị trí case sau khi khoét để fit Realforce R2'
 		}
 	]}
-	caption="Trước và sau khi khoét phần bị cấn cho R2. Nhìn hơi thủ công, nhưng miễn fit là được."
+	caption="Trước và sau khi khoét chỗ bị cấn cho R2. Làm tay nên không đẹp, nhưng fit được."
 />
 
 ## 5. Thành phẩm
 
-Sau khi sửa file, in lại và xử lý các điểm cấn, case đã assemble được với cả R1
-và R2. Bản hoàn thiện dùng được, cổng USB đưa ra cạnh case gọn hơn, và quan trọng
-nhất là không còn tiếng vỏ nứt lạo xạo như ban đầu.
+Sau khi sửa file, in lại và khoét chỗ cấn, case lắp được với cả R1 và R2. Cổng USB đưa ra cạnh case, và không còn tiếng vỏ nứt lạo xạo như con R2 lúc mới mua.
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/case-3d-and-realforce-r1-1.jpg',
+			src: '/static/realforce-tkl-3d/case-3d-canh-realforce-r1-1.jpg',
 			alt: 'Case Realforce in 3D đặt cạnh Realforce R1 ảnh thứ nhất'
 		},
 		{
-			src: '/static/realforce-tkl-3d/case-3d-and-realforce-r1-2.jpg',
+			src: '/static/realforce-tkl-3d/case-3d-canh-realforce-r1-2.jpg',
 			alt: 'Case Realforce in 3D đặt cạnh Realforce R1 ảnh thứ hai'
 		}
 	]}
-	caption="Case in 3D sau khi assemble, đặt cạnh Realforce R1."
+	caption="Case in 3D sau khi lắp, đặt cạnh Realforce R1."
 />
 
 <ContentFigure
 	columns={3}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/full-3d-side-v2.webp',
+			src: '/static/realforce-tkl-3d/case-v2-mat-ben.webp',
 			alt: 'Mặt bên của case Realforce TKL in 3D'
 		},
 		{
-			src: '/static/realforce-tkl-3d/full-3d-top-edge-v2.webp',
+			src: '/static/realforce-tkl-3d/case-v2-canh-tren.webp',
 			alt: 'Cạnh trên của case Realforce TKL in 3D'
 		},
 		{
-			src: '/static/realforce-tkl-3d/gate-usb-3d-v2.jpg',
+			src: '/static/realforce-tkl-3d/case-v2-cong-type-c.jpg',
 			alt: 'Cổng USB Type-C trên case Realforce TKL in 3D'
 		}
 	]}
-	caption="Mặt bên, cạnh trên và cổng Type-C. Tổng thể khá gọn so với xuất phát điểm là một cái vỏ nứt."
+	caption="Mặt bên, cạnh trên và cổng Type-C."
 />
 
 <ContentFigure
 	columns={2}
 	images={[
 		{
-			src: '/static/realforce-tkl-3d/assem-top-rf-r1.webp',
+			src: '/static/realforce-tkl-3d/mat-tren-lap-r1.webp',
 			alt: 'Mặt trên case in 3D sau khi assemble với Realforce R1'
 		},
 		{
-			src: '/static/realforce-tkl-3d/assem-top-rf-r2.jpg',
+			src: '/static/realforce-tkl-3d/mat-tren-lap-r2.jpg',
 			alt: 'Mặt trên case in 3D sau khi assemble với Realforce R2'
 		}
 	]}
-	caption="Mặt trên khi assemble với R1 và R2. R1 fit đẹp hơn, R2 dùng được nhưng phải chịu khó xử lý thêm phần cấn."
+	caption="Mặt trên khi lắp với R1 và R2. R1 fit đẹp hơn, R2 dùng được nhưng phải khoét thêm chỗ cấn."
 />
 
 <ContentFigure
-	src="/static/realforce-tkl-3d/weight-rf-r2.jpg"
+	src="/static/realforce-tkl-3d/can-nang-lap-r2.jpg"
 	alt="Cân nặng Realforce R2 sau khi assemble với case in 3D"
-	caption="Cân nặng sau khi assemble với Realforce R2. Còn R1 thì tôi quên cân mất 😝."
+	caption="Cân nặng khi lắp với Realforce R2. Con R1 thì tôi quên cân."
 />
 
 ## 6. Sound test tham khảo
 
-Các clip dưới đây chỉ để tham khảo tương đối. Âm gõ còn phụ thuộc dome, stab,
-keycap, mặt bàn, mic, phòng và cả tâm trạng người nghe hôm đó nữa.
+Các clip dưới đây chỉ để so sánh tương đối. Âm gõ còn phụ thuộc dome, stab, keycap, mặt bàn, mic và phòng thu.
 
-### 6.1. Sound test Realforce với case in 3D
+### 6.1. Case in 3D
 
 <figure>
 	<video
 		controls
 		preload="metadata"
-		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/soudtest-rf-r1-3d-no-mod-variable.mp4.mp4`}
+		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/sound-test-r1-case-3d-chua-mod-variable.mp4`}
 	/>
 	<figcaption>Realforce R1 với case in 3D, chưa mod, dome Variable.</figcaption>
 </figure>
@@ -513,7 +474,7 @@ keycap, mặt bàn, mic, phòng và cả tâm trạng người nghe hôm đó n�
 	<video
 		controls
 		preload="metadata"
-		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/soudtest-rf-r2-3d-moded-uniform-45g.mp4`}
+		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/sound-test-r2-case-3d-mod-uniform-45g.mp4`}
 	/>
 	<figcaption>
 		Realforce R2 với case in 3D, bản silent, dome Uniform 45g, đã mod stab.
@@ -524,7 +485,7 @@ keycap, mặt bàn, mic, phòng và cả tâm trạng người nghe hôm đó n�
 	<video
 		controls
 		preload="metadata"
-		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/soudtest-rf-r2-3d-moded-variable.mp4`}
+		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/sound-test-r2-case-3d-mod-variable.mp4`}
 	/>
 	<figcaption>
 		Realforce R2 với case in 3D, bản silent, dome Variable, đã mod stab.
@@ -535,11 +496,11 @@ keycap, mặt bàn, mic, phòng và cả tâm trạng người nghe hôm đó n�
 	<video
 		controls
 		preload="metadata"
-		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/soudtest-rule60v3-dyncap-45g.mp4`}
+		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/sound-test-rule60v3-dynacap-45g.mp4`}
 	/>
 	<figcaption>
-		Rule60v3 + full Dynacap + dome 45g + plate thép 1.5 mm, đã mod stab. Để có
-		một mốc so sánh khác hệ.
+		Rule60v3 + full Dynacap + dome 45g + plate thép 1.5 mm, đã mod stab. Clip
+		này để so sánh với một hệ khác.
 	</figcaption>
 </figure>
 
@@ -549,7 +510,7 @@ keycap, mặt bàn, mic, phòng và cả tâm trạng người nghe hôm đó n�
 	<video
 		controls
 		preload="metadata"
-		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/soudtest-rf-r1-moded-variable.mp4`}
+		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/sound-test-r1-case-goc-mod-variable.mp4`}
 	/>
 	<figcaption>Realforce R1 case gốc, đã mod stab, dome Variable.</figcaption>
 </figure>
@@ -558,7 +519,7 @@ keycap, mặt bàn, mic, phòng và cả tâm trạng người nghe hôm đó n�
 	<video
 		controls
 		preload="metadata"
-		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/soudtest-rf-r2-moded-uniform-45g.mp4`}
+		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/sound-test-r2-case-goc-mod-uniform-45g.mp4`}
 	/>
 	<figcaption>
 		Realforce R2 case gốc, bản silent, đã mod stab, dome Uniform 45g.
@@ -569,21 +530,21 @@ keycap, mặt bàn, mic, phòng và cả tâm trạng người nghe hôm đó n�
 	<video
 		controls
 		preload="metadata"
-		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/soudtest-rf-r1-sj38d0-moded-30g.mp4`}
+		src={`${import.meta.env.BASE_URL}static/realforce-tkl-3d/sound-test-r1-sj38d0-case-goc-mod-30g.mp4`}
 	/>
 	<figcaption>
 		Realforce R1 case gốc full size mã SJ38D0, đã mod stab, dome 30g.
 	</figcaption>
 </figure>
 
-## 7. File STL Realforce TKL 3D và link mua đồ
+## 7. File STL và link mua đồ
 
-### 7.1. File STL in 3D case Realforce TKL
+### 7.1. File STL
 
 File hoàn thiện cuối cùng nằm ở repo của Catto:
 https://github.com/4xgk3/CattoKeeb-RF
 
-Nếu muốn tải trực tiếp bản tôi dùng trong bài:
+Tải trực tiếp bản tôi dùng trong bài:
 
 <div class="not-prose my-6 flex flex-wrap gap-3">
 	<a
@@ -602,18 +563,18 @@ Nếu muốn tải trực tiếp bản tôi dùng trong bài:
 	</a>
 </div>
 
-<Callout variant="problem" title="⚠️ Lưu ý trước khi mang file đi in">
-	File STL ở trên là bản tôi đã dùng được với setup của mình, nhưng thông số in 3D ở mỗi nơi có thể khác nhau: máy in, vật liệu, độ co nhựa, hướng đặt mẫu, layer height, support và cả tay nghề người in đều có thể làm bản in bị hẹp hơn hoặc rộng hơn một chút.
+<Callout variant="problem" title="Lưu ý trước khi mang file đi in">
+	File STL này dùng được với setup của tôi, nhưng mỗi nơi in một khác: máy in, vật liệu, độ co nhựa, hướng đặt mẫu, layer height, support và tay nghề người in đều có thể làm bản in hẹp hơn hoặc rộng hơn một chút.
 
-Vì vậy tôi không chịu trách nhiệm nếu bản in của bạn bị cấn, lỏng, hẹp lòng case hoặc phải khoét thêm. Trước khi in bản đẹp, nên in test một phần quan trọng hoặc trao đổi kỹ với bên in. Đừng để case chưa thành bàn phím mà đã thành cục PETG trang trí bàn học 😝
+Tôi không chịu trách nhiệm nếu bản in của bạn bị cấn, lỏng, hẹp lòng hoặc phải khoét thêm. Trước khi in bản chính, nên in test một phần quan trọng hoặc trao đổi kỹ với bên in.
 
 </Callout>
 
 ### 7.2. Link mua linh kiện
 
-- Ai03 Unified Daughterboard: tôi mua qua người dùng trên Facebook nên không có
-  link cố định. Có thể tìm trong chợ bàn phím cơ hoặc Taobao. Nếu không có thì
-  dùng Type-C đầu cái cũng được.
+- Ai03 Unified Daughterboard: tôi mua qua một người trên Facebook nên không có
+  link cố định. Có thể tìm trong các chợ bàn phím cơ hoặc Taobao. Không có thì
+  dùng Type-C đầu cái.
 - Ốc bake dẹp mỏng M2 dài 4 mm:
   https://shopee.vn/2C-%E1%BB%90c-Bake-%C4%90%E1%BA%A7u-D%E1%BA%B9p-M%E1%BB%8Fng-M2-M2.5-Inox-304-H%C6%A1i-H%C3%BAt-Nam-Ch%C3%A2m-i.838073143.18432697565?extraParams=%7B%22display_model_id%22%3A181685829912%2C%22model_selection_logic%22%3A3%7D
 - Ốc bake M2.5 dài 4 mm:
@@ -641,14 +602,4 @@ Vì vậy tôi không chịu trách nhiệm nếu bản in của bạn bị cấ
   https://www.galaxy-factory.com/goods/goods_view.php?goodsNo=1000000006
 - Maker hỗ trợ vẽ case: https://www.facebook.com/hathu.le.526438/
 
-## 9. Kết
-
-Dự án này không phải kiểu “in một phát là xong”. Nó đi qua đủ combo: vỏ zin bị
-nứt, file plate sai, in PETG tốn tiền, cấy ren hơi vội, R1/R2 khác plate, rồi
-cuối cùng vẫn phải dùng dao với mỏ hàn để thuyết phục R2 chui vào case.
-
-Nhưng kết quả cuối cùng là dùng được, nhìn ổn, gõ không còn tiếng vỏ nứt lạo xạo,
-và quan trọng nhất là tôi có thêm một bài học: **đừng cấy ren trước khi thử fit**.
-
-Nếu bạn cần hỏi thêm về dây, file, hoặc đoạn nào trong bài chưa rõ thì có thể
-liên hệ tôi qua mail hoặc Facebook. Cảm ơn các bạn đã dành thời gian đọc bài 🥰
+Có gì chưa rõ về dây, file hay đoạn nào trong bài thì bạn liên hệ tôi qua mail hoặc Facebook.
