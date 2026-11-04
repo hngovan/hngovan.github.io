@@ -1,0 +1,97 @@
+---
+import { getImage } from 'astro:assets'
+import { Icon } from 'astro-icon/components'
+
+import Breadcrumbs from '@/components/breadcrumbs.astro'
+import ContentLightbox from '@/components/content-lightbox.astro'
+import GalleryPhoto from '@/components/gallery-photo.astro'
+import PageHead from '@/components/page-head.astro'
+import Layout from '@/layouts/layout.astro'
+import { getAllGalleryAlbums } from '@/lib/data-utils'
+import { formatTakenDate, resolveGalleryImage, toIsoDate } from '@/lib/gallery'
+
+export async function getStaticPaths() {
+	const albums = await getAllGalleryAlbums()
+	return albums.map(album => ({ params: { id: album.id }, props: album }))
+}
+
+const album = Astro.props
+const { title, date, description: albumDescription } = album.data
+const body = album.body?.trim()
+
+const photos = await Promise.all(
+	album.data.photos.map(async (photo, index) => {
+		const takenAt = photo.date ?? date
+		return {
+			...(await resolveGalleryImage(photo.image)),
+			alt: photo.alt || photo.description || `${title} – ảnh ${index + 1}`,
+			title: photo.title,
+			description: photo.description ?? '',
+			dateIso: toIsoDate(takenAt),
+			dateLabel: formatTakenDate(takenAt)
+		}
+	})
+)
+
+// Ảnh bìa (ảnh đầu tiên) làm ảnh xem trước khi chia sẻ link
+const cover = album.data.photos[0].image
+const ogImage =
+	typeof cover === 'string'
+		? photos[0].src
+		: (await getImage({ src: cover, width: 1200, format: 'jpg' })).src
+
+// Masonry dùng CSS columns (xếp từ trên xuống theo từng cột), nên vài ảnh
+// đầu trong DOM là phần trên của các cột đầu. Tải ngay thay vì lazy.
+const EAGER_COUNT = 6
+---
+
+<Layout class="max-w-6xl">
+	<PageHead
+		slot="head"
+		title={title}
+		description={albumDescription ?? `Bộ sưu tập ảnh ${title}.`}
+		image={ogImage}
+	/>
+	<Breadcrumbs
+		items={[
+			{ label: 'Gallery', href: '/gallery', icon: 'lucide:images' },
+			{ label: title, icon: 'lucide:image' }
+		]}
+	/>
+
+	<header class="flex flex-col gap-2">
+		<h1 class="text-2xl font-medium sm:text-3xl">{title}</h1>
+		<div
+			class="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 text-sm"
+		>
+			<time datetime={toIsoDate(date)} class="flex items-center gap-1.5">
+				<Icon name="lucide:calendar" class="size-4" />
+				{formatTakenDate(date)}
+			</time>
+			<span class="flex items-center gap-1.5">
+				<Icon name="lucide:images" class="size-4" />
+				{photos.length} ảnh
+			</span>
+		</div>
+		{
+			albumDescription && (
+				<p class="text-muted-foreground">{albumDescription}</p>
+			)
+		}
+		{
+			body && (
+				<p class="text-muted-foreground text-sm whitespace-pre-line">{body}</p>
+			)
+		}
+	</header>
+
+	<ul class="not-prose columns-2 gap-3 sm:gap-4 md:columns-3 lg:columns-4">
+		{
+			photos.map((photo, index) => (
+				<GalleryPhoto {...photo} eager={index < EAGER_COUNT} />
+			))
+		}
+	</ul>
+
+	<ContentLightbox />
+</Layout>

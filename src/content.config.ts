@@ -108,4 +108,27 @@ const projects = defineCollection({
 		})
 })
 
-export const collections = { blog, authors, projects }
+// Mỗi entry là một bộ sưu tập (album) gồm nhiều ảnh
+const gallery = defineCollection({
+	loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/gallery' }),
+	schema: ({ image }) =>
+		z.object({
+			title: z.string(),
+			date: z.coerce.date(),
+			description: z.string().optional(),
+			draft: z.boolean().optional(),
+			photos: z
+				.array(
+					z.object({
+						image: z.string().startsWith('/').or(z.url()).or(image()),
+						date: z.coerce.date().optional(),
+						title: z.string().optional(),
+						description: z.string().optional(),
+						alt: z.string().optional()
+					})
+				)
+				.min(1)
+		})
+})
+
+export const collections = { blog, authors, projects, gallery }

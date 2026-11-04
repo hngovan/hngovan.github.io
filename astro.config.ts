@@ -54,7 +54,16 @@ export default defineConfig({
 	site: 'https://hngovan.github.io',
 	integrations: [mdx(), react(), sitemap(), icon()],
 	vite: {
-		plugins: [tailwindcss()]
+		plugins: [tailwindcss()],
+		// Pre-bundle lightgallery khi khởi động dev server, tránh lỗi 504
+		// "Outdated Optimize Dep" khi Vite tối ưu lại giữa chừng
+		optimizeDeps: {
+			include: [
+				'lightgallery',
+				'lightgallery/plugins/zoom',
+				'lightgallery/plugins/rotate'
+			]
+		}
 	},
 	server: {
 		port: 1234,

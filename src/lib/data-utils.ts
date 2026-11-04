@@ -25,6 +25,19 @@ export async function getAllPosts(): Promise<CollectionEntry<'blog'>[]> {
 		.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
 }
 
+export async function getAllGalleryAlbums(): Promise<
+	CollectionEntry<'gallery'>[]
+> {
+	const albums = await getCollection('gallery')
+	return albums
+		.filter(album => !album.data.draft)
+		.sort(
+			(a, b) =>
+				b.data.date.valueOf() - a.data.date.valueOf() ||
+				a.data.title.localeCompare(b.data.title)
+		)
+}
+
 export async function getAllPostsAndSubposts(): Promise<
 	CollectionEntry<'blog'>[]
 > {

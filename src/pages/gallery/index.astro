@@ -1,0 +1,98 @@
+---
+import { Image } from 'astro:assets'
+import { Icon } from 'astro-icon/components'
+
+import Breadcrumbs from '@/components/breadcrumbs.astro'
+import Link from '@/components/link.astro'
+import PageHead from '@/components/page-head.astro'
+import Layout from '@/layouts/layout.astro'
+import { getAllGalleryAlbums } from '@/lib/data-utils'
+import { formatTakenDate, resolveGalleryImage, toIsoDate } from '@/lib/gallery'
+
+const albums = await Promise.all(
+	(await getAllGalleryAlbums()).map(async album => {
+		const cover = album.data.photos[0]
+		return {
+			id: album.id,
+			title: album.data.title,
+			description: album.data.description,
+			count: album.data.photos.length,
+			dateIso: toIsoDate(album.data.date),
+			dateLabel: formatTakenDate(album.data.date),
+			coverAlt: cover.alt || cover.description || album.data.title,
+			cover: await resolveGalleryImage(cover.image)
+		}
+	})
+)
+---
+
+<Layout class="max-w-6xl">
+	<PageHead
+		slot="head"
+		title="Gallery"
+		description="Các bộ sưu tập ảnh bàn phím đã build và sử dụng."
+	/>
+	<Breadcrumbs
+		items={[{ label: 'Gallery', href: '/gallery', icon: 'lucide:images' }]}
+	/>
+
+	{
+		albums.length === 0 ? (
+			<p class="text-muted-foreground py-16 text-center text-sm">
+				Chưa có bộ sưu tập nào.
+			</p>
+		) : (
+			<ul class="not-prose grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
+				{albums.map((album, index) => (
+					<li>
+						<Link
+							href={`/gallery/${album.id}`}
+							class="group bg-card block overflow-hidden rounded-xl border transition-shadow hover:shadow-lg"
+						>
+							<div class="relative overflow-hidden">
+								{album.cover.local ? (
+									<Image
+										src={album.cover.local}
+										alt={album.coverAlt}
+										widths={[480, 720, 960]}
+										sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+										format="webp"
+										loading={index < 3 ? 'eager' : 'lazy'}
+										class="block h-auto w-full transition-transform duration-300 group-hover:scale-[1.03]"
+									/>
+								) : (
+									<img
+										src={album.cover.src}
+										alt={album.coverAlt}
+										loading={index < 3 ? 'eager' : 'lazy'}
+										decoding="async"
+										class="block h-auto w-full transition-transform duration-300 group-hover:scale-[1.03]"
+									/>
+								)}
+								<span class="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-xs text-white backdrop-blur-sm">
+									<Icon name="lucide:images" class="size-3.5" />
+									{album.count} ảnh
+								</span>
+							</div>
+							<div class="flex flex-col gap-1 p-4">
+								<h2 class="leading-snug font-medium">{album.title}</h2>
+								<time
+									datetime={album.dateIso}
+									class="text-muted-foreground flex items-center gap-1.5 text-xs"
+								>
+									<Icon name="lucide:calendar" class="size-3.5" />
+									{album.dateLabel}
+								</time>
+								{album.description && (
+									<p class="text-muted-foreground mt-1 line-clamp-3 text-sm">
+										{album.description}
+									</p>
+								)}
+							</div>
+						</Link>
+					</li>
+				))}
+			</ul>
+		)
+	}
+</Layout>

@@ -6,6 +6,36 @@ import 'lightgallery/css/lightgallery.css'
 
 <div id="content-lightbox-root" class="hidden"></div>
 
+<style is:global>
+	.lg-photo-caption {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		max-width: 42rem;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	.lg-photo-date {
+		font-size: 0.75rem;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		opacity: 0.7;
+	}
+
+	.lg-photo-title {
+		font-size: 1rem;
+		font-weight: 600;
+	}
+
+	.lg-photo-description {
+		font-size: 0.875rem;
+		line-height: 1.5;
+		white-space: pre-line;
+		opacity: 0.9;
+	}
+</style>
+
 <script>
 	import lightGallery from 'lightgallery'
 	import lgRotate from 'lightgallery/plugins/rotate'
@@ -31,6 +61,27 @@ import 'lightgallery/css/lightgallery.css'
 		const caption = figure?.querySelector('figcaption')?.textContent?.trim()
 
 		return caption || image.alt || ''
+	}
+
+	// Ảnh gallery: data-lightbox-date / -title / -description -> caption nhiều dòng
+	const getSubHtml = (image: HTMLImageElement) => {
+		const { lightboxDate, lightboxTitle, lightboxDescription } = image.dataset
+
+		if (lightboxDate || lightboxTitle || lightboxDescription) {
+			const parts = [
+				lightboxDate &&
+					`<div class="lg-photo-date">${escapeHtml(lightboxDate)}</div>`,
+				lightboxTitle &&
+					`<div class="lg-photo-title">${escapeHtml(lightboxTitle)}</div>`,
+				lightboxDescription &&
+					`<div class="lg-photo-description">${escapeHtml(lightboxDescription)}</div>`
+			].filter(Boolean)
+
+			return `<div class="lg-caption lg-photo-caption">${parts.join('')}</div>`
+		}
+
+		const caption = getCaption(image)
+		return caption ? `<div class="lg-caption">${escapeHtml(caption)}</div>` : ''
 	}
 
 	const getImageUrl = (image: HTMLImageElement) =>
@@ -127,15 +178,13 @@ import 'lightgallery/css/lightgallery.css'
 		if (images.length === 0) return
 
 		const dynamicEl = images.map(image => {
-			const caption = getCaption(image)
-			const imageUrl = getImageUrl(image)
+			const imageUrl = image.dataset.lightboxSrc || getImageUrl(image)
+			const thumbUrl = getImageUrl(image) || imageUrl
 
 			return {
 				src: imageUrl,
-				thumb: imageUrl,
-				subHtml: caption
-					? `<div class="lg-caption">${escapeHtml(caption)}</div>`
-					: ''
+				thumb: thumbUrl,
+				subHtml: getSubHtml(image)
 			}
 		})
 

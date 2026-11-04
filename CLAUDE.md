@@ -146,6 +146,29 @@ lemma | proof | corollary ...; defaultOpen={false} để thu gọn
   </figure>
   ```
 
+### Gallery (`/gallery`)
+
+Gallery chia theo bộ sưu tập (album). `/gallery` hiện danh sách album, `/gallery/<slug>` hiện ảnh của album theo bố cục masonry, bấm vào ảnh để mở preview kèm ngày chụp và mô tả.
+
+Mỗi album là một thư mục `src/content/gallery/<slug>/` gồm `index.md` và các file ảnh. Ảnh chuyển sang `.webp` cạnh dài tối đa 1600px (như phần Ảnh và video), đặt tên theo nội dung. Astro tự tạo thumbnail.
+
+```md
+---
+title: 'Tên bộ sưu tập'
+date: '2026-11-04' # ngày chụp mặc định cho mọi ảnh trong album
+description: 'Mô tả album' # tùy chọn
+draft: true # tùy chọn
+photos: # ảnh đầu tiên là ảnh bìa
+  - image: './toan-canh.webp' # hoặc '/static/...' hoặc URL
+    description: 'Mô tả hiện trong preview' # tùy chọn
+    date: '2026-10-20' # tùy chọn, ghi đè date của album
+    title: '...' # tùy chọn
+    alt: '...' # tùy chọn
+---
+```
+
+Album sắp theo `date` mới nhất trước. Preview dùng `content-lightbox.astro` và đọc các attribute `data-lightbox-src`, `data-lightbox-date`, `data-lightbox-title`, `data-lightbox-description`.
+
 ### Project (build log bàn phím)
 
 Mỗi project là `src/content/projects/<slug>/index.mdx`, frontmatter dùng `name` (không phải `title`):
