@@ -6,19 +6,26 @@ interface Props {
 	title?: string
 	description?: string
 	noindex?: boolean
+	/** Ảnh OG riêng (đường dẫn đã có base hoặc URL tuyệt đối) */
+	image?: string
 }
 
 const {
 	title = SITE.title,
 	description = SITE.description,
-	noindex = false
+	noindex = false,
+	image: customImage
 } = Astro.props
-const image = new URL(withBasePath('/static/twitter-card.png'), Astro.site)
+const image = new URL(
+	customImage ?? withBasePath('/static/twitter-card.png'),
+	Astro.site
+)
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site)
 ---
 
 <title>{`${title} | ${SITE.title}`}</title>
 <meta name="description" content={description} />
-<link rel="canonical" href={SITE.href} />
+<link rel="canonical" href={canonicalUrl.toString()} />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
 <meta property="og:title" content={title} />
